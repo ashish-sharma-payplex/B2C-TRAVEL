@@ -240,7 +240,7 @@
 // export default FlightsPage;
 
 
-  
+
 
 
 
@@ -251,9 +251,14 @@ import React, { useState } from "react";
 // import FlightDatePicker from "../../src/components/flights/DatePicker";
 // import TravellersDropdown from "../../src/components/flights/TravellersDropdown";
 
-import CityDropdown from "@/components/flights/CityDropdown";
-import FlightDatePicker from "@/components/flights/DatePicker";
-import TravellersDropdown from "@/components/flights/TravellersDropdown";
+import CityDropdown from "@/components/flights/CityDropdown.jsx";
+import FlightDatePicker from "@/components/flights/DatePicker.jsx";
+import TravellersDropdown from "@/components/flights/TravellersDropdown.jsx";
+import FlightsListingPage from "@/components/flights/FlightsListingPage.jsx";
+import FlightHome from "@/components/flights/FlightHome.jsx";
+// import useFlightSearch from "../../hooks/flighthooks/useFlightSearch";
+import useFlightSearch from "@/hooks/flighthooks/useFlightSearch.jsx";
+
 
 import { Box, Typography, Button, Paper, Grid } from "@mui/material";
 import SwapHorizIcon           from "@mui/icons-material/SwapHoriz";
@@ -294,10 +299,35 @@ const navItems = [
 
 const FlightsPage = () => {
 
-
   const navigate = useNavigate();
 
-  const handleSearch = () => {
+    const {
+    searchFlights,
+    flightData,
+    loading,
+  } = useFlightSearch();
+
+
+const handleSearch = async () => {
+
+  console.log("Search Clicked");
+
+console.log({
+  from: fromCity.code,
+  to: toCity.code,
+  departureDate,
+});
+
+  const response = await searchFlights(
+    fromCity.code,
+    toCity.code,
+    departureDate
+  );
+
+  if (
+    response?.data?.results?.Results
+  ) {
+
     navigate("/flights/listing", {
       state: {
         tripType,
@@ -305,12 +335,14 @@ const FlightsPage = () => {
         toCity,
         departureDate,
         returnDate,
+        flights:
+          response.data.results.Results,
       },
     });
-  };
 
+  }
 
-
+};
 
   const [tripType, setTripType] = useState("Oneway");
 
@@ -322,6 +354,16 @@ const FlightsPage = () => {
 
   return (
     <Box sx={{ bgcolor: "#f4f6fa", minHeight: "100vh", pb: 6 }}>
+
+
+
+          {/* <Button
+      variant="contained"
+      onClick={searchFlights}
+      sx={{ m: 2 }}
+    >
+      Test Flight API
+    </Button> */}
 
       {/* ── Category Nav ── */}
       <Box

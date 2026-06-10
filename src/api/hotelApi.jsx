@@ -2,7 +2,7 @@ export const API_BASE_URL = "https://travelmytrip.com";
 
 export const API_HEADERS = {
   "Content-Type": "application/json",
-  "x-api-key": "ft4xaqQzYscsEfWAqrl-iLqq67xzrHqGPxVHRXzm_NI",
+  "x-api-key": "phbA-DvwrvTf9WD-uvQ_7mVFD0NNMMhEMVkqX9gycws",
   "x-user-id": "1",
 };
 
