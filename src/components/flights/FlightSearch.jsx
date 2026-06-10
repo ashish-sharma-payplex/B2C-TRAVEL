@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Box,
@@ -9,6 +9,7 @@ import {
   Link,
   useMediaQuery,
   useTheme,
+  CircularProgress,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -20,6 +21,9 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
+import SearchIcon from "@mui/icons-material/Search";
+import { useFlightCities } from "../../hooks/flighthooks/useFlightCities";
+import { useFlightSearch } from "../../hooks/flighthooks/useFlightSearch";
 
 // ─── MUI Theme ────────────────────────────────
 const muiTheme = createTheme({
@@ -112,9 +116,179 @@ function formatDisplayDate(date) {
   return `${DAYS_FULL[date.getDay()]}, ${MONTH_SHORT[date.getMonth()]} ${date.getDate()}`;
 }
 
+// ─── CitySearchDropdown ───────────────────────
+const CitySearchDropdown = ({
+  anchorEl,
+  open,
+  onClose,
+  onSelect,
+  cities,
+  loading,
+  placeholder = "Search city or airport...",
+}) => {
+  const [query, setQuery] = useState("");
+  const [pos, setPos] = useState({ top: 0, left: 0, width: 320 });
+  const inputRef = useRef(null);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (open && anchorEl) {
+      const rect = anchorEl.getBoundingClientRect();
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      const scrollX = window.scrollX || document.documentElement.scrollLeft;
+      setPos({
+        top: rect.bottom + scrollY + 6,
+        left: rect.left + scrollX,
+        width: Math.max(rect.width, 320),
+      });
+      setQuery("");
+      setTimeout(() => inputRef.current?.focus(), 50);
+    }
+  }, [open, anchorEl]);
+
+  useEffect(() => {
+    if (!open) return;
+    const handle = (e) => {
+      if (
+        ref.current && !ref.current.contains(e.target) &&
+        anchorEl && !anchorEl.contains(e.target)
+      ) onClose();
+    };
+    document.addEventListener("mousedown", handle);
+    return () => document.removeEventListener("mousedown", handle);
+  }, [open, onClose, anchorEl]);
+
+  // API response shape: { name: "Afghanistan", code: "AF", phone: "93", label: "...", value: "AF" }
+  const normalize = (c) => ({
+    code:    c.code  || c.value || "",
+    name:    c.name  || c.label || "",
+    country: "",
+    airport: "",
+  });
+
+  // Filter by name or code
+  const filtered = useMemo(() => {
+    if (!query.trim()) return cities.slice(0, 50);
+    const q = query.toLowerCase();
+    return cities.filter((c) => {
+      const name = (c.name || c.label || "").toLowerCase();
+      const code = (c.code || c.value || "").toLowerCase();
+      return name.includes(q) || code.includes(q);
+    }).slice(0, 50);
+  }, [query, cities]);
+
+  if (!open) return null;
+
+  return (
+    <Paper
+      ref={ref}
+      elevation={0}
+      sx={{
+        position: "absolute",
+        top: pos.top,
+        left: { xs: 8, md: pos.left },
+        right: { xs: 8, md: "auto" },
+        width: { xs: "calc(100vw - 16px)", md: pos.width },
+        zIndex: 9999,
+        borderRadius: "16px",
+        border: "1px solid #e5e7eb",
+        boxShadow: "0 8px 40px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.07)",
+        bgcolor: "#fff",
+        overflow: "hidden",
+        fontFamily: "'Inter', sans-serif",
+      }}
+    >
+      {/* Search Input */}
+      <Box sx={{
+        display: "flex", alignItems: "center", gap: 1,
+        px: 2, py: 1.5, borderBottom: "1px solid #f3f4f6",
+      }}>
+        <SearchIcon sx={{ fontSize: 18, color: "#9ca3af", flexShrink: 0 }} />
+        <input
+          ref={inputRef}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={placeholder}
+          style={{
+            flex: 1, border: "none", outline: "none",
+            fontSize: 14, fontFamily: "'Inter', sans-serif",
+            color: "#111827", background: "transparent",
+          }}
+        />
+        {query && (
+          <Box
+            onClick={() => setQuery("")}
+            sx={{ cursor: "pointer", color: "#9ca3af", fontSize: 18, lineHeight: 1, "&:hover": { color: "#374151" } }}
+          >×</Box>
+        )}
+      </Box>
+
+      {/* Results */}
+      <Box sx={{ maxHeight: 320, overflowY: "auto" }}>
+        {loading ? (
+          <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+            <CircularProgress size={24} sx={{ color: GREEN }} />
+          </Box>
+        ) : filtered.length === 0 ? (
+          <Box sx={{ py: 3, textAlign: "center" }}>
+            <Typography sx={{ fontSize: 13, color: "#9ca3af", fontFamily: "'Inter', sans-serif" }}>
+              No cities found
+            </Typography>
+          </Box>
+        ) : (
+          filtered.map((city, idx) => {
+            const { code, name, country, airport } = normalize(city);
+
+            return (
+              <Box
+                key={`${code}-${idx}`}
+                onClick={() => {
+                  // For countries API: name is country name, code is country code (AF, IN etc.)
+                  onSelect({ code, name: country ? `${name}, ${country}` : name });
+                  onClose();
+                }}
+                sx={{
+                  display: "flex", alignItems: "center", gap: 1.5,
+                  px: 2, py: 1.2,
+                  cursor: "pointer",
+                  borderBottom: "1px solid #f9fafb",
+                  transition: "background 0.12s",
+                  "&:hover": { bgcolor: "#f0fdf4" },
+                }}
+              >
+                {/* Airport Code badge */}
+                <Box sx={{
+                  minWidth: 42, height: 42, borderRadius: "10px",
+                  bgcolor: "#f0fdf4", border: "1px solid #bbf7d0",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  flexShrink: 0,
+                }}>
+                  <Typography sx={{ fontSize: 11, fontWeight: 700, color: GREEN, fontFamily: "'Inter', sans-serif", letterSpacing: 0.5 }}>
+                    {code || "—"}
+                  </Typography>
+                </Box>
+
+                <Box sx={{ minWidth: 0 }}>
+                  <Typography sx={{
+                    fontSize: 13, fontWeight: 600, color: "#111827",
+                    fontFamily: "'Inter', sans-serif",
+                    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                  }}>
+                    {name}
+                  </Typography>
+                </Box>
+              </Box>
+            );
+          })
+        )}
+      </Box>
+    </Paper>
+  );
+};
+
 // ─── FlightDatePicker ─────────────────────────
 const FlightDatePicker = ({ anchorEl, open, onClose, selectedDate, onChange, minDate }) => {
-  const today = minDate || new Date();
+  const today = minDate ? new Date(minDate) : new Date();
   today.setHours(0, 0, 0, 0);
 
   const [viewMonth, setViewMonth] = useState({ year: today.getFullYear(), month: today.getMonth() });
@@ -193,22 +367,20 @@ const FlightDatePicker = ({ anchorEl, open, onClose, selectedDate, onChange, min
         fontFamily: "'Inter', sans-serif",
       }}
     >
-      {/* Month header */}
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1.5 }}>
         <IconButton onClick={goPrev} disabled={!canGoPrev} size="small"
-          sx={{ width: 28, height: 28, color: canGoPrev ? "#6b7280" : "#d1d5db", "&:hover": canGoPrev ? { bgcolor: "#f9fafb", color: "#111" } : {} }}>
+          sx={{ width: 28, height: 28, color: canGoPrev ? "#6b7280" : "#d1d5db" }}>
           <ChevronLeftIcon sx={{ fontSize: 18 }} />
         </IconButton>
         <Typography sx={{ fontWeight: 700, fontSize: "0.95rem", color: "#111827", fontFamily: "inherit" }}>
           {MONTH_NAMES[month]} {year}
         </Typography>
         <IconButton onClick={goNext} size="small"
-          sx={{ width: 28, height: 28, color: "#6b7280", "&:hover": { bgcolor: "#f9fafb", color: "#111" } }}>
+          sx={{ width: 28, height: 28, color: "#6b7280" }}>
           <ChevronRightIcon sx={{ fontSize: 18 }} />
         </IconButton>
       </Box>
 
-      {/* Day labels */}
       <Box sx={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", mb: 0.5 }}>
         {DAY_LABELS.map((d) => (
           <Typography key={d} sx={{ textAlign: "center", fontSize: "0.78rem", fontWeight: 600, color: "#9ca3af", py: 0.5 }}>
@@ -217,12 +389,11 @@ const FlightDatePicker = ({ anchorEl, open, onClose, selectedDate, onChange, min
         ))}
       </Box>
 
-      {/* Day cells */}
       <Box sx={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)" }}>
         {cells.map((date, idx) => {
           if (!date) return <Box key={`empty-${idx}`} />;
           const isSelected = isSameDay(date, selectedDate);
-          const isToday    = isSameDay(date, today);
+          const isToday    = isSameDay(date, new Date());
           const isPast     = date < today && !isToday;
           return (
             <Box key={date.toISOString()} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -251,7 +422,6 @@ const FlightDatePicker = ({ anchorEl, open, onClose, selectedDate, onChange, min
         })}
       </Box>
 
-      {/* Footer */}
       <Box sx={{ textAlign: "center", mt: 2 }}>
         <Typography sx={{ fontSize: "0.78rem", color: "#9ca3af" }}>
           {selectedDate
@@ -372,12 +542,12 @@ const PassengerClassDropdown = ({ anchorEl, open, onClose, passengers, setPassen
   );
 };
 
-// ─── StickyRightBar (same as BusSearch) ──────
+// ─── StickyRightBar ───────────────────────────
 const StickyRightBar = ({ visible }) => {
-  const theme  = useTheme();
+  const theme    = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const navigate  = useNavigate();
-  const location  = useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <Box sx={{
@@ -451,7 +621,7 @@ const StickyRightBar = ({ visible }) => {
   );
 };
 
-// ─── CategoryTabs (same as BusSearch) ────────
+// ─── CategoryTabs ─────────────────────────────
 const CategoryTabs = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -533,17 +703,28 @@ export default function FlightSearch({
 }) {
   const theme    = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
   const navigate = useNavigate();
 
   const [scrolled, setScrolled] = useState(false);
 
+  // ── Hooks ──
+  const { cities, loading: citiesLoading } = useFlightCities();
+  const { searchFlights, loading: searchLoading } = useFlightSearch();
+
   // ── Trip type ──
-  const [tripType, setTripType] = useState("oneway"); // "oneway" | "roundtrip"
+  const [tripType, setTripType] = useState("oneway");
 
   // ── City state ──
   const [fromCity, setFromCity] = useState(initialFrom || { code: "BOM", name: "Mumbai, IN" });
   const [toCity,   setToCity]   = useState(initialTo   || { code: "DEL", name: "New Delhi, IN" });
+
+  // ── City dropdown open state ──
+  const [fromDropOpen, setFromDropOpen] = useState(false);
+  const [toDropOpen,   setToDropOpen]   = useState(false);
+
+  // ── Refs for city fields ──
+  const fromFieldRef = useRef(null);
+  const toFieldRef   = useRef(null);
 
   // ── Validation errors ──
   const [errors, setErrors] = useState({ from: "", to: "" });
@@ -556,14 +737,14 @@ export default function FlightSearch({
   const [returnDate, setReturnDate] = useState(null);
 
   // ── Dropdown open state ──
-  const [depPickerOpen,  setDepPickerOpen]  = useState(false);
-  const [retPickerOpen,  setRetPickerOpen]  = useState(false);
-  const [paxDropOpen,    setPaxDropOpen]    = useState(false);
+  const [depPickerOpen, setDepPickerOpen] = useState(false);
+  const [retPickerOpen, setRetPickerOpen] = useState(false);
+  const [paxDropOpen,   setPaxDropOpen]   = useState(false);
 
   // ── Refs ──
-  const depDateRef  = useRef(null);
-  const retDateRef  = useRef(null);
-  const paxRef      = useRef(null);
+  const depDateRef = useRef(null);
+  const retDateRef = useRef(null);
+  const paxRef     = useRef(null);
 
   // ── Passengers & class ──
   const [passengers, setPassengers] = useState({ adults: 1, children: 0, infants: 0 });
@@ -575,8 +756,6 @@ export default function FlightSearch({
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const totalPassengers = passengers.adults + passengers.children + passengers.infants;
 
   const passengerLabel = () => {
     const parts = [];
@@ -601,42 +780,68 @@ export default function FlightSearch({
     }
   };
 
-  const handleSearch = () => {
+  // Close all dropdowns helper
+  const closeAll = () => {
+    setFromDropOpen(false);
+    setToDropOpen(false);
+    setDepPickerOpen(false);
+    setRetPickerOpen(false);
+    setPaxDropOpen(false);
+  };
+
+  const handleSearch = async () => {
     const newErrors = { from: "", to: "" };
     let hasError = false;
-    if (!fromCity) { newErrors.from = "Please select departure city"; hasError = true; }
-    if (!toCity)   { newErrors.to   = "Please select destination city"; hasError = true; }
+    if (!fromCity?.code) { newErrors.from = "Please select departure city"; hasError = true; }
+    if (!toCity?.code)   { newErrors.to   = "Please select destination city"; hasError = true; }
     setErrors(newErrors);
     if (hasError) return;
 
-    navigate("/flights/results", {
-      state: { fromCity, toCity, departureDate: departureDate.toISOString(), returnDate: returnDate?.toISOString() ?? null, passengers, cabinClass, tripType },
+    // Call search API
+    const result = await searchFlights({
+      fromCity,
+      toCity,
+      departureDate,
+      returnDate,
+      passengers,
+      cabinClass,
+      tripType,
+    });
+
+    // Navigate to listing page with results + search params
+    navigate("/flights/listing", {
+      state: {
+        searchResult: result,
+        fromCity,
+        toCity,
+        departureDate: departureDate.toISOString(),
+        returnDate: returnDate?.toISOString() ?? null,
+        passengers,
+        cabinClass,
+        tripType,
+      },
     });
   };
 
   return (
     <ThemeProvider theme={muiTheme}>
       <>
-        {/* ── StickyRightBar ── */}
         <StickyRightBar visible={scrolled} />
-
-        {/* ── CategoryTabs ── */}
         <CategoryTabs />
 
-        {/* ── Main content ── */}
         <Box sx={{ backgroundColor: "#f0f4f8", display: "flex", alignItems: "center", justifyContent: "center", p: { xs: 1.5, sm: 2, md: 3 } }}>
           <Paper elevation={0} sx={{
-            width: "100%", maxWidth: 1100,
+            width: "100%", maxWidth: 1280,
             borderRadius: { xs: 3, sm: 4 },
             border: "1px solid #e8e8e8",
-            px: { xs: 2, sm: 3, md: 4 },
+            px: { xs: 2, sm: 3, md: 3 },
             py: { xs: 2.5, sm: 3 },
             position: "relative",
             backgroundColor: "#fff",
             fontFamily: "'Inter', sans-serif",
           }}>
 
-            {/* ── Header ── */}
+            {/* Header */}
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: { xs: 1.5, sm: 2 } }}>
               <Box>
                 <Typography variant="h5" fontWeight={700} fontSize={{ xs: "1.25rem", sm: "1.5rem" }} color="#1a1a1a" lineHeight={1.2} sx={{ fontFamily: "'Inter', sans-serif" }}>
@@ -646,15 +851,13 @@ export default function FlightSearch({
                   Book International and Domestic Flights
                 </Typography>
               </Box>
-
-              {/* Help link — desktop */}
               <Link href="#" underline="none"
                 sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center", gap: 0.6, color: "#555", fontSize: "0.85rem", mt: 0.5, "&:hover": { color: "#2e7d32" }, fontFamily: "'Inter', sans-serif" }}>
                 <UserIcon /> Need some help?
               </Link>
             </Box>
 
-            {/* ── Trip type radios ── */}
+            {/* Trip type radios */}
             <Box sx={{ display: "flex", gap: { xs: 2, sm: 3 }, mb: { xs: 2, sm: 2.5 } }}>
               {[
                 { val: "oneway",    label: "Oneway"     },
@@ -673,128 +876,75 @@ export default function FlightSearch({
               ))}
             </Box>
 
-            {/* ── Search row ── */}
+            {/* Search row */}
             <Box sx={{
               display: "flex",
               flexDirection: { xs: "column", md: "row" },
               alignItems: { xs: "stretch", md: "center" },
-              gap: { xs: 1.5, md: 1.5 },
+              gap: { xs: 1.5, md: 1 },
             }}>
 
               {/* FROM + SWAP + TO */}
-              <Box
-                sx={{
-                  display: "flex",
-                  flex: { md: "1 1 auto" },
-                  alignItems: "center",
-                  position: "relative",
-                  gap: 0,
-                  mt: "-6px",
-                }}
-              >
+              <Box sx={{
+                display: "flex",
+                flex: { md: "1 1 auto" },
+                alignItems: "center",
+                position: "relative",
+                gap: 0,
+                mt: "-6px",
+              }}>
                 {/* FROM fieldset */}
                 <Box
                   component="fieldset"
-                  onClick={() => {}}
+                  ref={fromFieldRef}
+                  onClick={() => { closeAll(); setFromDropOpen(true); }}
                   sx={{
                     flex: 1,
                     border: `1px solid ${errors.from ? "#dc2626" : "#c8c8c8"}`,
                     borderRadius: "12px",
-                    m: 0,
-                    pl: "14px",
-                    pr: "30px",
-                    height: 58,
-                    minHeight: 58,
+                    m: 0, pl: "14px", pr: "30px",
+                    height: 58, minHeight: 58,
                     boxSizing: "border-box",
-                    display: "flex",
-                    alignItems: "center",
+                    display: "flex", alignItems: "center",
                     backgroundColor: errors.from ? "#fff5f5" : "#fff",
-                    minWidth: 0,
-                    mr: "8px",
-                    lineHeight: 1,
+                    minWidth: 0, mr: "8px", lineHeight: 1,
                     cursor: "pointer",
                     "&:hover": { borderColor: errors.from ? "#dc2626" : "#2e7d32" },
                     transition: "border-color 0.15s",
                   }}
                 >
-                  <legend
-                    style={{
-                      fontSize: "0.72rem",
-                      color: errors.from ? "#dc2626" : "#6b6b6b",
-                      padding: "0 3px",
-                      lineHeight: 1,
-                      marginLeft: "30px",
-                      fontFamily: "'Inter', sans-serif",
-                    }}
-                  >
-                    From
-                  </legend>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                      width: "100%",
-                      marginLeft: "18px",
-                    }}
-                  >
+                  <legend style={{
+                    fontSize: "0.72rem", color: errors.from ? "#dc2626" : "#6b6b6b",
+                    padding: "0 3px", lineHeight: 1, marginLeft: "30px",
+                    fontFamily: "'Inter', sans-serif",
+                  }}>From</legend>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%", marginLeft: "18px" }}>
                     <FlightTakeoffIcon />
-                    <Typography
-                      sx={{
-                        fontSize: "0.95rem",
-                        fontWeight: 600,
-                        color: fromCity ? "#111827" : "#9ca3af",
-                        flex: 1,
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        userSelect: "none",
-                        fontFamily: "'Inter', sans-serif",
-                      }}
-                    >
+                    <Typography sx={{
+                      fontSize: "0.95rem", fontWeight: 600,
+                      color: fromCity ? "#111827" : "#9ca3af",
+                      flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                      userSelect: "none", fontFamily: "'Inter', sans-serif",
+                    }}>
                       {fromCity ? `${fromCity.code} - ${fromCity.name}` : "Leaving From"}
                     </Typography>
                   </Box>
                   {errors.from && (
-                    <Typography
-                      sx={{
-                        fontSize: "0.68rem",
-                        color: "#dc2626",
-                        position: "absolute",
-                        bottom: -18,
-                        left: 4,
-                        whiteSpace: "nowrap",
-                      }}
-                    >
+                    <Typography sx={{ fontSize: "0.68rem", color: "#dc2626", position: "absolute", bottom: -18, left: 4, whiteSpace: "nowrap" }}>
                       ⚠ {errors.from}
                     </Typography>
                   )}
                 </Box>
 
                 {/* Swap button */}
-                <Box
-                  sx={{
-                    position: "absolute",
-                    left: "50%",
-                    top: "50%",
-                    transform: "translate(-50%, -50%)",
-                    zIndex: 5,
-                    flexShrink: 0,
-                  }}
-                >
-                  <IconButton
-                    onClick={handleSwap}
+                <Box sx={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", zIndex: 5, flexShrink: 0 }}>
+                  <IconButton onClick={(e) => { e.stopPropagation(); handleSwap(); }}
                     sx={{
-                      border: "1px solid #d4d4d4",
-                      backgroundColor: "#fff",
-                      width: 40,
-                      height: 40,
-                      borderRadius: "50%",
-                      boxShadow: "0 0 0 3px #fff",
+                      border: "1px solid #d4d4d4", backgroundColor: "#fff",
+                      width: 40, height: 40, borderRadius: "50%", boxShadow: "0 0 0 3px #fff",
                       "&:hover": { backgroundColor: "#f1f8f1", borderColor: "#2e7d32" },
                       transition: "all 0.2s",
-                    }}
-                  >
+                    }}>
                     <SwapIcon />
                   </IconButton>
                 </Box>
@@ -802,82 +952,48 @@ export default function FlightSearch({
                 {/* TO fieldset */}
                 <Box
                   component="fieldset"
-                  onClick={() => {}}
+                  ref={toFieldRef}
+                  onClick={() => { closeAll(); setToDropOpen(true); }}
                   sx={{
                     flex: 1,
                     border: `1px solid ${errors.to ? "#dc2626" : "#c8c8c8"}`,
                     borderRadius: "12px",
-                    m: 0,
-                    pl: "30px",
-                    pr: "14px",
-                    height: 58,
-                    minHeight: 58,
+                    m: 0, pl: "30px", pr: "14px",
+                    height: 58, minHeight: 58,
                     boxSizing: "border-box",
-                    display: "flex",
-                    alignItems: "center",
+                    display: "flex", alignItems: "center",
                     backgroundColor: errors.to ? "#fff5f5" : "#fff",
-                    minWidth: 0,
-                    lineHeight: 1,
+                    minWidth: 0, lineHeight: 1,
                     cursor: "pointer",
                     "&:hover": { borderColor: errors.to ? "#dc2626" : "#2e7d32" },
                     transition: "border-color 0.15s",
                   }}
                 >
-                  <legend
-                    style={{
-                      fontSize: "0.72rem",
-                      color: errors.to ? "#dc2626" : "#6b6b6b",
-                      padding: "0 3px",
-                      lineHeight: 1,
-                      marginLeft: "44px",
-                      fontFamily: "'Inter', sans-serif",
-                    }}
-                  >
-                    To
-                  </legend>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                      width: "100%",
-                      marginLeft: "24px",
-                    }}
-                  >
+                  <legend style={{
+                    fontSize: "0.72rem", color: errors.to ? "#dc2626" : "#6b6b6b",
+                    padding: "0 3px", lineHeight: 1, marginLeft: "44px",
+                    fontFamily: "'Inter', sans-serif",
+                  }}>To</legend>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%", marginLeft: "24px" }}>
                     <FlightLandIcon />
-                    <Typography
-                      sx={{
-                        fontSize: "0.95rem",
-                        fontWeight: 600,
-                        color: toCity ? "#111827" : "#9ca3af",
-                        flex: 1,
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        userSelect: "none",
-                        fontFamily: "'Inter', sans-serif",
-                      }}
-                    >
+                    <Typography sx={{
+                      fontSize: "0.95rem", fontWeight: 600,
+                      color: toCity ? "#111827" : "#9ca3af",
+                      flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                      userSelect: "none", fontFamily: "'Inter', sans-serif",
+                    }}>
                       {toCity ? `${toCity.code} - ${toCity.name}` : "Going To"}
                     </Typography>
                   </Box>
                   {errors.to && (
-                    <Typography
-                      sx={{
-                        fontSize: "0.68rem",
-                        color: "#dc2626",
-                        position: "absolute",
-                        bottom: -18,
-                        whiteSpace: "nowrap",
-                      }}
-                    >
+                    <Typography sx={{ fontSize: "0.68rem", color: "#dc2626", position: "absolute", bottom: -18, whiteSpace: "nowrap" }}>
                       ⚠ {errors.to}
                     </Typography>
                   )}
                 </Box>
               </Box>
 
-              {/* Date fields row */}
+              {/* Date + Pax row */}
               <Box sx={{
                 display: "flex",
                 flex: { md: "0 0 auto" },
@@ -889,15 +1005,13 @@ export default function FlightSearch({
                 <FieldBox
                   legend="Departure"
                   fieldRef={depDateRef}
-                  onClick={() => { setDepPickerOpen((o) => !o); setRetPickerOpen(false); setPaxDropOpen(false); }}
-                  sx={{ width: { xs: "100%", sm: 160, md: 165 }, cursor: "pointer" }}
+                  onClick={() => { closeAll(); setDepPickerOpen((o) => !o); }}
+                  sx={{ width: { xs: "100%", sm: 150, md: 150 }, cursor: "pointer" }}
                 >
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <CalendarIcon />
                     <Box>
-                      <Typography sx={{ fontSize: "0.78rem", color: "#9ca3af", lineHeight: 1, mb: 0.3, fontFamily: "'Inter', sans-serif" }}>
-                        Departure
-                      </Typography>
+                      <Typography sx={{ fontSize: "0.78rem", color: "#9ca3af", lineHeight: 1, mb: 0.3, fontFamily: "'Inter', sans-serif" }}>Departure</Typography>
                       <Typography sx={{ fontSize: "0.9rem", fontWeight: 600, color: "#1a1a1a", lineHeight: 1.2, fontFamily: "'Inter', sans-serif", whiteSpace: "nowrap" }}>
                         {formatDisplayDate(departureDate)}
                       </Typography>
@@ -910,25 +1024,21 @@ export default function FlightSearch({
                   legend="Return"
                   fieldRef={retDateRef}
                   onClick={() => {
-                    if (tripType === "oneway") { handleRoundTripToggle("roundtrip"); setRetPickerOpen(true); return; }
-                    setRetPickerOpen((o) => !o); setDepPickerOpen(false); setPaxDropOpen(false);
+                    if (tripType === "oneway") { handleRoundTripToggle("roundtrip"); closeAll(); setRetPickerOpen(true); return; }
+                    closeAll(); setRetPickerOpen((o) => !o);
                   }}
-                  sx={{ width: { xs: "100%", sm: 160, md: 165 }, cursor: "pointer", bgcolor: tripType === "oneway" ? "#fafafa" : "#fff" }}
+                  sx={{ width: { xs: "100%", sm: 150, md: 150 }, cursor: "pointer", bgcolor: tripType === "oneway" ? "#fafafa" : "#fff" }}
                 >
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <CalendarIcon />
                     <Box>
-                      <Typography sx={{ fontSize: "0.78rem", color: "#9ca3af", lineHeight: 1, mb: 0.3, fontFamily: "'Inter', sans-serif" }}>
-                        Return
-                      </Typography>
+                      <Typography sx={{ fontSize: "0.78rem", color: "#9ca3af", lineHeight: 1, mb: 0.3, fontFamily: "'Inter', sans-serif" }}>Return</Typography>
                       {returnDate ? (
                         <Typography sx={{ fontSize: "0.9rem", fontWeight: 600, color: "#1a1a1a", lineHeight: 1.2, fontFamily: "'Inter', sans-serif", whiteSpace: "nowrap" }}>
                           {formatDisplayDate(returnDate)}
                         </Typography>
                       ) : (
-                        <Typography sx={{ fontSize: "0.82rem", color: "#9ca3af", lineHeight: 1.2, fontFamily: "'Inter', sans-serif" }}>
-                          Add date
-                        </Typography>
+                        <Typography sx={{ fontSize: "0.82rem", color: "#9ca3af", lineHeight: 1.2, fontFamily: "'Inter', sans-serif" }}>Add date</Typography>
                       )}
                     </Box>
                   </Box>
@@ -938,15 +1048,13 @@ export default function FlightSearch({
                 <FieldBox
                   legend="Travellers & Class"
                   fieldRef={paxRef}
-                  onClick={() => { setPaxDropOpen((o) => !o); setDepPickerOpen(false); setRetPickerOpen(false); }}
-                  sx={{ width: { xs: "100%", sm: 190, md: 200 }, cursor: "pointer" }}
+                  onClick={() => { closeAll(); setPaxDropOpen((o) => !o); }}
+                  sx={{ width: { xs: "100%", sm: 175, md: 180 }, cursor: "pointer" }}
                 >
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%" }}>
                     <PassengerIcon />
                     <Box sx={{ minWidth: 0, flex: 1 }}>
-                      <Typography sx={{ fontSize: "0.78rem", color: "#9ca3af", lineHeight: 1, mb: 0.3, fontFamily: "'Inter', sans-serif" }}>
-                        Travellers & Class
-                      </Typography>
+                      <Typography sx={{ fontSize: "0.78rem", color: "#9ca3af", lineHeight: 1, mb: 0.3, fontFamily: "'Inter', sans-serif" }}>Travellers & Class</Typography>
                       <Typography sx={{ fontSize: "0.88rem", fontWeight: 600, color: "#1a1a1a", lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "'Inter', sans-serif" }}>
                         {passengerLabel()}
                       </Typography>
@@ -961,29 +1069,24 @@ export default function FlightSearch({
                 variant="contained"
                 disableElevation
                 onClick={handleSearch}
+                disabled={searchLoading}
+                startIcon={searchLoading ? <CircularProgress size={16} sx={{ color: "#fff" }} /> : null}
                 sx={{
-                  backgroundColor: "#2e7d32",
-                  color: "#fff",
-                  fontWeight: 700,
-                  fontSize: { xs: "1rem", sm: "1.05rem" },
-                  borderRadius: 2.5,
-                  px: { xs: 3, sm: 4 },
-                  py: { xs: 1.5, sm: "13px" },
-                  minWidth: { xs: "100%", md: 120 },
-                  height: { sm: 50 },
-                  flexShrink: 0,
-                  letterSpacing: 0.3,
+                  backgroundColor: "#2e7d32", color: "#fff",
+                  fontWeight: 700, fontSize: { xs: "1rem", sm: "1.05rem" },
+                  borderRadius: 2.5, px: { xs: 3, sm: 4 }, py: { xs: 1.5, sm: "13px" },
+                  minWidth: { xs: "100%", md: 120 }, height: { sm: 50 },
+                  flexShrink: 0, letterSpacing: 0.3,
                   "&:hover": { backgroundColor: "#1b5e20" },
-                  transition: "background 0.2s",
-                  textTransform: "none",
+                  transition: "background 0.2s", textTransform: "none",
                   fontFamily: "'Inter', sans-serif",
                 }}
               >
-                Search
+                {searchLoading ? "Searching..." : "Search"}
               </Button>
             </Box>
 
-            {/* Help link — mobile */}
+            {/* Help link mobile */}
             <Box sx={{ display: { xs: "flex", sm: "none" }, justifyContent: "center", mt: 2 }}>
               <Link href="#" underline="none"
                 sx={{ display: "flex", alignItems: "center", gap: 0.6, color: "#555", fontSize: "0.82rem", "&:hover": { color: "#2e7d32" }, fontFamily: "'Inter', sans-serif" }}>
@@ -993,7 +1096,28 @@ export default function FlightSearch({
           </Paper>
         </Box>
 
-        {/* ── Departure DatePicker ── */}
+        {/* ── City Dropdowns ── */}
+        <CitySearchDropdown
+          anchorEl={fromFieldRef.current}
+          open={fromDropOpen}
+          onClose={() => setFromDropOpen(false)}
+          onSelect={(city) => { setFromCity(city); setErrors((e) => ({ ...e, from: "" })); }}
+          cities={cities}
+          loading={citiesLoading}
+          placeholder="Search departure city..."
+        />
+
+        <CitySearchDropdown
+          anchorEl={toFieldRef.current}
+          open={toDropOpen}
+          onClose={() => setToDropOpen(false)}
+          onSelect={(city) => { setToCity(city); setErrors((e) => ({ ...e, to: "" })); }}
+          cities={cities}
+          loading={citiesLoading}
+          placeholder="Search destination city..."
+        />
+
+        {/* ── Date Pickers ── */}
         <FlightDatePicker
           anchorEl={depDateRef.current}
           open={depPickerOpen}
@@ -1009,7 +1133,6 @@ export default function FlightSearch({
           }}
         />
 
-        {/* ── Return DatePicker ── */}
         <FlightDatePicker
           anchorEl={retDateRef.current}
           open={retPickerOpen}

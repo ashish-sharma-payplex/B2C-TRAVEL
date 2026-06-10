@@ -1,220 +1,111 @@
-// import { useState } from "react";
-// import flightApi from "../../api/flightApi";
+import { useState, useCallback } from "react";
+import { FLIGHT_ENDPOINTS, flightFetch } from "../../api/flightApi";
 
-// const useFlightSearch = () => {
+// FlightCabinClass mapping
+// 1 = Economy, 2 = Premium Economy, 3 = Business, 4 = First Class
+const CABIN_CLASS_MAP = {
+  Economy: 1,
+  "Premium Economy": 2,
+  Business: 3,
+  "First Class": 4,
+};
 
-//   const [flightData, setFlightData] = useState(null);
-//   const [loading, setLoading] = useState(false);
+function formatDateTime(date) {
+  if (!date) return "";
+  const d = new Date(date);
+  // "2026-06-22T00:00:00"
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T00:00:00`;
+}
 
-//   const searchFlights = async () => {
-
-//     try {
-
-//       setLoading(true);
-
-//       const payload = {
-//         EndUserIp: "192.168.10.10",
-//         TokenId: "ac2751e9-4cc3-406f-b678-c947e4f57a00",
-//         AdultCount: "1",
-//         ChildCount: "0",
-//         InfantCount: "0",
-//         DirectFlight: "false",
-//         OneStopFlight: "false",
-//         JourneyType: "1",
-
-//         Segments: [
-//           {
-//             Origin: "ELS",
-//             Destination: "DXB",
-//             FlightCabinClass: 1,
-//             PreferredDepartureTime: "2026-06-10T00:00:00",
-//             PreferredArrivalTime: "2026-06-22T00:00:00"
-//           }
-//         ]
-//       };
-
-//       const response = await flightApi.post(
-//         "/search/",
-//         payload
-//       );
-
-//       setFlightData(response.data);
-
-//       console.log("Full Response:", response.data);
-
-//       console.log(
-//         "Flight Results:",
-//         response.data?.data?.results
-//       );
-
-//       console.log(
-//         response.data.data.results.Results[0]
-//         );
-
-//         console.log(
-//         "Segments => ",
-//         response.data.data.results.Results[0].Segments
-//         );
-
-//         console.log(
-//         "First Segment => ",
-//         response.data.data.results.Results[0].Segments[0]
-//         );
-
-//         console.log(
-//         "First Flight Leg => ",
-//         response.data.data.results.Results[0].Segments[0][0]
-//         );
-
-//         console.log(
-//         "Segments Count => ",
-//         response.data.data.results.Results[0].Segments.length
-//         );
-
-
-
-//       return response.data;
-
-//     } catch (error) {
-
-//       console.log("Flight Search Error:", error);
-
-//     } finally {
-
-//       setLoading(false);
-
-//     }
-
-//   };
-
-//   return {
-//     searchFlights,
-//     flightData,
-//     loading,
-//   };
-// };
-
-// export default useFlightSearch;
-
-
-
-import { useState } from "react";
-import flightApi from "../../api/flightApi";
-
-const useFlightSearch = () => {
-
-  const [flightData, setFlightData] = useState(null);
+export function useFlightSearch() {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [results, setResults] = useState(null);
 
-  const searchFlights = async (
-    fromCode,
-    toCode,
-    departureDate
-  ) => {
+  const searchFlights = useCallback(async ({
+    fromCity,
+    toCity,
+    departureDate,
+    returnDate,
+    passengers,
+    cabinClass,
+    tripType, // "oneway" | "roundtrip"
+  }) => {
+    setLoading(true);
+    setError(null);
+    setResults(null);
 
-    try {
+    const cabinClassNum = CABIN_CLASS_MAP[cabinClass] ?? 1;
+    const journeyType = tripType === "roundtrip" ? "2" : "1";
+    const depTime = formatDateTime(departureDate);
 
-      setLoading(true);
+    let payload;
 
-      const payload = {
-        EndUserIp: "192.168.10.10",
-        TokenId: "ac2751e9-4cc3-406f-b678-c947e4f57a00",
-
-        AdultCount: "1",
-        ChildCount: "0",
-        InfantCount: "0",
-
+    if (journeyType === "1") {
+      // One-way
+      payload = {
+        AdultCount: String(passengers.adults),
+        ChildCount: String(passengers.children),
+        InfantCount: String(passengers.infants),
         DirectFlight: "false",
         OneStopFlight: "false",
-
         JourneyType: "1",
-
         Segments: [
           {
-            Origin: fromCode,
-            Destination: toCode,
-
-            FlightCabinClass: 1,
-
-            PreferredDepartureTime:
-              departureDate,
-
-            PreferredArrivalTime:
-              departureDate,
+            Origin: fromCity.code,
+            Destination: toCity.code,
+            FlightCabinClass: cabinClassNum,
+            PreferredDepartureTime: depTime,
+            PreferredArrivalTime: depTime,
           },
         ],
       };
-
-      const response = await flightApi.post(
-        "/search/",
-        payload
-      );
-
-      setFlightData(response.data);
-
-      console.log(
-        "Full Response:",
-        response.data
-      );
-
-      console.log(
-        "Flight Results:",
-        response.data?.data?.results
-      );
-
-      console.log(
-        "First Result:",
-        response.data?.data?.results?.Results?.[0]
-      );
-
-      console.log(
-        "Segments => ",
-        response.data?.data?.results?.Results?.[0]
-          ?.Segments
-      );
-
-      console.log(
-        "First Segment => ",
-        response.data?.data?.results?.Results?.[0]
-          ?.Segments?.[0]
-      );
-
-      console.log(
-        "First Flight Leg => ",
-        response.data?.data?.results?.Results?.[0]
-          ?.Segments?.[0]?.[0]
-      );
-
-      console.log(
-        "Segments Count => ",
-        response.data?.data?.results?.Results?.[0]
-          ?.Segments?.length
-      );
-
-      return response.data;
-
-    } catch (error) {
-
-      console.log(
-        "Flight Search Error:",
-        error
-      );
-
-      return null;
-
-    } finally {
-
-      setLoading(false);
-
+    } else {
+      // Round-trip
+      const retTime = formatDateTime(returnDate);
+      payload = {
+        AdultCount: String(passengers.adults),
+        ChildCount: String(passengers.children),
+        InfantCount: String(passengers.infants),
+        DirectFlight: "false",
+        OneStopFlight: "false",
+        JourneyType: "2",
+        PreferredAirlines: null,
+        Segments: [
+          {
+            Origin: fromCity.code,
+            Destination: toCity.code,
+            FlightCabinClass: String(cabinClassNum),
+            PreferredDepartureTime: depTime,
+            PreferredArrivalTime: depTime,
+          },
+          {
+            Origin: toCity.code,
+            Destination: fromCity.code,
+            FlightCabinClass: String(cabinClassNum),
+            PreferredDepartureTime: retTime,
+            PreferredArrivalTime: retTime,
+          },
+        ],
+        Sources: null,
+      };
     }
 
-  };
+    try {
+      const data = await flightFetch(FLIGHT_ENDPOINTS.SEARCH, {
+        method: "POST",
+        body: payload,
+      });
+      setResults(data);
+      return data;
+    } catch (err) {
+      setError(err.message);
+      return { success: false, error: { message: err.message } };
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  return {
-    searchFlights,
-    flightData,
-    loading,
-  };
-};
-
-export default useFlightSearch;
+  return { searchFlights, loading, error, results };
+}
