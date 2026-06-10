@@ -1,4 +1,3 @@
-// hooks/buseshooks/useBusBlock.js
 import { useState, useCallback } from "react";
 import { busFetch } from "../../api/busApi";
 
@@ -17,7 +16,7 @@ export function useBusBlock() {
       return data;
     } catch (err) {
       setError(err.message);
-      throw err;
+      return { success: false, error: { message: err.message } };
     } finally {
       setLoading(false);
     }

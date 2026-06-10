@@ -22,11 +22,16 @@ export async function busFetch(
   if (method === "POST" && body) options.body = JSON.stringify(body);
 
   const res = await fetch(url.toString(), options);
-  if (!res.ok) throw new Error(`API Error: ${res.status} ${res.statusText}`);
-  return res.json();
+
+  // Pehle JSON parse karo, chahe status kuch bhi ho
+  const data = await res.json();
+
+  // Server ka JSON seedha return karo taaki error.message upar handle ho sake
+  return data;
 }
 
 export const BUS_ENDPOINTS = {
   CITY_LIST: "/api/busv2/city-list/",
   BUS_SEARCH: "/api/busv2/search/",
+  PAYMENT_CANCEL: "/api/busv2/payment/cancel/"
 };

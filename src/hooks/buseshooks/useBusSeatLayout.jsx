@@ -1,12 +1,6 @@
 import { useState, useCallback } from "react";
 import { busFetch } from "../../api/busApi";
 
-/**
- * useBusSeatLayout
- * - Seat layout POST API call karta hai
- * - Body: { trace_id, result_index }
- * - Same headers use hote hain jo baki hooks use karte hain (busFetch se)
- */
 export function useBusSeatLayout() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -25,7 +19,7 @@ export function useBusSeatLayout() {
       return data;
     } catch (err) {
       setError(err.message);
-      throw err;
+      return { success: false, error: { message: err.message } };
     } finally {
       setLoading(false);
     }

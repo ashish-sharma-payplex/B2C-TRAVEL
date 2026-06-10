@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useBusBlock } from "../../hooks/buseshooks/useBusBlock";
+import { useBusSeatLayout } from "../../hooks/buseshooks/useBusSeatLayout";
+import { useBusPayment } from "../../hooks/buseshooks/useBusPayment";
+import BusPaymentQRModal from "./BusPaymentQRModal";
 
 const STYLES = `
   .pdf-page {
@@ -53,39 +56,24 @@ const GREEN_BORDER = "#bbf7d0";
 const ERROR_COLOR = "#ef4444";
 const ERROR_LIGHT = "#fef2f2";
 
-// ─── Validation helpers ───────────────────────────────────────────────────────
-
-// No leading spaces, no digits, no special chars — only letters & internal spaces
 const sanitizeTextOnly = (val) => {
-  // Block leading space
   if (val.startsWith(" ")) return val.trimStart();
-  // Remove digits
   val = val.replace(/[0-9]/g, "");
-  // Remove special characters (allow only letters, spaces, hyphens, apostrophes)
   val = val.replace(/[^a-zA-Z\s\-']/g, "");
   return val;
 };
-
-// Digits only, no leading zeros allowed for pincode/phone
 const sanitizeDigitsOnly = (val) => val.replace(/\D/g, "");
-
-// Age: digits only, 1–99
 const sanitizeAge = (val) => {
   val = val.replace(/\D/g, "");
   if (val.length > 2) val = val.slice(0, 2);
   return val;
 };
-
-// Email: lowercase only, no special chars except allowed ones
 const sanitizeEmail = (val) => {
-  // No leading space
   if (val.startsWith(" ")) val = val.trimStart();
-  // Only lowercase letters, digits, @, ., _, -
   val = val.replace(/[^a-z0-9@._-]/g, "");
   return val;
 };
 
-// Validate full name: min 2 chars, no digits, no special chars
 const validateName = (val) => {
   if (!val.trim()) return "Name is required";
   if (val.trim().length < 2) return "Name must be at least 2 characters";
@@ -94,54 +82,44 @@ const validateName = (val) => {
     return "Name cannot contain special characters";
   return "";
 };
-
-// Validate age: required, 1–99
 const validateAge = (val) => {
   if (!val) return "Age is required";
   const n = parseInt(val, 10);
   if (isNaN(n) || n < 1 || n > 99) return "Enter valid age (1–99)";
   return "";
 };
-
-// Validate phone: exactly 10 digits, no all-zeros
 const validatePhone = (val) => {
   if (!val) return "Phone number is required";
   if (val.length !== 10) return "Phone must be exactly 10 digits";
   if (/^0+$/.test(val)) return "Enter a valid phone number";
   return "";
 };
-
-// Validate email: strict — only lowercase letters before @, no consecutive dots, valid domain
 const validateEmail = (val) => {
   if (!val.trim()) return "Email is required";
   if (/[A-Z]/.test(val)) return "Email must be in lowercase only";
   if (/[^a-z0-9@._-]/.test(val))
     return "Only lowercase letters, digits, @, ., _ and - are allowed";
-  // Strict regex: localpart@domain.tld
   const emailRegex =
     /^[a-z0-9]+([._-][a-z0-9]+)*@[a-z0-9]+([.-][a-z0-9]+)*\.[a-z]{2,}$/;
   if (!emailRegex.test(val)) return "Enter a valid email address";
   return "";
 };
-
-// Validate pincode: exactly 6 digits, no all-zeros
 const validatePin = (val) => {
-  if (!val) return ""; // optional field
+  if (!val) return "";
   if (val.length !== 6) return "Pincode must be exactly 6 digits";
   if (/^0+$/.test(val)) return "Enter a valid pincode";
   return "";
 };
-
-// Validate text fields (city, state): no leading space, no digits
 const validateTextField = (label, val) => {
-  if (!val.trim()) return ""; // optional
+  if (!val.trim()) return "";
   if (/[0-9]/.test(val)) return `${label} cannot contain digits`;
   if (/[^a-zA-Z\s\-']/.test(val))
     return `${label} cannot contain special characters`;
   return "";
 };
 
-// ─── FocusInput ───────────────────────────────────────────────────────────────
+// ─── Sub-components (unchanged from original) ────────────────────────────────
+
 const FocusInput = ({ style, error, ...props }) => {
   const [focused, setFocused] = useState(false);
   return (
@@ -164,7 +142,7 @@ const FocusInput = ({ style, error, ...props }) => {
         boxSizing: "border-box",
         boxShadow: focused
           ? error
-            ? `0 0 0 3px #fee2e2`
+            ? "0 0 0 3px #fee2e2"
             : `0 0 0 3px ${GREEN_LIGHT}`
           : "none",
         transition: "border-color 0.15s, box-shadow 0.15s",
@@ -176,7 +154,6 @@ const FocusInput = ({ style, error, ...props }) => {
   );
 };
 
-// ─── FocusSelect ─────────────────────────────────────────────────────────────
 const FocusSelect = ({ style, children, error, ...props }) => {
   const [focused, setFocused] = useState(false);
   return (
@@ -202,7 +179,7 @@ const FocusSelect = ({ style, children, error, ...props }) => {
           cursor: "pointer",
           boxShadow: focused
             ? error
-              ? `0 0 0 3px #fee2e2`
+              ? "0 0 0 3px #fee2e2"
               : `0 0 0 3px ${GREEN_LIGHT}`
             : "none",
           transition: "border-color 0.15s, box-shadow 0.15s",
@@ -281,7 +258,6 @@ const Field = ({ label, required, error, children }) => (
   </div>
 );
 
-// ─── Per-seat Passenger Block ─────────────────────────────────────────────────
 const PassengerBlock = ({
   index,
   seatLabel,
@@ -394,8 +370,7 @@ const PassengerBlock = ({
   </div>
 );
 
-// ─── Timeline Stop ────────────────────────────────────────────────────────────
-const Stop = ({ time, date, place, duration }) => (
+const Stop = ({ time, date, place }) => (
   <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
     <div style={{ minWidth: 44, textAlign: "right", flexShrink: 0 }}>
       <div
@@ -426,7 +401,6 @@ const Stop = ({ time, date, place, duration }) => (
   </div>
 );
 
-// ─── Summary Panel ────────────────────────────────────────────────────────────
 const SummaryPanel = ({
   bus,
   selectedSeatObjects,
@@ -440,7 +414,6 @@ const SummaryPanel = ({
     0,
   );
   const seatLabels = selectedSeatObjects.map((s) => s.SeatName);
-
   return (
     <div className="pdf-summary">
       <div style={{ fontSize: 15, fontWeight: 700, color: "#111" }}>
@@ -456,9 +429,7 @@ const SummaryPanel = ({
       >
         {bus.busType}
       </div>
-
       <div style={{ height: 1, background: "#f3f4f6", marginBottom: 14 }} />
-
       <div style={{ position: "relative" }}>
         <div
           style={{
@@ -486,9 +457,7 @@ const SummaryPanel = ({
           place={`${bus.to} · ${selectedDroppingPoint?.name}`}
         />
       </div>
-
       <div style={{ height: 1, background: "#f3f4f6", margin: "14px 0" }} />
-
       <div
         style={{
           fontSize: 13,
@@ -519,9 +488,7 @@ const SummaryPanel = ({
           </span>
         ))}
       </div>
-
       <div style={{ height: 1, background: "#f3f4f6", margin: "14px 0" }} />
-
       <div
         style={{
           fontSize: 14,
@@ -564,7 +531,6 @@ const SummaryPanel = ({
           ₹{totalFare.toLocaleString("en-IN")}
         </span>
       </div>
-
       <button
         onClick={onPay}
         disabled={paying}
@@ -601,7 +567,10 @@ const PassengerDetailsForm = ({
   injectStyles();
   const navigate = useNavigate();
   const { blockSeat, loading: paying } = useBusBlock();
+  const { fetchSeatLayout } = useBusSeatLayout();
+  const { initiatePayment, startPolling, stopPolling } = useBusPayment();
 
+  // ── Form state ──
   const [passengers, setPassengers] = useState(
     selectedSeatObjects.map(() => ({ name: "", age: "", gender: "" })),
   );
@@ -616,8 +585,6 @@ const PassengerDetailsForm = ({
     state: "",
     city: "",
   });
-
-  // Error state
   const [passengerErrors, setPassengerErrors] = useState(
     selectedSeatObjects.map(() => ({ name: "", age: "", gender: "" })),
   );
@@ -628,7 +595,16 @@ const PassengerDetailsForm = ({
     city: "",
   });
 
-  // ── Passenger field update + live validation ──
+  // ── QR Modal state ──
+  const [qrVisible, setQrVisible] = useState(false);
+  const [paymentData, setPaymentData] = useState(null); // data from /payment/initiate/
+  const [paymentStatus, setPaymentStatus] = useState("PENDING");
+  const [retrying, setRetrying] = useState(false);
+  const [failedData, setFailedData] = useState(null);
+
+  // Stash traceId + resultIndex for retry
+  const [blockMeta, setBlockMeta] = useState({ traceId: null, resultIndex: null });
+  // ── Field update handlers ──
   const updatePassenger = (idx, key, val) => {
     setPassengers((prev) =>
       prev.map((p, i) => (i === idx ? { ...p, [key]: val } : p)),
@@ -641,8 +617,6 @@ const PassengerDetailsForm = ({
       prev.map((e, i) => (i === idx ? { ...e, [key]: err } : e)),
     );
   };
-
-  // ── Contact field update + live validation ──
   const updateContact = (key, val) => {
     setContact((f) => ({ ...f, [key]: val }));
     let err = "";
@@ -650,8 +624,6 @@ const PassengerDetailsForm = ({
     if (key === "email") err = validateEmail(val);
     setContactErrors((f) => ({ ...f, [key]: err }));
   };
-
-  // ── Billing field update + live validation ──
   const updateBilling = (key, val) => {
     setBilling((f) => ({ ...f, [key]: val }));
     let err = "";
@@ -661,11 +633,8 @@ const PassengerDetailsForm = ({
     setBillingErrors((f) => ({ ...f, [key]: err }));
   };
 
-  // ── Final validation before submit ──
   const runAllValidations = () => {
     let valid = true;
-
-    // Passengers
     const newPaxErrors = passengers.map((p) => {
       const nameErr = validateName(p.name);
       const ageErr = validateAge(p.age);
@@ -674,23 +643,142 @@ const PassengerDetailsForm = ({
       return { name: nameErr, age: ageErr, gender: genderErr };
     });
     setPassengerErrors(newPaxErrors);
-
-    // Contact
     const phoneErr = validatePhone(contact.phone);
     const emailErr = validateEmail(contact.email);
     if (phoneErr || emailErr) valid = false;
     setContactErrors({ phone: phoneErr, email: emailErr });
-
-    // Billing (optional fields — only validate if filled)
     const pinErr = validatePin(billing.pin);
     const stateErr = validateTextField("State", billing.state);
     const cityErr = validateTextField("City", billing.city);
     if (pinErr || stateErr || cityErr) valid = false;
     setBillingErrors({ pin: pinErr, state: stateErr, city: cityErr });
-
     return valid;
   };
 
+  // ── Launch QR + polling ──
+  const launchPaymentQR = useCallback(
+    async (traceId, resultIndex) => {
+      setRetrying(true);
+      setPaymentStatus("PENDING");
+      try {
+        const res = await initiatePayment({ traceId, resultIndex });
+        console.log("💳 PAYMENT INITIATE:", JSON.stringify(res, null, 2));
+        if (res?.success && res?.data) {
+          setPaymentData(res.data);
+          setRetrying(false);
+          setQrVisible(true);
+
+          startPolling({
+            traceId,
+            resultIndex,
+            intervalMs: 3000,
+            onStatus: (statusData) => {
+              setPaymentStatus(statusData?.status ?? "PENDING");
+            },
+            onSuccess: (statusData) => {
+              setPaymentStatus("SUCCESS");
+              setTimeout(() => {
+                navigate("/buses/booking", {
+                  state: {
+                    blockResponse: null,
+                    bus,
+                    contact,
+                    billing,
+                    paymentData: res.data,
+                  },
+                });
+              }, 1500);
+            },
+            onExpired: () => {
+              setPaymentStatus("EXPIRED");
+            },
+            onFailed: (statusData) => {
+              setPaymentStatus("FAILED");
+              stopPolling();
+              setQrVisible(false);
+
+              Swal.fire({
+                icon: "error",
+                title: "Payment Failed",
+                html: `
+                  <div style="font-size:14px;color:#374151;line-height:1.8;text-align:left">
+                    <div style="margin-bottom:6px">
+                      <span style="color:#6b7280;font-size:12px">Reason</span><br/>
+                      <strong>${statusData?.message || "Payment could not be processed."}</strong>
+                    </div>
+                    <div style="margin-bottom:6px">
+                      <span style="color:#6b7280;font-size:12px">Order ID</span><br/>
+                      <strong style="font-family:monospace">${statusData?.orderId || "-"}</strong>
+                    </div>
+                    <div>
+                      <span style="color:#6b7280;font-size:12px">Amount</span><br/>
+                      <strong>₹${Number(statusData?.amount || 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</strong>
+                    </div>
+                  </div>
+                `,
+                confirmButtonColor: "#ef4444",
+                confirmButtonText: "OK",
+                timer: 10000,
+                timerProgressBar: true,
+                allowOutsideClick: false,
+              }).then(() => {
+                navigate("/");
+              });
+            },
+          });
+        } else {
+          setRetrying(false);
+          setQrVisible(false);
+          Swal.fire({
+            icon: "error",
+            title: "Payment Init Failed",
+            text:
+              res?.error?.message ||
+              res?.message ||
+              "Could not initiate payment.",
+            confirmButtonColor: GREEN,
+          });
+        }
+      } catch (err) {
+        setRetrying(false);
+        setQrVisible(false);
+        console.error("Payment initiate error:", err);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Could not initiate payment. Please try again.",
+          confirmButtonColor: GREEN,
+        });
+      }
+    },
+    [
+      initiatePayment,
+      startPolling,
+      stopPolling,
+      navigate,
+      bus,
+      contact,
+      billing,
+    ],
+  );
+
+  // ── Retry handler ──
+  const handleRetry = useCallback(() => {
+    const { traceId, resultIndex } = blockMeta;
+    if (!traceId) return;
+    stopPolling();
+    launchPaymentQR(traceId, resultIndex);
+  }, [launchPaymentQR, stopPolling, blockMeta]);
+
+  // ── Close modal ──
+  const handleCloseQR = useCallback(() => {
+    stopPolling();
+    setQrVisible(false);
+    setPaymentData(null);
+    setPaymentStatus("PENDING");
+  }, [stopPolling]);
+
+  // ── Main pay handler ──
   const handlePay = async () => {
     if (!runAllValidations()) {
       Swal.fire({
@@ -702,17 +790,24 @@ const PassengerDetailsForm = ({
       return;
     }
 
-    // ✅ Block se pehle seat layout refresh karo
+    // Refresh seat layout
     try {
-      await busFetch("/api/busv2/seat-layout/", {
-        method: "POST",
-        body: {
-          trace_id: bus.traceId ?? bus.trace_id,
-          result_index: bus.resultIndex ?? bus.result_index,
-        },
+      const seatRes = await fetchSeatLayout({
+        traceId: bus.traceId ?? bus.trace_id,
+        resultIndex: bus.resultIndex ?? bus.result_index,
       });
+      if (seatRes?.success === false) {
+        Swal.fire({
+          icon: "error",
+          title: "Session Expired",
+          text:
+            seatRes?.error?.message || "Session expired. Please search again.",
+          confirmButtonColor: GREEN,
+        });
+        return;
+      }
     } catch (e) {
-      // ignore, block try karte hain
+      console.log("⚠️ Seat refresh failed, trying block anyway:", e);
     }
 
     const passengerPayload = selectedSeatObjects.map((seat, idx) => {
@@ -721,10 +816,9 @@ const PassengerDetailsForm = ({
       const firstName = nameParts[0];
       const lastName = nameParts.slice(1).join(" ") || nameParts[0];
       const genderNum = p.gender === "male" ? 2 : p.gender === "female" ? 1 : 3;
-
       return {
         LeadPassenger: idx === 0,
-        PassengerId: idx + 1,
+        PassengerId: idx,
         Title: p.gender === "female" ? "Ms." : "Mr.",
         FirstName: firstName,
         LastName: lastName,
@@ -733,50 +827,70 @@ const PassengerDetailsForm = ({
         Gender: genderNum,
         Age: parseInt(p.age),
         Address: billing.address || "N/A",
-        Seat: {
-          ColumnNo: seat.ColumnNo ?? "000",
-          Height: seat.Height ?? 1,
-          IsLadiesSeat: seat.IsLadiesSeat ?? false,
-          IsMalesSeat: seat.IsMalesSeat ?? false,
-          IsUpper: seat.IsUpper ?? false,
-          RowNo: seat.RowNo ?? "000",
-          SeatFare: seat.SeatFare ?? 0,
-          SeatIndex: seat.SeatIndex ?? idx + 1,
-          SeatName: seat.SeatName,
-          SeatStatus: seat.SeatStatus ?? true,
-          SeatType: seat.SeatType ?? 1,
-          Width: seat.Width ?? 1,
-          Price: seat.Price,
-        },
+        Seat: { ...seat, Price: { ...seat.Price } },
       };
     });
 
+    const traceId = bus.traceId ?? bus.trace_id;
+    const resultIndex = bus.resultIndex ?? bus.result_index;
+
     const payload = {
-      TraceId: bus.traceId ?? bus.trace_id,
-      ResultIndex: String(bus.resultIndex ?? bus.result_index),
+      TraceId: traceId,
+      ResultIndex: String(resultIndex),
       BoardingPointId: String(selectedBoardingPoint?.id ?? "1"),
       DroppingPointId: String(selectedDroppingPoint?.id ?? "1"),
       Passenger: passengerPayload,
     };
 
-    console.log("BLOCK PAYLOAD:", JSON.stringify(payload, null, 2));
+    console.log("🚌 BLOCK PAYLOAD:", JSON.stringify(payload, null, 2));
 
     try {
       const res = await blockSeat(payload);
+      console.log("✅ BLOCK RESPONSE:", JSON.stringify(res, null, 2));
+
       if (res?.success) {
-        navigate("/buses/booking", {
-          state: { blockResponse: res, bus, contact, billing },
+        setBlockMeta({ traceId, resultIndex });
+
+        await Swal.fire({
+          icon: "success",
+          title: "Seat Blocked Successfully! 🎉",
+          html: `
+            <div style="font-size:14px;color:#374151;line-height:1.6">
+              Your seat has been reserved.<br/>
+              <strong>Redirecting to payment QR in <span id="swal-countdown">5</span>s...</strong>
+            </div>
+          `,
+          confirmButtonColor: GREEN,
+          confirmButtonText: "Pay Now",
+          timer: 5000,
+          timerProgressBar: true,
+          allowOutsideClick: false,
+          didOpen: () => {
+            let count = 5;
+            const el = document.getElementById("swal-countdown");
+            const interval = setInterval(() => {
+              count -= 1;
+              if (el) el.textContent = count;
+              if (count <= 0) clearInterval(interval);
+            }, 1000);
+          },
         });
+
+        await launchPaymentQR(traceId, resultIndex);
       } else {
+        console.log("❌ BLOCK FAILED:", res?.error);
         Swal.fire({
           icon: "error",
           title: "Booking Failed",
           text:
-            res?.error?.message || "Something went wrong. Please try again.",
+            res?.error?.message ||
+            res?.message ||
+            "Something went wrong. Please try again.",
           confirmButtonColor: GREEN,
         });
       }
-    } catch {
+    } catch (err) {
+      console.log("💥 BLOCK ERROR:", err);
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -787,167 +901,181 @@ const PassengerDetailsForm = ({
   };
 
   return (
-    <div className="pdf-page">
-      {/* LEFT */}
-      <div>
-        {/* Passenger Details */}
-        <div className="pdf-card">
-          <div
-            style={{
-              fontSize: 16,
-              fontWeight: 700,
-              color: "#111",
-              marginBottom: 16,
-            }}
-          >
-            Passenger Details
+    <>
+      <div className="pdf-page">
+        <div>
+          {/* Passenger Details */}
+          <div className="pdf-card">
+            <div
+              style={{
+                fontSize: 16,
+                fontWeight: 700,
+                color: "#111",
+                marginBottom: 16,
+              }}
+            >
+              Passenger Details
+            </div>
+            {selectedSeatObjects.map((seat, idx) => (
+              <PassengerBlock
+                key={seat.SeatName}
+                index={idx + 1}
+                seatLabel={`Seat ${seat.SeatName} · ${seat.IsUpper ? "Upper" : "Lower"} berth`}
+                isLead={selectedSeatObjects.length === 1 || idx === 0}
+                form={passengers[idx]}
+                errors={passengerErrors[idx]}
+                onChange={(key, val) => updatePassenger(idx, key, val)}
+              />
+            ))}
           </div>
-          {selectedSeatObjects.map((seat, idx) => (
-            <PassengerBlock
-              key={seat.SeatName}
-              index={idx + 1}
-              seatLabel={`Seat ${seat.SeatName} · ${seat.IsUpper ? "Upper" : "Lower"} berth`}
-              isLead={selectedSeatObjects.length === 1 || idx === 0}
-              form={passengers[idx]}
-              errors={passengerErrors[idx]}
-              onChange={(key, val) => updatePassenger(idx, key, val)}
-            />
-          ))}
-        </div>
 
-        {/* Contact Details */}
-        <div className="pdf-card">
-          <div
-            style={{
-              fontSize: 16,
-              fontWeight: 700,
-              color: "#111",
-              marginBottom: 4,
-            }}
-          >
-            Contact Details
-          </div>
-          <div style={{ fontSize: 13, color: "#9ca3af", marginBottom: 14 }}>
-            Ticket details will be sent to
-          </div>
-          <div className="pdf-fields-2">
-            <Field label="Phone Number" required error={contactErrors.phone}>
-              <div style={{ display: "flex", gap: 6 }}>
-                <FocusSelect
-                  value={contact.countryCode}
-                  onChange={(e) =>
-                    setContact((f) => ({ ...f, countryCode: e.target.value }))
-                  }
-                  style={{ width: 72, flexShrink: 0 }}
-                >
-                  <option>+91</option>
-                  <option>+1</option>
-                  <option>+44</option>
-                  <option>+61</option>
-                  <option>+971</option>
-                </FocusSelect>
+          {/* Contact Details */}
+          <div className="pdf-card">
+            <div
+              style={{
+                fontSize: 16,
+                fontWeight: 700,
+                color: "#111",
+                marginBottom: 4,
+              }}
+            >
+              Contact Details
+            </div>
+            <div style={{ fontSize: 13, color: "#9ca3af", marginBottom: 14 }}>
+              Ticket details will be sent to
+            </div>
+            <div className="pdf-fields-2">
+              <Field label="Phone Number" required error={contactErrors.phone}>
+                <div style={{ display: "flex", gap: 6 }}>
+                  <FocusSelect
+                    value={contact.countryCode}
+                    onChange={(e) =>
+                      setContact((f) => ({ ...f, countryCode: e.target.value }))
+                    }
+                    style={{ width: 72, flexShrink: 0 }}
+                  >
+                    <option>+91</option>
+                    <option>+1</option>
+                    <option>+44</option>
+                    <option>+61</option>
+                    <option>+971</option>
+                  </FocusSelect>
+                  <FocusInput
+                    type="tel"
+                    placeholder="Enter mobile number"
+                    value={contact.phone}
+                    error={contactErrors.phone}
+                    maxLength={10}
+                    onChange={(e) =>
+                      updateContact("phone", sanitizeDigitsOnly(e.target.value))
+                    }
+                    style={{ flex: 1, width: "auto" }}
+                  />
+                </div>
+              </Field>
+              <Field label="Email Address" required error={contactErrors.email}>
                 <FocusInput
-                  type="tel"
-                  placeholder="Enter mobile number"
-                  value={contact.phone}
-                  error={contactErrors.phone}
-                  maxLength={10}
+                  type="email"
+                  placeholder="Enter email"
+                  value={contact.email}
+                  error={contactErrors.email}
                   onChange={(e) =>
-                    updateContact("phone", sanitizeDigitsOnly(e.target.value))
+                    updateContact("email", sanitizeEmail(e.target.value))
                   }
-                  style={{ flex: 1, width: "auto" }}
                 />
-              </div>
-            </Field>
-            <Field label="Email Address" required error={contactErrors.email}>
-              <FocusInput
-                type="email"
-                placeholder="Enter email"
-                value={contact.email}
-                error={contactErrors.email}
-                onChange={(e) =>
-                  updateContact("email", sanitizeEmail(e.target.value))
-                }
-              />
-            </Field>
+              </Field>
+            </div>
+          </div>
+
+          {/* Billing Details */}
+          <div className="pdf-card">
+            <div
+              style={{
+                fontSize: 16,
+                fontWeight: 700,
+                color: "#111",
+                marginBottom: 16,
+              }}
+            >
+              Billing Details
+            </div>
+            <div className="pdf-billing-top">
+              <Field label="Address">
+                <FocusInput
+                  type="text"
+                  placeholder="Enter Address"
+                  value={billing.address}
+                  onChange={(e) => {
+                    let val = e.target.value;
+                    if (val.startsWith(" ")) val = val.trimStart();
+                    setBilling((f) => ({ ...f, address: val }));
+                  }}
+                />
+              </Field>
+              <Field label="Pin Code" error={billingErrors.pin}>
+                <FocusInput
+                  type="text"
+                  placeholder="Enter Pincode"
+                  value={billing.pin}
+                  error={billingErrors.pin}
+                  maxLength={6}
+                  onChange={(e) =>
+                    updateBilling("pin", sanitizeDigitsOnly(e.target.value))
+                  }
+                />
+              </Field>
+            </div>
+            <div className="pdf-fields-2">
+              <Field label="State" error={billingErrors.state}>
+                <FocusInput
+                  type="text"
+                  placeholder="Enter State"
+                  value={billing.state}
+                  error={billingErrors.state}
+                  onChange={(e) =>
+                    updateBilling("state", sanitizeTextOnly(e.target.value))
+                  }
+                />
+              </Field>
+              <Field label="City" error={billingErrors.city}>
+                <FocusInput
+                  type="text"
+                  placeholder="Enter City"
+                  value={billing.city}
+                  error={billingErrors.city}
+                  onChange={(e) =>
+                    updateBilling("city", sanitizeTextOnly(e.target.value))
+                  }
+                />
+              </Field>
+            </div>
           </div>
         </div>
 
-        {/* Billing Details */}
-        <div className="pdf-card">
-          <div
-            style={{
-              fontSize: 16,
-              fontWeight: 700,
-              color: "#111",
-              marginBottom: 16,
-            }}
-          >
-            Billing Details
-          </div>
-          <div className="pdf-billing-top">
-            <Field label="Address">
-              <FocusInput
-                type="text"
-                placeholder="Enter Address"
-                value={billing.address}
-                onChange={(e) => {
-                  let val = e.target.value;
-                  if (val.startsWith(" ")) val = val.trimStart();
-                  setBilling((f) => ({ ...f, address: val }));
-                }}
-              />
-            </Field>
-            <Field label="Pin Code" error={billingErrors.pin}>
-              <FocusInput
-                type="text"
-                placeholder="Enter Pincode"
-                value={billing.pin}
-                error={billingErrors.pin}
-                maxLength={6}
-                onChange={(e) =>
-                  updateBilling("pin", sanitizeDigitsOnly(e.target.value))
-                }
-              />
-            </Field>
-          </div>
-          <div className="pdf-fields-2">
-            <Field label="State" error={billingErrors.state}>
-              <FocusInput
-                type="text"
-                placeholder="Enter State"
-                value={billing.state}
-                error={billingErrors.state}
-                onChange={(e) =>
-                  updateBilling("state", sanitizeTextOnly(e.target.value))
-                }
-              />
-            </Field>
-            <Field label="City" error={billingErrors.city}>
-              <FocusInput
-                type="text"
-                placeholder="Enter City"
-                value={billing.city}
-                error={billingErrors.city}
-                onChange={(e) =>
-                  updateBilling("city", sanitizeTextOnly(e.target.value))
-                }
-              />
-            </Field>
-          </div>
-        </div>
+        <SummaryPanel
+          bus={bus}
+          selectedSeatObjects={selectedSeatObjects}
+          selectedBoardingPoint={selectedBoardingPoint}
+          selectedDroppingPoint={selectedDroppingPoint}
+          onPay={handlePay}
+          paying={paying}
+        />
       </div>
 
-      {/* RIGHT */}
-      <SummaryPanel
-        bus={bus}
-        selectedSeatObjects={selectedSeatObjects}
-        selectedBoardingPoint={selectedBoardingPoint}
-        selectedDroppingPoint={selectedDroppingPoint}
-        onPay={handlePay}
-        paying={paying}
-      />
-    </div>
+      {/* QR Payment Modal */}
+     <BusPaymentQRModal
+  visible={qrVisible}
+  onClose={handleCloseQR}
+  paymentData={paymentData}
+  onRetry={handleRetry}
+  onSuccess={() => { }}
+  onFailed={() => navigate("/")}
+  retrying={retrying}
+  paymentStatus={paymentStatus}
+  traceId={blockMeta.traceId}
+  resultIndex={blockMeta.resultIndex}
+/>
+    </>
   );
 };
 

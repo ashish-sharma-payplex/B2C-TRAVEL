@@ -958,7 +958,7 @@ const CategoryTabs = () => {
 };
 
 // ─── BusSearch (Main Component) ───────────────
-export default function BusSearch() {
+export default function BusSearch({ initialFrom = null, initialTo = null, initialDate = null }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
@@ -966,8 +966,8 @@ export default function BusSearch() {
   const [scrolled, setScrolled] = useState(false);
 
   // ── City state ──
-  const [fromCity, setFromCity] = useState(null); // { id, name }
-  const [toCity, setToCity] = useState(null); // { id, name }
+  const [fromCity, setFromCity] = useState(initialFrom);
+const [toCity, setToCity] = useState(initialTo);
   const [fromOpen, setFromOpen] = useState(false);
   const [toOpen, setToOpen] = useState(false);
   const fromRef = useRef(null);
@@ -978,10 +978,17 @@ export default function BusSearch() {
 
   // ── Date state ──
   const [selectedDate, setSelectedDate] = useState(() => {
-    const d = new Date();
+  if (initialDate) {
+    const d = new Date(initialDate);
     d.setHours(0, 0, 0, 0);
     return d;
-  });
+  }
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+});
+
+
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const dateFieldRef = useRef(null);
   const todayDate = new Date();
@@ -1210,6 +1217,8 @@ export default function BusSearch() {
                   alignItems: "center",
                   position: "relative",
                   gap: 0,
+                  // border:"1px solid red",
+                  mt:"-6px"
                 }}
               >
                 {/* FROM fieldset */}
@@ -1227,8 +1236,8 @@ export default function BusSearch() {
                     m: 0,
                     pl: "14px",
                     pr: "30px",
-                    height: 50,
-                    minHeight: 50,
+                    height: 58,
+                    minHeight: 58,
                     boxSizing: "border-box",
                     display: "flex",
                     alignItems: "center",
@@ -1260,6 +1269,7 @@ export default function BusSearch() {
                       alignItems: "center",
                       gap: 1,
                       width: "100%",
+                      marginLeft: "18px",
                     }}
                   >
                     <LocationIcon />
@@ -1339,8 +1349,8 @@ export default function BusSearch() {
                     m: 0,
                     pl: "30px",
                     pr: "14px",
-                    height: 50,
-                    minHeight: 50,
+                    height: 58,
+                    minHeight: 58,
                     boxSizing: "border-box",
                     display: "flex",
                     alignItems: "center",
@@ -1371,6 +1381,7 @@ export default function BusSearch() {
                       alignItems: "center",
                       gap: 1,
                       width: "100%",
+                       marginLeft: "24px",
                     }}
                   >
                     <PinIcon />
