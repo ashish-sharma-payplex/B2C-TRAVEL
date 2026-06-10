@@ -5,8 +5,8 @@ import BookFlight from "../../src/components/flights/BookFlight";
 const index = () => {
   return (
     <>
-      <FlightSearch/>
-      <BookFlight/>
+    <FlightSearch/>
+    <BookFlight/>
     </>
   )
 }
