@@ -17,6 +17,7 @@ import HotelCheckoutPage from "./components/hotel/HotelCheckoutPage";
 import BookingSuccessPage from "./components/hotel/BookingSuccessPage";
 import BusResultsPage from "../pages/buses/Results";
 import BusPassengerPage from "../pages/buses/busPassangerPage";
+import FlightsListingPage from "./components/flights/FlightsListingPage";
 
 function ScrollHandler({ setScrolled }) {
   const location = useLocation();
@@ -95,6 +96,7 @@ function App() {
           <Route path="/hotels/checkout" element={<HotelCheckoutPage />} />
           <Route path="/hotels/payment" element={<BookingSuccessPage />} />
           <Route path="/flights" element={<FlightsPage />} />
+          <Route path="/flights/listing" element={<FlightsListingPage />} />
           <Route path="/buses" element={<BusesPage />} />
           <Route path="/buses/results" element={<BusResultsPage />} /> 
           <Route path="/buses/passenger-details" element={<BusPassengerPage />} /> 

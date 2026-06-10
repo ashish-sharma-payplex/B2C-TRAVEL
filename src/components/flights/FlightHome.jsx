@@ -13,6 +13,7 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import SearchIcon from "@mui/icons-material/Search";
 import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
+import useFlightSearch from "@/hooks/flighthooks/useFlightSearch";
 
 const GREEN = "#1A914B";
 const BORDER = "#E3E8EE";
@@ -33,6 +34,13 @@ const popularRoutes = [
 
 const FlightHome = () => {
   const [tripType, setTripType] = useState("Oneway");
+
+  const { results, loading, error, searchFlights } = useFlightSearch();
+  const [form, setForm] = useState({
+  origin: "BOM",
+  destination: "DEL",
+  date: "2026-02-12",
+});
 
   return (
     <Box sx={{ bgcolor: "#f4f6fa", minHeight: "100vh", pb: 6 }}>
@@ -149,10 +157,36 @@ const FlightHome = () => {
             </Box>
 
             {/* Search Btn */}
-            <Button variant="contained" startIcon={<SearchIcon />}
-              sx={{ bgcolor: GREEN, borderRadius: 2, px: 4, py: 1.5, fontSize: 18, fontWeight: 500, textTransform: "none", height: 48, flexShrink: 0, "&:hover": { bgcolor: "#157a3c" } }}>
-              Search
-            </Button>
+            <Button
+            variant="contained"
+            startIcon={<SearchIcon />}
+            sx={{
+              bgcolor: GREEN,
+              borderRadius: 2,
+              px: 4,
+              py: 1.5,
+              fontSize: 18,
+              fontWeight: 500,
+              textTransform: "none",
+              height: 48,
+              flexShrink: 0,
+              "&:hover": { bgcolor: "#157a3c" },
+            }}
+            onClick={() =>
+              searchFlights({
+                JourneyType: tripType === "Oneway" ? 1 : 2,
+                Segments: [
+                  {
+                    Origin: form.origin,
+                    Destination: form.destination,
+                    PreferredDepartureTime: form.date,
+                  },
+                ],
+              })
+            }
+          >
+            Search
+          </Button>
           </Box>
         </Paper>
 
