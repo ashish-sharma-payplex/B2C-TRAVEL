@@ -560,15 +560,15 @@ const BusCardExpanded = ({ bus }) => {
       <div style={{ padding: "16px 18px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 16, fontWeight: 700, color: "#111", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{bus.operatorName}</div>
-            <div style={{ fontSize: 12, color: "#6b7280", marginTop: 2 }}>{bus.busType}</div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 14, flexWrap: "wrap" }}>
+            <div style={{ fontSize: 16, fontWeight: 700,family: "Inter", color: "#111", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{bus.operatorName}</div>
+            <div style={{ fontSize: 12,fontFamily: "Inter", color: "#6b7280", marginTop: 2 }}>{bus.busType}</div>
+            <div style={{ display: "flex",fontFamily: "Inter", alignItems: "center", gap: 8, marginTop: 14, flexWrap: "wrap" }}>
               <div>
-                <div style={{ fontSize: 20, fontWeight: 700, color: "#111", lineHeight: 1 }}>{bus.departureTime}</div>
-                <div style={{ fontSize: 11, color: "#9ca3af", marginTop: 3 }}>{bus.departureDate}</div>
+                <div style={{ fontSize: 20, fontWeight: 700, fontFamily: "Inter", color: "#111", lineHeight: 1 }}>{bus.departureTime}</div>
+                <div style={{ fontSize: 11,fontFamily: "Inter", color: "#9ca3af", marginTop: 3 }}>{bus.departureDate}</div>
               </div>
               <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, minWidth: 60 }}>
-                <span style={{ fontSize: 11, color: "#9ca3af" }}>{bus.duration}</span>
+                <span style={{ fontSize: 11, fontFamily: "Inter", color: "#9ca3af" }}>{bus.duration}</span>
                 <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
                   <div style={{ flex: 1, height: 1, background: "#d1d5db" }} />
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 2 }}>
@@ -577,20 +577,20 @@ const BusCardExpanded = ({ bus }) => {
                 </div>
               </div>
               <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: 20, fontWeight: 700, color: "#111", lineHeight: 1 }}>{bus.arrivalTime}</div>
-                <div style={{ fontSize: 11, color: "#9ca3af", marginTop: 3 }}>{bus.arrivalDate}</div>
+                <div style={{ fontSize: 20, fontWeight: 700, fontFamily: "Inter", color: "#111", lineHeight: 1 }}>{bus.arrivalTime}</div>
+                <div style={{ fontSize: 11, fontFamily: "Inter", color: "#9ca3af", marginTop: 3 }}>{bus.arrivalDate}</div>
               </div>
             </div>
           </div>
           <div style={{ textAlign: "right", marginLeft: 16, flexShrink: 0 }}>
-            <div style={{ fontSize: 11, color: "#9ca3af" }}>from</div>
-            <div style={{ fontSize: 18, fontWeight: 700, color: "#111" }}>₹{bus.price?.toLocaleString("en-IN")}</div>
+            <div style={{ fontSize: 11, fontFamily: "Inter", color: "#9ca3af" }}>from</div>
+            <div style={{ fontSize: 18, fontWeight: 700, fontFamily: "Inter", color: "#111" }}>₹{bus.price?.toLocaleString("en-IN")}</div>
             <button
               onClick={handleToggleExpand}
               disabled={seatLoading && !seatLayoutLoaded}
-              style={{ background: expanded ? "#374151" : GREEN, color: "#fff", border: "none", borderRadius: 8, padding: "6px 14px", fontWeight: 600, fontSize: 13, cursor: seatLoading ? "wait" : "pointer", marginTop: 8, whiteSpace: "nowrap", transition: "background 0.15s" }}
+              style={{ background: expanded ? "#374151" : GREEN, color: "#fff", border: "none", borderRadius: 8, padding: "6px 14px", fontWeight: 600, fontSize: 13, fontFamily: "Inter", cursor: seatLoading ? "wait" : "pointer", marginTop: 8, whiteSpace: "nowrap", transition: "background 0.15s" }}
             >
-              {seatLoading && !seatLayoutLoaded ? "Loading..." : expanded ? "Hide seats" : "Select seats"}
+              {seatLoading && !seatLayoutLoaded ? "Loading..." : expanded ? "Hide seats" : "Select Seats"}
             </button>
             <div style={{ fontSize: 11, color: "#6b7280", marginTop: 5 }}>{bus.seatsAvailable} Seats</div>
           </div>
@@ -748,7 +748,7 @@ const FilterContent = ({ filters, setFilters, buses, priceRange }) => {
   ];
 
   const Divider      = () => <div style={{ height: 1, background: "#f3f4f6", margin: "14px 0" }} />;
-  const SectionTitle = ({ children }) => <div style={{ fontSize: 12, fontWeight: 700, color: "#111", marginBottom: 8 }}>{children}</div>;
+  const SectionTitle = ({ children }) => <div style={{ fontSize: 12, fontWeight: 700,fontFamily: "Inter", color: "#111", marginBottom: 8 }}>{children}</div>;
 
   return (
     <div style={{ padding: "0 16px" }}>
@@ -807,7 +807,7 @@ const FilterContent = ({ filters, setFilters, buses, priceRange }) => {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 14 }}>
         {busTypeButtons.map((btn) => (
           <button key={btn.key} onClick={() => toggle("busTypes", btn.key)} style={{ border: filters.busTypes[btn.key] ? `1.5px solid ${GREEN}` : "1px solid #e5e7eb", borderRadius: 8, padding: "8px 4px", display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", fontSize: 12, color: filters.busTypes[btn.key] ? GREEN : "#374151", fontWeight: filters.busTypes[btn.key] ? 700 : 400, background: filters.busTypes[btn.key] ? GREEN_LIGHT : "#fff", transition: "all 0.15s" }}>
-            <span style={{ fontSize: 18 }}>{btn.emoji}</span>
+            <span style={{ fontSize: 18, fontFamily: "Inter" }}>{btn.emoji}</span>
             {btn.label}
           </button>
         ))}
@@ -816,7 +816,7 @@ const FilterContent = ({ filters, setFilters, buses, priceRange }) => {
       <Divider />
 
       <SectionTitle>Min Seats Available</SectionTitle>
-      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 14 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 14,fontFamily: "Inter" }}>
         {[0, 5, 10, 20].map((n) => (
           <button key={n} onClick={() => setFilters((f) => ({ ...f, minSeats: n }))} style={{ flex: 1, padding: "5px 0", borderRadius: 6, border: filters.minSeats === n ? `1.5px solid ${GREEN}` : "1px solid #e5e7eb", background: filters.minSeats === n ? GREEN_LIGHT : "#fff", color: filters.minSeats === n ? GREEN : "#6b7280", fontSize: 12, fontWeight: filters.minSeats === n ? 700 : 400, cursor: "pointer", transition: "all 0.15s" }}>
             {n === 0 ? "Any" : `${n}+`}
@@ -830,7 +830,7 @@ const FilterContent = ({ filters, setFilters, buses, priceRange }) => {
           <SectionTitle>Operator</SectionTitle>
           <div style={{ display: "flex", alignItems: "center", gap: 6, border: "1px solid #e5e7eb", borderRadius: 8, padding: "7px 10px", marginBottom: 8, background: "#fff" }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
-            <input type="text" placeholder="Search operator..." value={operatorSearch} onChange={(e) => setOperatorSearch(e.target.value)} style={{ border: "none", outline: "none", fontSize: 12, color: "#111", width: "100%", background: "transparent" }} />
+            <input type="text" placeholder="Search operator..." value={operatorSearch} onChange={(e) => setOperatorSearch(e.target.value)} style={{ border: "none", outline: "none", fontSize: 12,fontFamily: "Inter", color: "#111", width: "100%", background: "transparent" }} />
           </div>
           {visibleOps.map((op) => (
             <label key={op} style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 0", cursor: "pointer" }}>

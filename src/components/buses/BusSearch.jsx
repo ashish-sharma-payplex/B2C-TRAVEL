@@ -28,7 +28,7 @@ const muiTheme = createTheme({
     background: { default: "#f5f5f5" },
   },
   typography: {
-    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+    fontFamily: "Inter",
   },
   components: {
     MuiOutlinedInput: {
@@ -1164,6 +1164,7 @@ const [toCity, setToCity] = useState(initialTo);
                 <Typography
                   variant="h5"
                   fontWeight={700}
+                  fontFamily="Inter"
                   fontSize={{ xs: "1.25rem", sm: "1.5rem" }}
                   color="#1a1a1a"
                   lineHeight={1.2}
@@ -1190,6 +1191,7 @@ const [toCity, setToCity] = useState(initialTo);
                   gap: 0.6,
                   color: "#555",
                   fontSize: "0.85rem",
+                  fontFamily: "Inter",
                   mt: 0.5,
                   "&:hover": { color: "#2e7d32" },
                 }}

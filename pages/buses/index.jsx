@@ -2,6 +2,7 @@ import React from "react";
 import BusSeatSelection from "../../src/components/buses/BusSeatSelection";
 import PassengerDetailsForm from "../../src/components/buses/PassangersDetailsForm";
 import BusSearch from "../../src/components/buses/BusSearch";
+import PopularRoutes from "../../src/components/buses/PopularRoutes";
 
 // ─── Seat layout helper ───────────────────────
 // s(id, status, price) => seat object
@@ -278,6 +279,7 @@ const Index = () => {
       <BusSearch />
       {/* <BusSeatSelection buses={sampleBuses} from="Mumbai" to="Pune" />
       <PassengerDetailsForm /> */}
+      <PopularRoutes />
     </>
   );
 };
