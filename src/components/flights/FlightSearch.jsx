@@ -682,68 +682,199 @@ export default function FlightSearch({
             }}>
 
               {/* FROM + SWAP + TO */}
-              <Box sx={{
-                display: "flex",
-                flex: { md: "1 1 auto" },
-                alignItems: "center",
-                position: "relative",
-                minWidth: 0,
-              }}>
-                {/* FROM */}
-                <FieldBox
-                  legend="From"
-                  error={errors.from}
-                  sx={{ flex: 1, borderRadius: "12px 0 0 12px", borderRight: "none", minWidth: 0, pr: "30px" }}
+              <Box
+                sx={{
+                  display: "flex",
+                  flex: { md: "1 1 auto" },
+                  alignItems: "center",
+                  position: "relative",
+                  gap: 0,
+                  mt: "-6px",
+                }}
+              >
+                {/* FROM fieldset */}
+                <Box
+                  component="fieldset"
+                  onClick={() => {}}
+                  sx={{
+                    flex: 1,
+                    border: `1px solid ${errors.from ? "#dc2626" : "#c8c8c8"}`,
+                    borderRadius: "12px",
+                    m: 0,
+                    pl: "14px",
+                    pr: "30px",
+                    height: 58,
+                    minHeight: 58,
+                    boxSizing: "border-box",
+                    display: "flex",
+                    alignItems: "center",
+                    backgroundColor: errors.from ? "#fff5f5" : "#fff",
+                    minWidth: 0,
+                    mr: "8px",
+                    lineHeight: 1,
+                    cursor: "pointer",
+                    "&:hover": { borderColor: errors.from ? "#dc2626" : "#2e7d32" },
+                    transition: "border-color 0.15s",
+                  }}
                 >
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%" }}>
+                  <legend
+                    style={{
+                      fontSize: "0.72rem",
+                      color: errors.from ? "#dc2626" : "#6b6b6b",
+                      padding: "0 3px",
+                      lineHeight: 1,
+                      marginLeft: "30px",
+                      fontFamily: "'Inter', sans-serif",
+                    }}
+                  >
+                    From
+                  </legend>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      width: "100%",
+                      marginLeft: "18px",
+                    }}
+                  >
                     <FlightTakeoffIcon />
-                    <Box sx={{ minWidth: 0 }}>
-                      <Typography sx={{ fontSize: "0.78rem", color: "#9ca3af", lineHeight: 1, mb: 0.3, fontFamily: "'Inter', sans-serif" }}>
-                        From
-                      </Typography>
-                      <Typography sx={{ fontSize: { xs: "0.95rem", sm: "1rem" }, fontWeight: 700, color: "#111827", lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "'Inter', sans-serif" }}>
-                        {fromCity ? `${fromCity.code} - ${fromCity.name}` : "Departure City"}
-                      </Typography>
-                    </Box>
+                    <Typography
+                      sx={{
+                        fontSize: "0.95rem",
+                        fontWeight: 600,
+                        color: fromCity ? "#111827" : "#9ca3af",
+                        flex: 1,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        userSelect: "none",
+                        fontFamily: "'Inter', sans-serif",
+                      }}
+                    >
+                      {fromCity ? `${fromCity.code} - ${fromCity.name}` : "Leaving From"}
+                    </Typography>
                   </Box>
                   {errors.from && (
-                    <Typography sx={{ fontSize: "0.68rem", color: "#dc2626", position: "absolute", bottom: -18, left: 4, whiteSpace: "nowrap" }}>
+                    <Typography
+                      sx={{
+                        fontSize: "0.68rem",
+                        color: "#dc2626",
+                        position: "absolute",
+                        bottom: -18,
+                        left: 4,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
                       ⚠ {errors.from}
                     </Typography>
                   )}
-                </FieldBox>
+                </Box>
 
                 {/* Swap button */}
-                <Box sx={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", zIndex: 5, flexShrink: 0 }}>
-                  <IconButton onClick={handleSwap}
-                    sx={{ border: "1px solid #d4d4d4", backgroundColor: "#fff", width: 40, height: 40, borderRadius: "50%", boxShadow: "0 0 0 3px #fff", "&:hover": { backgroundColor: "#f1f8f1", borderColor: "#2e7d32" }, transition: "all 0.2s" }}>
+                <Box
+                  sx={{
+                    position: "absolute",
+                    left: "50%",
+                    top: "50%",
+                    transform: "translate(-50%, -50%)",
+                    zIndex: 5,
+                    flexShrink: 0,
+                  }}
+                >
+                  <IconButton
+                    onClick={handleSwap}
+                    sx={{
+                      border: "1px solid #d4d4d4",
+                      backgroundColor: "#fff",
+                      width: 40,
+                      height: 40,
+                      borderRadius: "50%",
+                      boxShadow: "0 0 0 3px #fff",
+                      "&:hover": { backgroundColor: "#f1f8f1", borderColor: "#2e7d32" },
+                      transition: "all 0.2s",
+                    }}
+                  >
                     <SwapIcon />
                   </IconButton>
                 </Box>
 
-                {/* TO */}
-                <FieldBox
-                  legend="To"
-                  error={errors.to}
-                  sx={{ flex: 1, borderRadius: "0 12px 12px 0", borderLeft: "none", minWidth: 0, pl: "30px" }}
+                {/* TO fieldset */}
+                <Box
+                  component="fieldset"
+                  onClick={() => {}}
+                  sx={{
+                    flex: 1,
+                    border: `1px solid ${errors.to ? "#dc2626" : "#c8c8c8"}`,
+                    borderRadius: "12px",
+                    m: 0,
+                    pl: "30px",
+                    pr: "14px",
+                    height: 58,
+                    minHeight: 58,
+                    boxSizing: "border-box",
+                    display: "flex",
+                    alignItems: "center",
+                    backgroundColor: errors.to ? "#fff5f5" : "#fff",
+                    minWidth: 0,
+                    lineHeight: 1,
+                    cursor: "pointer",
+                    "&:hover": { borderColor: errors.to ? "#dc2626" : "#2e7d32" },
+                    transition: "border-color 0.15s",
+                  }}
                 >
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%" }}>
+                  <legend
+                    style={{
+                      fontSize: "0.72rem",
+                      color: errors.to ? "#dc2626" : "#6b6b6b",
+                      padding: "0 3px",
+                      lineHeight: 1,
+                      marginLeft: "44px",
+                      fontFamily: "'Inter', sans-serif",
+                    }}
+                  >
+                    To
+                  </legend>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      width: "100%",
+                      marginLeft: "24px",
+                    }}
+                  >
                     <FlightLandIcon />
-                    <Box sx={{ minWidth: 0 }}>
-                      <Typography sx={{ fontSize: "0.78rem", color: "#9ca3af", lineHeight: 1, mb: 0.3, fontFamily: "'Inter', sans-serif" }}>
-                        To
-                      </Typography>
-                      <Typography sx={{ fontSize: { xs: "0.95rem", sm: "1rem" }, fontWeight: 700, color: "#111827", lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "'Inter', sans-serif" }}>
-                        {toCity ? `${toCity.code} - ${toCity.name}` : "Destination City"}
-                      </Typography>
-                    </Box>
+                    <Typography
+                      sx={{
+                        fontSize: "0.95rem",
+                        fontWeight: 600,
+                        color: toCity ? "#111827" : "#9ca3af",
+                        flex: 1,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        userSelect: "none",
+                        fontFamily: "'Inter', sans-serif",
+                      }}
+                    >
+                      {toCity ? `${toCity.code} - ${toCity.name}` : "Going To"}
+                    </Typography>
                   </Box>
                   {errors.to && (
-                    <Typography sx={{ fontSize: "0.68rem", color: "#dc2626", position: "absolute", bottom: -18, whiteSpace: "nowrap" }}>
+                    <Typography
+                      sx={{
+                        fontSize: "0.68rem",
+                        color: "#dc2626",
+                        position: "absolute",
+                        bottom: -18,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
                       ⚠ {errors.to}
                     </Typography>
                   )}
-                </FieldBox>
+                </Box>
               </Box>
 
               {/* Date fields row */}
