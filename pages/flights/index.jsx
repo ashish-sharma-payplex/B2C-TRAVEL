@@ -248,12 +248,10 @@
 import React, { useState } from "react";
 
 // import CityDropdown from "../../src/components/flights/CityDropdown";
-// import FlightDatePicker from "../../src/components/flights/DatePicker";
-// import TravellersDropdown from "../../src/components/flights/TravellersDropdown";
-
-import CityDropdown from "@/components/flights/CityDropdown";
-import FlightDatePicker from "@/components/flights/DatePicker";
-import TravellersDropdown from "@/components/flights/TravellersDropdown";
+import FlightDatePicker from "../../src/components/flight/DatePicker";
+import TravellersDropdown from "../../src/components/flight/TravellersDropdown";
+import CityDropdown from "../../src/components/flight/CityDropdown";
+// import TravellersDropdown from "@/components/flights/TravellersDropdown";
 
 import { Box, Typography, Button, Paper, Grid } from "@mui/material";
 import SwapHorizIcon           from "@mui/icons-material/SwapHoriz";
