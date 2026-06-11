@@ -173,12 +173,16 @@ const SeatIcon = ({ status, label, onClick, seat, size }) => {
   const isSleeper = isSleeperType(seat?.SeatType);
   const SEAT_W  = size ?? 36;
   const SEAT_H  = size ?? 36;
-  const SLP_W   = 80;
-  const SLP_H   = 40;
-  const SLP_SVG = 40;
-  const SLP_SVG_H = 80;
-  const outerW = isSleeper ? SLP_W  : SEAT_W;
-  const outerH = isSleeper ? SLP_H  : SEAT_H;
+
+  // Sleeper outer container
+  const SLP_OUTER_W = 62;
+  const SLP_OUTER_H = 32;
+  // SVG actual size (rotated 270deg, so width/height swap)
+  const SLP_SVG_W = 32;
+  const SLP_SVG_H = 62;
+
+  const outerW = isSleeper ? SLP_OUTER_W : SEAT_W;
+  const outerH = isSleeper ? SLP_OUTER_H : SEAT_H;
   const clickable = ["available", "selected", "female", "male"].includes(status);
   const iconSrc   = getSeatIconSrc(status, isSleeper);
 
@@ -186,20 +190,38 @@ const SeatIcon = ({ status, label, onClick, seat, size }) => {
     <div
       onClick={clickable ? onClick : undefined}
       title={label}
-      style={{ width: outerW, height: outerH, flexShrink: 0, cursor: clickable ? "pointer" : "not-allowed", position: "relative", transition: "opacity 0.15s" }}
+      style={{
+        width: outerW,
+        height: outerH,
+        flexShrink: 0,
+        cursor: clickable ? "pointer" : "not-allowed",
+        position: "relative",
+        transition: "opacity 0.15s",
+      }}
       onMouseEnter={(e) => { if (clickable) e.currentTarget.style.opacity = "0.75"; }}
       onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
     >
       {isSleeper ? (
-        <img src={iconSrc} alt={status} draggable={false} style={{ position: "absolute", top: "50%", left: "50%", width: SLP_SVG, height: SLP_SVG_H, transform: "translate(-50%, -50%) rotate(270deg)", transformOrigin: "center center", display: "block", userSelect: "none" }} />
+        <img
+          src={iconSrc}
+          alt={status}
+          draggable={false}
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            width: SLP_SVG_W,
+            height: SLP_SVG_H,
+            transform: "translate(-50%, -50%) rotate(270deg)",
+            transformOrigin: "center center",
+            display: "block",
+            userSelect: "none",
+          }}
+        />
       ) : (
         <img src={iconSrc} alt={status} width={SEAT_W} height={SEAT_H} draggable={false} style={{ display: "block", userSelect: "none" }} />
       )}
-      {label && (
-        <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-150%, -50%)", fontSize: 10, color: "#313030", fontWeight: 700, whiteSpace: "nowrap", pointerEvents: "none" }}>
-          {label}
-        </div>
-      )}
+      {/* seat label/number removed */}
     </div>
   );
 };
@@ -234,13 +256,21 @@ const RealSeatMap = ({ seats, selectedSeatNames, onSeatToggle }) => {
   const renderSection = (rows, label) => {
     if (!rows.length) return null;
     const sortedRows = [...rows].sort((a, b) => parseInt(a[0].RowNo) - parseInt(b[0].RowNo));
+
+    // ✅ Section sleeper hai ya seater — pehle row se detect karo
+    const sectionHasSleeper = sortedRows.some((row) => row.some((s) => isSleeperType(s.SeatType)));
+
     const allCols = new Set();
     sortedRows.forEach((row) => row.forEach((seat) => allCols.add(parseInt(seat.ColumnNo))));
     const sortedCols = [...allCols].sort((a, b) => a - b);
+
+    // ✅ Sleeper section mein aisle detection skip — col gaps unka natural layout hai
     const aisleAfterCol = new Set();
-    sortedCols.forEach((col, idx) => {
-      if (idx > 0 && col - sortedCols[idx - 1] > 2) aisleAfterCol.add(sortedCols[idx - 1]);
-    });
+    if (!sectionHasSleeper) {
+      sortedCols.forEach((col, idx) => {
+        if (idx > 0 && col - sortedCols[idx - 1] > 2) aisleAfterCol.add(sortedCols[idx - 1]);
+      });
+    }
     const rowsWithGaps = [];
     sortedRows.forEach((row, idx) => {
       if (idx > 0) {
@@ -262,24 +292,45 @@ const RealSeatMap = ({ seats, selectedSeatNames, onSeatToggle }) => {
             const isFirstRow = !firstRowRendered;
             if (!firstRowRendered) firstRowRendered = true;
             const rowHasSleeper = item.row.some((s) => isSleeperType(s.SeatType));
-            const rowHeight = rowHasSleeper ? 28 : 36;
+
+            const rowGap    = rowHasSleeper ? 5 : 6;
+            const rowHeight = rowHasSleeper ? 32 : 36;
+            const rowMb     = rowHasSleeper ? 8 : 8;
+
             return (
-              <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: rowHasSleeper ? 12 : 8, minHeight: rowHeight }}>
-                {isFirstRow ? <DriverCell /> : <div style={{ width: 52, flexShrink: 0 }} />}
+              <div
+                key={i}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: rowGap,
+                  marginBottom: rowMb,
+                  minHeight: rowHeight,
+                }}
+              >
+                {isFirstRow && label === "Lower Berth" ? <DriverCell /> : <div style={{ width: 52, flexShrink: 0 }} />}
                 {sortedCols.map((col, colIdx) => {
                   const seat = seatByCol[col];
                   return (
                     <React.Fragment key={col}>
-                    {colIdx > 0 && aisleAfterCol.has(sortedCols[colIdx - 1]) && <div style={{ width: 20, flexShrink: 0 }} />}
+                      {colIdx > 0 && aisleAfterCol.has(sortedCols[colIdx - 1]) && (
+                        // ✅ FIX: Aisle gap bhi sleeper ke liye kam — 10px instead of 20
+                        <div style={{ width: rowHasSleeper ? 10 : 20, flexShrink: 0 }} />
+                      )}
                       {seat ? (
                         <SeatIcon
                           status={getSeatStatus(seat, selectedSeatNames)}
                           label={seat.SeatName}
                           seat={seat}
-                          onClick={["available", "selected", "female", "male"].includes(getSeatStatus(seat, selectedSeatNames)) ? () => onSeatToggle(seat.SeatName, seat) : undefined}
+                          onClick={
+                            ["available", "selected", "female", "male"].includes(getSeatStatus(seat, selectedSeatNames))
+                              ? () => onSeatToggle(seat.SeatName, seat)
+                              : undefined
+                          }
                         />
                       ) : (
-                        <div style={{ width: rowHasSleeper ? 80 : 36, height: rowHasSleeper ? 40 : 36, flexShrink: 0 }} />
+                        // ✅ Sleeper mein missing col = no space (0px), seater mein 36px placeholder
+                        <div style={{ width: rowHasSleeper ? 0 : 36, height: rowHasSleeper ? 0 : 36, flexShrink: 0 }} />
                       )}
                     </React.Fragment>
                   );
@@ -468,7 +519,6 @@ const BusCardExpanded = ({ bus }) => {
   const [apiDroppingPoints, setApiDroppingPoints] = useState([]);
   const [fetchStarted, setFetchStarted] = useState(false);
 
-  // ── Height-sync: seat map ref → boarding points height ──
   const seatMapRef = useRef(null);
   const [seatMapHeight, setSeatMapHeight] = useState(null);
 
@@ -479,7 +529,7 @@ const BusCardExpanded = ({ bus }) => {
     });
     observer.observe(seatMapRef.current);
     return () => observer.disconnect();
-  }, [seatLayoutLoaded]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [seatLayoutLoaded]);
 
   const { fetchSeatLayout, loading: seatLoading } = useBusSeatLayout();
   const { fetchBoardingPoints } = useBusBoardingPoints();
@@ -560,12 +610,12 @@ const BusCardExpanded = ({ bus }) => {
       <div style={{ padding: "16px 18px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 16, fontWeight: 700,family: "Inter", color: "#111", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{bus.operatorName}</div>
-            <div style={{ fontSize: 12,fontFamily: "Inter", color: "#6b7280", marginTop: 2 }}>{bus.busType}</div>
-            <div style={{ display: "flex",fontFamily: "Inter", alignItems: "center", gap: 8, marginTop: 14, flexWrap: "wrap" }}>
+            <div style={{ fontSize: 16, fontWeight: 700, family: "Inter", color: "#111", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{bus.operatorName}</div>
+            <div style={{ fontSize: 12, fontFamily: "Inter", color: "#6b7280", marginTop: 2 }}>{bus.busType}</div>
+            <div style={{ display: "flex", fontFamily: "Inter", alignItems: "center", gap: 8, marginTop: 14, flexWrap: "wrap" }}>
               <div>
                 <div style={{ fontSize: 20, fontWeight: 700, fontFamily: "Inter", color: "#111", lineHeight: 1 }}>{bus.departureTime}</div>
-                <div style={{ fontSize: 11,fontFamily: "Inter", color: "#9ca3af", marginTop: 3 }}>{bus.departureDate}</div>
+                <div style={{ fontSize: 11, fontFamily: "Inter", color: "#9ca3af", marginTop: 3 }}>{bus.departureDate}</div>
               </div>
               <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, minWidth: 60 }}>
                 <span style={{ fontSize: 11, fontFamily: "Inter", color: "#9ca3af" }}>{bus.duration}</span>
@@ -639,7 +689,7 @@ const BusCardExpanded = ({ bus }) => {
 
             <div style={{ width: 1, background: "#f0f0f0", flexShrink: 0, alignSelf: "stretch", minHeight: 20 }} />
 
-            {/* RIGHT: Boarding Points — height matches seat map, scrolls internally */}
+            {/* RIGHT: Boarding Points */}
             <div
               style={{
                 flex: "1 1 200px",
@@ -748,7 +798,7 @@ const FilterContent = ({ filters, setFilters, buses, priceRange }) => {
   ];
 
   const Divider      = () => <div style={{ height: 1, background: "#f3f4f6", margin: "14px 0" }} />;
-  const SectionTitle = ({ children }) => <div style={{ fontSize: 12, fontWeight: 700,fontFamily: "Inter", color: "#111", marginBottom: 8 }}>{children}</div>;
+  const SectionTitle = ({ children }) => <div style={{ fontSize: 12, fontWeight: 700, fontFamily: "Inter", color: "#111", marginBottom: 8 }}>{children}</div>;
 
   return (
     <div style={{ padding: "0 16px" }}>
@@ -816,7 +866,7 @@ const FilterContent = ({ filters, setFilters, buses, priceRange }) => {
       <Divider />
 
       <SectionTitle>Min Seats Available</SectionTitle>
-      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 14,fontFamily: "Inter" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 14, fontFamily: "Inter" }}>
         {[0, 5, 10, 20].map((n) => (
           <button key={n} onClick={() => setFilters((f) => ({ ...f, minSeats: n }))} style={{ flex: 1, padding: "5px 0", borderRadius: 6, border: filters.minSeats === n ? `1.5px solid ${GREEN}` : "1px solid #e5e7eb", background: filters.minSeats === n ? GREEN_LIGHT : "#fff", color: filters.minSeats === n ? GREEN : "#6b7280", fontSize: 12, fontWeight: filters.minSeats === n ? 700 : 400, cursor: "pointer", transition: "all 0.15s" }}>
             {n === 0 ? "Any" : `${n}+`}
@@ -830,7 +880,7 @@ const FilterContent = ({ filters, setFilters, buses, priceRange }) => {
           <SectionTitle>Operator</SectionTitle>
           <div style={{ display: "flex", alignItems: "center", gap: 6, border: "1px solid #e5e7eb", borderRadius: 8, padding: "7px 10px", marginBottom: 8, background: "#fff" }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
-            <input type="text" placeholder="Search operator..." value={operatorSearch} onChange={(e) => setOperatorSearch(e.target.value)} style={{ border: "none", outline: "none", fontSize: 12,fontFamily: "Inter", color: "#111", width: "100%", background: "transparent" }} />
+            <input type="text" placeholder="Search operator..." value={operatorSearch} onChange={(e) => setOperatorSearch(e.target.value)} style={{ border: "none", outline: "none", fontSize: 12, fontFamily: "Inter", color: "#111", width: "100%", background: "transparent" }} />
           </div>
           {visibleOps.map((op) => (
             <label key={op} style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 0", cursor: "pointer" }}>
