@@ -40,23 +40,64 @@ const muiTheme = createTheme({
 const GREEN = "#16a34a";
 
 const CATEGORIES = [
-  { label: "Flights", img: "/navbaricons/flightslogo.svg", path: "/flights", emoji: "✈️" },
-  { label: "Hotels",  img: "/navbaricons/hotelslogo.svg",  path: "/hotels",  emoji: "🏨" },
-  { label: "Buses",   img: "/navbaricons/buseslogo.svg",   path: "/buses",   emoji: "🚌" },
-  { label: "Trains",  img: "/navbaricons/trainslogo.svg",  path: "/trains",  emoji: "🚆" },
+  {
+    label: "Flights",
+    img: "/navbaricons/flightslogo.svg",
+    path: "/flights",
+    emoji: "✈️",
+  },
+  {
+    label: "Hotels",
+    img: "/navbaricons/hotelslogo.svg",
+    path: "/hotels",
+    emoji: "🏨",
+  },
+  {
+    label: "Buses",
+    img: "/navbaricons/buseslogo.svg",
+    path: "/buses",
+    emoji: "🚌",
+  },
+  {
+    label: "Trains",
+    img: "/navbaricons/trainslogo.svg",
+    path: "/trains",
+    emoji: "🚆",
+  },
 ];
 
 const CABIN_CLASSES = ["Economy", "Premium Economy", "Business", "First Class"];
 
 // ─── SVG Icons ────────────────────────────────
 const FlightTakeoffIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9e9e9e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M22 2 11 13" /><path d="m22 2-7 20-4-9-9-4 20-7z" />
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="#9e9e9e"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    style={{ flexShrink: 0 }}
+  >
+    <path d="M22 2 11 13" />
+    <path d="m22 2-7 20-4-9-9-4 20-7z" />
   </svg>
 );
 
 const FlightLandIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9e9e9e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="#9e9e9e"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    style={{ flexShrink: 0 }}
+  >
     <path d="M17.8 19.2 16 11l-3.5 3.5-2 4.8" />
     <path d="m2 9 7.7-1.4 3-5.3 1.3 3.5-4 7.2L2 9z" />
     <line x1="2" y1="19" x2="22" y2="19" />
@@ -64,14 +105,33 @@ const FlightLandIcon = () => (
 );
 
 const SwapIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="#2e7d32"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path d="M7 16V4m0 0L3 8m4-4l4 4" />
     <path d="M17 8v12m0 0l4-4m-4 4l-4-4" />
   </svg>
 );
 
 const CalendarIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9e9e9e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="#9e9e9e"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    style={{ flexShrink: 0 }}
+  >
     <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
     <line x1="16" y1="2" x2="16" y2="6" />
     <line x1="8" y1="2" x2="8" y2="6" />
@@ -80,36 +140,100 @@ const CalendarIcon = () => (
 );
 
 const UserIcon = () => (
-  <svg width="17" height="17" viewBox="0 0 24 24" fill="#2e7d32" stroke="#2e7d32" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="17"
+    height="17"
+    viewBox="0 0 24 24"
+    fill="#2e7d32"
+    stroke="#2e7d32"
+    strokeWidth="1"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
     <circle cx="12" cy="7" r="4" />
   </svg>
 );
 
 const PassengerIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9e9e9e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="#9e9e9e"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    style={{ flexShrink: 0 }}
+  >
     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
     <circle cx="12" cy="7" r="4" />
   </svg>
 );
 
 const ChevronDownIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9e9e9e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="#9e9e9e"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    style={{ flexShrink: 0 }}
+  >
     <polyline points="6 9 12 15 18 9" />
   </svg>
 );
 
 // ─── Date Helpers ─────────────────────────────
-const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-const MONTH_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const DAY_LABELS  = ["Mo","Tu","We","Th","Fr","Sa","Su"];
-const DAYS_FULL   = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const MONTH_NAMES = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+const MONTH_SHORT = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+const DAY_LABELS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+const DAYS_FULL = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-function getDaysInMonth(year, month) { return new Date(year, month + 1, 0).getDate(); }
-function getFirstDayOfMonth(year, month) { const d = new Date(year, month, 1).getDay(); return (d + 6) % 7; }
+function getDaysInMonth(year, month) {
+  return new Date(year, month + 1, 0).getDate();
+}
+function getFirstDayOfMonth(year, month) {
+  const d = new Date(year, month, 1).getDay();
+  return (d + 6) % 7;
+}
 function isSameDay(a, b) {
   if (!a || !b) return false;
-  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  );
 }
 function formatDisplayDate(date) {
   if (!date) return "";
@@ -150,31 +274,34 @@ const CitySearchDropdown = ({
     if (!open) return;
     const handle = (e) => {
       if (
-        ref.current && !ref.current.contains(e.target) &&
-        anchorEl && !anchorEl.contains(e.target)
-      ) onClose();
+        ref.current &&
+        !ref.current.contains(e.target) &&
+        anchorEl &&
+        !anchorEl.contains(e.target)
+      )
+        onClose();
     };
     document.addEventListener("mousedown", handle);
     return () => document.removeEventListener("mousedown", handle);
   }, [open, onClose, anchorEl]);
 
-  // API response shape: { name: "Afghanistan", code: "AF", phone: "93", label: "...", value: "AF" }
   const normalize = (c) => ({
-    code:    c.code  || c.value || "",
-    name:    c.name  || c.label || "",
+    code: c.code || c.value || "",
+    name: c.name || c.label || "",
     country: "",
     airport: "",
   });
 
-  // Filter by name or code
   const filtered = useMemo(() => {
     if (!query.trim()) return cities.slice(0, 50);
     const q = query.toLowerCase();
-    return cities.filter((c) => {
-      const name = (c.name || c.label || "").toLowerCase();
-      const code = (c.code || c.value || "").toLowerCase();
-      return name.includes(q) || code.includes(q);
-    }).slice(0, 50);
+    return cities
+      .filter((c) => {
+        const name = (c.name || c.label || "").toLowerCase();
+        const code = (c.code || c.value || "").toLowerCase();
+        return name.includes(q) || code.includes(q);
+      })
+      .slice(0, 50);
   }, [query, cities]);
 
   if (!open) return null;
@@ -198,11 +325,16 @@ const CitySearchDropdown = ({
         fontFamily: "'Inter', sans-serif",
       }}
     >
-      {/* Search Input */}
-      <Box sx={{
-        display: "flex", alignItems: "center", gap: 1,
-        px: 2, py: 1.5, borderBottom: "1px solid #f3f4f6",
-      }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+          px: 2,
+          py: 1.5,
+          borderBottom: "1px solid #f3f4f6",
+        }}
+      >
         <SearchIcon sx={{ fontSize: 18, color: "#9ca3af", flexShrink: 0 }} />
         <input
           ref={inputRef}
@@ -210,20 +342,31 @@ const CitySearchDropdown = ({
           onChange={(e) => setQuery(e.target.value)}
           placeholder={placeholder}
           style={{
-            flex: 1, border: "none", outline: "none",
-            fontSize: 14, fontFamily: "'Inter', sans-serif",
-            color: "#111827", background: "transparent",
+            flex: 1,
+            border: "none",
+            outline: "none",
+            fontSize: 14,
+            fontFamily: "'Inter', sans-serif",
+            color: "#111827",
+            background: "transparent",
           }}
         />
         {query && (
           <Box
             onClick={() => setQuery("")}
-            sx={{ cursor: "pointer", color: "#9ca3af", fontSize: 18, lineHeight: 1, "&:hover": { color: "#374151" } }}
-          >×</Box>
+            sx={{
+              cursor: "pointer",
+              color: "#9ca3af",
+              fontSize: 18,
+              lineHeight: 1,
+              "&:hover": { color: "#374151" },
+            }}
+          >
+            ×
+          </Box>
         )}
       </Box>
 
-      {/* Results */}
       <Box sx={{ maxHeight: 320, overflowY: "auto" }}>
         {loading ? (
           <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
@@ -231,49 +374,78 @@ const CitySearchDropdown = ({
           </Box>
         ) : filtered.length === 0 ? (
           <Box sx={{ py: 3, textAlign: "center" }}>
-            <Typography sx={{ fontSize: 13, color: "#9ca3af", fontFamily: "'Inter', sans-serif" }}>
+            <Typography
+              sx={{
+                fontSize: 13,
+                color: "#9ca3af",
+                fontFamily: "'Inter', sans-serif",
+              }}
+            >
               No cities found
             </Typography>
           </Box>
         ) : (
           filtered.map((city, idx) => {
-            const { code, name, country, airport } = normalize(city);
-
+            const { code, name, country } = normalize(city);
             return (
               <Box
                 key={`${code}-${idx}`}
                 onClick={() => {
-                  // For countries API: name is country name, code is country code (AF, IN etc.)
-                  onSelect({ code, name: country ? `${name}, ${country}` : name });
+                  onSelect({
+                    code,
+                    name: country ? `${name}, ${country}` : name,
+                  });
                   onClose();
                 }}
                 sx={{
-                  display: "flex", alignItems: "center", gap: 1.5,
-                  px: 2, py: 1.2,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1.5,
+                  px: 2,
+                  py: 1.2,
                   cursor: "pointer",
                   borderBottom: "1px solid #f9fafb",
                   transition: "background 0.12s",
                   "&:hover": { bgcolor: "#f0fdf4" },
                 }}
               >
-                {/* Airport Code badge */}
-                <Box sx={{
-                  minWidth: 42, height: 42, borderRadius: "10px",
-                  bgcolor: "#f0fdf4", border: "1px solid #bbf7d0",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  flexShrink: 0,
-                }}>
-                  <Typography sx={{ fontSize: 11, fontWeight: 700, color: GREEN, fontFamily: "'Inter', sans-serif", letterSpacing: 0.5 }}>
+                <Box
+                  sx={{
+                    minWidth: 42,
+                    height: 42,
+                    borderRadius: "10px",
+                    bgcolor: "#f0fdf4",
+                    border: "1px solid #bbf7d0",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: 11,
+                      fontWeight: 700,
+                      color: GREEN,
+                      fontFamily: "'Inter', sans-serif",
+                      letterSpacing: 0.5,
+                    }}
+                  >
                     {code || "—"}
                   </Typography>
                 </Box>
-
                 <Box sx={{ minWidth: 0 }}>
-                  <Typography sx={{
-                    fontSize: 13, fontWeight: 600, color: "#111827",
-                    fontFamily: "'Inter', sans-serif",
-                    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                  }}>
+                  <Typography
+                    sx={{
+                      fontSize: 13,
+                      fontWeight: 600,
+                      color: "#111827",
+                      fontFamily: "'Inter', sans-serif",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
                     {name}
                   </Typography>
                 </Box>
@@ -287,11 +459,20 @@ const CitySearchDropdown = ({
 };
 
 // ─── FlightDatePicker ─────────────────────────
-const FlightDatePicker = ({ anchorEl, open, onClose, selectedDate, onChange, minDate }) => {
+const FlightDatePicker = ({
+  anchorEl,
+  open,
+  onClose,
+  selectedDate,
+  onChange,
+  minDate,
+}) => {
   const today = minDate ? new Date(minDate) : new Date();
   today.setHours(0, 0, 0, 0);
-
-  const [viewMonth, setViewMonth] = useState({ year: today.getFullYear(), month: today.getMonth() });
+  const [viewMonth, setViewMonth] = useState({
+    year: today.getFullYear(),
+    month: today.getMonth(),
+  });
   const [pos, setPos] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
@@ -309,7 +490,13 @@ const FlightDatePicker = ({ anchorEl, open, onClose, selectedDate, onChange, min
     if (!open) return;
     const handle = (e) => {
       const popup = document.getElementById("flight-drp-popup");
-      if (anchorEl && !anchorEl.contains(e.target) && popup && !popup.contains(e.target)) onClose();
+      if (
+        anchorEl &&
+        !anchorEl.contains(e.target) &&
+        popup &&
+        !popup.contains(e.target)
+      )
+        onClose();
     };
     document.addEventListener("mousedown", handle);
     return () => document.removeEventListener("mousedown", handle);
@@ -317,14 +504,22 @@ const FlightDatePicker = ({ anchorEl, open, onClose, selectedDate, onChange, min
 
   const canGoPrev =
     viewMonth.year > today.getFullYear() ||
-    (viewMonth.year === today.getFullYear() && viewMonth.month > today.getMonth());
+    (viewMonth.year === today.getFullYear() &&
+      viewMonth.month > today.getMonth());
 
   const goPrev = () => {
     if (!canGoPrev) return;
     setViewMonth((prev) => {
-      let m = prev.month - 1; let y = prev.year;
-      if (m < 0) { m = 11; y--; }
-      if (y < today.getFullYear() || (y === today.getFullYear() && m < today.getMonth()))
+      let m = prev.month - 1;
+      let y = prev.year;
+      if (m < 0) {
+        m = 11;
+        y--;
+      }
+      if (
+        y < today.getFullYear() ||
+        (y === today.getFullYear() && m < today.getMonth())
+      )
         return { year: today.getFullYear(), month: today.getMonth() };
       return { year: y, month: m };
     });
@@ -332,8 +527,12 @@ const FlightDatePicker = ({ anchorEl, open, onClose, selectedDate, onChange, min
 
   const goNext = () => {
     setViewMonth((prev) => {
-      let m = prev.month + 1; let y = prev.year;
-      if (m > 11) { m = 0; y++; }
+      let m = prev.month + 1;
+      let y = prev.year;
+      if (m > 11) {
+        m = 0;
+        y++;
+      }
       return { year: y, month: m };
     });
   };
@@ -342,7 +541,7 @@ const FlightDatePicker = ({ anchorEl, open, onClose, selectedDate, onChange, min
 
   const { year, month } = viewMonth;
   const daysInMonth = getDaysInMonth(year, month);
-  const firstDay    = getFirstDayOfMonth(year, month);
+  const firstDay = getFirstDayOfMonth(year, month);
   const cells = [];
   for (let i = 0; i < firstDay; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(new Date(year, month, d));
@@ -367,23 +566,59 @@ const FlightDatePicker = ({ anchorEl, open, onClose, selectedDate, onChange, min
         fontFamily: "'Inter', sans-serif",
       }}
     >
-      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1.5 }}>
-        <IconButton onClick={goPrev} disabled={!canGoPrev} size="small"
-          sx={{ width: 28, height: 28, color: canGoPrev ? "#6b7280" : "#d1d5db" }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          mb: 1.5,
+        }}
+      >
+        <IconButton
+          onClick={goPrev}
+          disabled={!canGoPrev}
+          size="small"
+          sx={{
+            width: 28,
+            height: 28,
+            color: canGoPrev ? "#6b7280" : "#d1d5db",
+          }}
+        >
           <ChevronLeftIcon sx={{ fontSize: 18 }} />
         </IconButton>
-        <Typography sx={{ fontWeight: 700, fontSize: "0.95rem", color: "#111827", fontFamily: "inherit" }}>
+        <Typography
+          sx={{
+            fontWeight: 700,
+            fontSize: "0.95rem",
+            color: "#111827",
+            fontFamily: "inherit",
+          }}
+        >
           {MONTH_NAMES[month]} {year}
         </Typography>
-        <IconButton onClick={goNext} size="small"
-          sx={{ width: 28, height: 28, color: "#6b7280" }}>
+        <IconButton
+          onClick={goNext}
+          size="small"
+          sx={{ width: 28, height: 28, color: "#6b7280" }}
+        >
           <ChevronRightIcon sx={{ fontSize: 18 }} />
         </IconButton>
       </Box>
 
-      <Box sx={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", mb: 0.5 }}>
+      <Box
+        sx={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", mb: 0.5 }}
+      >
         {DAY_LABELS.map((d) => (
-          <Typography key={d} sx={{ textAlign: "center", fontSize: "0.78rem", fontWeight: 600, color: "#9ca3af", py: 0.5 }}>
+          <Typography
+            key={d}
+            sx={{
+              textAlign: "center",
+              fontSize: "0.78rem",
+              fontWeight: 600,
+              color: "#9ca3af",
+              py: 0.5,
+            }}
+          >
             {d}
           </Typography>
         ))}
@@ -393,27 +628,58 @@ const FlightDatePicker = ({ anchorEl, open, onClose, selectedDate, onChange, min
         {cells.map((date, idx) => {
           if (!date) return <Box key={`empty-${idx}`} />;
           const isSelected = isSameDay(date, selectedDate);
-          const isToday    = isSameDay(date, new Date());
-          const isPast     = date < today && !isToday;
+          const isToday = isSameDay(date, new Date());
+          const isPast = date < today && !isToday;
           return (
-            <Box key={date.toISOString()} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Box
+              key={date.toISOString()}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
               <Box
-                onClick={() => { if (!isPast) { onChange(date); onClose(); } }}
+                onClick={() => {
+                  if (!isPast) {
+                    onChange(date);
+                    onClose();
+                  }
+                }}
                 sx={{
-                  width: 34, height: 34, borderRadius: "50%",
-                  display: "flex", alignItems: "center", justifyContent: "center",
+                  width: 34,
+                  height: 34,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                   cursor: isPast ? "default" : "pointer",
                   bgcolor: isSelected ? GREEN : "transparent",
-                  my: 0.3, transition: "background 0.12s, transform 0.1s",
-                  "&:hover": !isPast ? { bgcolor: isSelected ? GREEN : "#f0fdf4", transform: "scale(1.08)" } : {},
+                  my: 0.3,
+                  transition: "background 0.12s, transform 0.1s",
+                  "&:hover": !isPast
+                    ? {
+                        bgcolor: isSelected ? GREEN : "#f0fdf4",
+                        transform: "scale(1.08)",
+                      }
+                    : {},
                 }}
               >
-                <Typography sx={{
-                  fontSize: "0.85rem",
-                  fontWeight: isSelected || isToday ? 700 : 400,
-                  color: isSelected ? "#fff" : isPast ? "#d1d5db" : isToday ? GREEN : "#111827",
-                  lineHeight: 1, userSelect: "none",
-                }}>
+                <Typography
+                  sx={{
+                    fontSize: "0.85rem",
+                    fontWeight: isSelected || isToday ? 700 : 400,
+                    color: isSelected
+                      ? "#fff"
+                      : isPast
+                        ? "#d1d5db"
+                        : isToday
+                          ? GREEN
+                          : "#111827",
+                    lineHeight: 1,
+                    userSelect: "none",
+                  }}
+                >
                   {date.getDate()}
                 </Typography>
               </Box>
@@ -425,7 +691,11 @@ const FlightDatePicker = ({ anchorEl, open, onClose, selectedDate, onChange, min
       <Box sx={{ textAlign: "center", mt: 2 }}>
         <Typography sx={{ fontSize: "0.78rem", color: "#9ca3af" }}>
           {selectedDate
-            ? selectedDate.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+            ? selectedDate.toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })
             : "Select date"}
         </Typography>
       </Box>
@@ -434,7 +704,15 @@ const FlightDatePicker = ({ anchorEl, open, onClose, selectedDate, onChange, min
 };
 
 // ─── PassengerClassDropdown ───────────────────
-const PassengerClassDropdown = ({ anchorEl, open, onClose, passengers, setPassengers, cabinClass, setCabinClass }) => {
+const PassengerClassDropdown = ({
+  anchorEl,
+  open,
+  onClose,
+  passengers,
+  setPassengers,
+  cabinClass,
+  setCabinClass,
+}) => {
   const [pos, setPos] = useState({ top: 0, left: 0 });
   const ref = useRef(null);
 
@@ -450,7 +728,13 @@ const PassengerClassDropdown = ({ anchorEl, open, onClose, passengers, setPassen
   useEffect(() => {
     if (!open) return;
     const handle = (e) => {
-      if (ref.current && !ref.current.contains(e.target) && anchorEl && !anchorEl.contains(e.target)) onClose();
+      if (
+        ref.current &&
+        !ref.current.contains(e.target) &&
+        anchorEl &&
+        !anchorEl.contains(e.target)
+      )
+        onClose();
     };
     document.addEventListener("mousedown", handle);
     return () => document.removeEventListener("mousedown", handle);
@@ -459,84 +743,171 @@ const PassengerClassDropdown = ({ anchorEl, open, onClose, passengers, setPassen
   if (!open) return null;
 
   const types = [
-    { key: "adults",   label: "Adults",   sub: "12+ years"  },
+    { key: "adults", label: "Adults", sub: "12+ years" },
     { key: "children", label: "Children", sub: "2-12 years" },
-    { key: "infants",  label: "Infants",  sub: "Under 2"    },
+    { key: "infants", label: "Infants", sub: "Under 2" },
   ];
 
   return (
-    <div ref={ref} style={{
-      position: "absolute", top: pos.top, left: pos.left, zIndex: 9999,
-      width: 300, background: "#fff", borderRadius: 16,
-      border: "1px solid #f0f0f0", boxShadow: "0 4px 24px rgba(0,0,0,0.10)",
-      overflow: "hidden", fontFamily: "'Inter', sans-serif",
-    }}>
-      <div style={{ padding: "16px 16px 10px", fontWeight: 700, fontSize: 14, color: "#374151" }}>
+    <div
+      ref={ref}
+      style={{
+        position: "absolute",
+        top: pos.top,
+        left: pos.left,
+        zIndex: 9999,
+        width: 300,
+        background: "#fff",
+        borderRadius: 16,
+        border: "1px solid #f0f0f0",
+        boxShadow: "0 4px 24px rgba(0,0,0,0.10)",
+        overflow: "hidden",
+        fontFamily: "'Inter', sans-serif",
+      }}
+    >
+      <div
+        style={{
+          padding: "16px 16px 10px",
+          fontWeight: 700,
+          fontSize: 14,
+          color: "#374151",
+        }}
+      >
         Travellers
       </div>
-
       {types.map(({ key, label, sub }) => (
-        <div key={key} style={{
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-          padding: "10px 16px", borderBottom: "1px solid #f3f4f6",
-        }}>
+        <div
+          key={key}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "10px 16px",
+            borderBottom: "1px solid #f3f4f6",
+          }}
+        >
           <div>
-            <div style={{ fontSize: 14, fontWeight: 500, color: "#111827" }}>{label}</div>
+            <div style={{ fontSize: 14, fontWeight: 500, color: "#111827" }}>
+              {label}
+            </div>
             <div style={{ fontSize: 12, color: "#9ca3af" }}>{sub}</div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <button
-              onClick={() => setPassengers((p) => ({ ...p, [key]: Math.max(key === "adults" ? 1 : 0, p[key] - 1) }))}
+              onClick={() =>
+                setPassengers((p) => ({
+                  ...p,
+                  [key]: Math.max(key === "adults" ? 1 : 0, p[key] - 1),
+                }))
+              }
               style={{
-                width: 28, height: 28, borderRadius: "50%", border: "1.5px solid #d1d5db",
-                background: "#fff", fontSize: 18, cursor: "pointer", display: "flex",
-                alignItems: "center", justifyContent: "center", color: "#374151", lineHeight: 1,
+                width: 28,
+                height: 28,
+                borderRadius: "50%",
+                border: "1.5px solid #d1d5db",
+                background: "#fff",
+                fontSize: 18,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#374151",
+                lineHeight: 1,
               }}
-            >−</button>
-            <span style={{ fontSize: 15, fontWeight: 600, color: "#111827", minWidth: 20, textAlign: "center" }}>
+            >
+              −
+            </button>
+            <span
+              style={{
+                fontSize: 15,
+                fontWeight: 600,
+                color: "#111827",
+                minWidth: 20,
+                textAlign: "center",
+              }}
+            >
               {passengers[key]}
             </span>
             <button
-              onClick={() => setPassengers((p) => ({ ...p, [key]: p[key] + 1 }))}
+              onClick={() =>
+                setPassengers((p) => ({ ...p, [key]: p[key] + 1 }))
+              }
               style={{
-                width: 28, height: 28, borderRadius: "50%", border: "1.5px solid #d1d5db",
-                background: "#fff", fontSize: 18, cursor: "pointer", display: "flex",
-                alignItems: "center", justifyContent: "center", color: "#374151", lineHeight: 1,
+                width: 28,
+                height: 28,
+                borderRadius: "50%",
+                border: "1.5px solid #d1d5db",
+                background: "#fff",
+                fontSize: 18,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#374151",
+                lineHeight: 1,
               }}
-            >+</button>
+            >
+              +
+            </button>
           </div>
         </div>
       ))}
-
-      <div style={{ padding: "12px 16px 8px", fontWeight: 700, fontSize: 14, color: "#374151" }}>
+      <div
+        style={{
+          padding: "12px 16px 8px",
+          fontWeight: 700,
+          fontSize: 14,
+          color: "#374151",
+        }}
+      >
         Cabin Class
       </div>
-      <div style={{ padding: "0 16px 16px", display: "flex", flexWrap: "wrap", gap: 8 }}>
+      <div
+        style={{
+          padding: "0 16px 16px",
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 8,
+        }}
+      >
         {CABIN_CLASSES.map((cls) => (
           <button
             key={cls}
             onClick={() => setCabinClass(cls)}
             style={{
-              padding: "6px 14px", borderRadius: 50,
+              padding: "6px 14px",
+              borderRadius: 50,
               border: `1.5px solid ${cabinClass === cls ? GREEN : "#d1d5db"}`,
               background: cabinClass === cls ? "#f0fdf4" : "#fff",
               color: cabinClass === cls ? GREEN : "#374151",
               fontWeight: cabinClass === cls ? 700 : 500,
-              fontSize: 13, cursor: "pointer", fontFamily: "'Inter', sans-serif",
+              fontSize: 13,
+              cursor: "pointer",
+              fontFamily: "'Inter', sans-serif",
             }}
-          >{cls}</button>
+          >
+            {cls}
+          </button>
         ))}
       </div>
-
       <div style={{ padding: "0 16px 14px" }}>
         <button
           onClick={onClose}
           style={{
-            width: "100%", padding: "10px", borderRadius: 10,
-            background: GREEN, color: "#fff", border: "none",
-            fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "'Inter', sans-serif",
+            width: "100%",
+            padding: "10px",
+            borderRadius: 10,
+            background: GREEN,
+            color: "#fff",
+            border: "none",
+            fontWeight: 700,
+            fontSize: 14,
+            cursor: "pointer",
+            fontFamily: "'Inter', sans-serif",
           }}
-        >Done</button>
+        >
+          Done
+        </button>
       </div>
     </div>
   );
@@ -544,41 +915,89 @@ const PassengerClassDropdown = ({ anchorEl, open, onClose, passengers, setPassen
 
 // ─── StickyRightBar ───────────────────────────
 const StickyRightBar = ({ visible }) => {
-  const theme    = useTheme();
+  const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
   const location = useLocation();
 
   return (
-    <Box sx={{
-      position: "fixed", top: 0, left: 0, right: 0, zIndex: 1300,
-      bgcolor: "#ffffff", borderBottom: "1px solid #e8e8e8",
-      px: { xs: 2, md: 4 }, display: "flex", alignItems: "center",
-      gap: 2, minHeight: "64px", boxShadow: "0 2px 8px rgba(0,0,0,0.07)",
-      transform: visible ? "translateY(0)" : "translateY(-100%)",
-      opacity: visible ? 1 : 0, visibility: visible ? "visible" : "hidden",
-      transition: "transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease",
-    }}>
-      <Box component="img" src="/navbaricons/dealplexlogo.svg" alt="Dealplex"
+    <Box
+      sx={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1300,
+        bgcolor: "#ffffff",
+        borderBottom: "1px solid #e8e8e8",
+        px: { xs: 2, md: 4 },
+        display: "flex",
+        alignItems: "center",
+        gap: 2,
+        minHeight: "64px",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.07)",
+        transform: visible ? "translateY(0)" : "translateY(-100%)",
+        opacity: visible ? 1 : 0,
+        visibility: visible ? "visible" : "hidden",
+        transition:
+          "transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease",
+      }}
+    >
+      <Box
+        component="img"
+        src="/navbaricons/dealplexlogo.svg"
+        alt="Dealplex"
         sx={{ height: 38, objectFit: "contain", flexShrink: 0, mr: 1 }}
-        onError={(e) => { e.target.style.display = "none"; }} />
-
+        onError={(e) => {
+          e.target.style.display = "none";
+        }}
+      />
       {!isMobile && (
         <Box sx={{ display: "flex", alignItems: "center" }}>
           {CATEGORIES.map((cat) => {
-            const isActive = location.pathname === cat.path || location.pathname.startsWith(cat.path + "/");
+            const isActive =
+              location.pathname === cat.path ||
+              location.pathname.startsWith(cat.path + "/");
             return (
-              <Box key={cat.label} onClick={() => navigate(cat.path)}
+              <Box
+                key={cat.label}
+                onClick={() => navigate(cat.path)}
                 sx={{
-                  display: "flex", flexDirection: "column", alignItems: "center",
-                  px: 2.5, py: 1, cursor: "pointer", borderRadius: "10px",
-                  transition: "background 0.15s", "&:hover": { bgcolor: "#f5f5f5" },
-                }}>
-                <Box component="img" src={cat.img} alt={cat.label}
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  px: 2.5,
+                  py: 1,
+                  cursor: "pointer",
+                  borderRadius: "10px",
+                  transition: "background 0.15s",
+                  "&:hover": { bgcolor: "#f5f5f5" },
+                }}
+              >
+                <Box
+                  component="img"
+                  src={cat.img}
+                  alt={cat.label}
                   sx={{ width: 28, height: 28, objectFit: "contain", mb: 0.4 }}
-                  onError={(e) => { e.target.style.display = "none"; e.target.nextSibling.style.display = "block"; }} />
-                <Typography sx={{ fontSize: 20, lineHeight: 1, display: "none" }}>{cat.emoji}</Typography>
-                <Typography sx={{ fontSize: 13, fontWeight: isActive ? 700 : 500, color: isActive ? GREEN : "#444", lineHeight: 1, whiteSpace: "nowrap" }}>
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                    e.target.nextSibling.style.display = "block";
+                  }}
+                />
+                <Typography
+                  sx={{ fontSize: 20, lineHeight: 1, display: "none" }}
+                >
+                  {cat.emoji}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: 13,
+                    fontWeight: isActive ? 700 : 500,
+                    color: isActive ? GREEN : "#444",
+                    lineHeight: 1,
+                    whiteSpace: "nowrap",
+                  }}
+                >
                   {cat.label}
                 </Typography>
               </Box>
@@ -586,32 +1005,101 @@ const StickyRightBar = ({ visible }) => {
           })}
         </Box>
       )}
-
       {!isMobile && (
-        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, ml: "auto" }}>
+        <Box
+          sx={{ display: "flex", alignItems: "center", gap: 0.5, ml: "auto" }}
+        >
           {[
-            { icon: <LocalOfferOutlinedIcon sx={{ fontSize: 20, color: "#555" }} />, label: "Offers" },
-            { icon: <HeadsetMicOutlinedIcon sx={{ fontSize: 20, color: "#555" }} />, label: "Support" },
+            {
+              icon: (
+                <LocalOfferOutlinedIcon sx={{ fontSize: 20, color: "#555" }} />
+              ),
+              label: "Offers",
+            },
+            {
+              icon: (
+                <HeadsetMicOutlinedIcon sx={{ fontSize: 20, color: "#555" }} />
+              ),
+              label: "Support",
+            },
           ].map((item) => (
-            <Box key={item.label} sx={{ display: "flex", alignItems: "center", gap: 0.8, px: 1.5, py: 0.8, cursor: "pointer", borderRadius: "8px", "&:hover": { bgcolor: "#f5f5f5" } }}>
+            <Box
+              key={item.label}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 0.8,
+                px: 1.5,
+                py: 0.8,
+                cursor: "pointer",
+                borderRadius: "8px",
+                "&:hover": { bgcolor: "#f5f5f5" },
+              }}
+            >
               {item.icon}
-              <Typography sx={{ fontSize: 13, fontWeight: 500, color: "#333" }}>{item.label}</Typography>
+              <Typography sx={{ fontSize: 13, fontWeight: 500, color: "#333" }}>
+                {item.label}
+              </Typography>
             </Box>
           ))}
-          <Box sx={{ display: "flex", alignItems: "center", gap: 0.8, px: 1.5, py: 0.8, cursor: "pointer", borderRadius: "8px", "&:hover": { bgcolor: "#f5f5f5" } }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 0.8,
+              px: 1.5,
+              py: 0.8,
+              cursor: "pointer",
+              borderRadius: "8px",
+              "&:hover": { bgcolor: "#f5f5f5" },
+            }}
+          >
             <LuggageOutlinedIcon sx={{ fontSize: 20, color: "#555" }} />
             <Box>
-              <Typography sx={{ fontSize: 10, color: GREEN, fontWeight: 600, lineHeight: 1, mb: 0.2 }}>Manage Booking</Typography>
-              <Typography sx={{ fontSize: 13, fontWeight: 500, color: "#333", lineHeight: 1 }}>My Trips</Typography>
+              <Typography
+                sx={{
+                  fontSize: 10,
+                  color: GREEN,
+                  fontWeight: 600,
+                  lineHeight: 1,
+                  mb: 0.2,
+                }}
+              >
+                Manage Booking
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: "#333",
+                  lineHeight: 1,
+                }}
+              >
+                My Trips
+              </Typography>
             </Box>
           </Box>
-          <Button variant="outlined" startIcon={<PersonOutlinedIcon sx={{ fontSize: 18 }} />}
-            sx={{ ml: 1, borderRadius: "8px", borderColor: GREEN, color: GREEN, fontWeight: 600, fontSize: 13, textTransform: "none", px: 2, py: 0.9, whiteSpace: "nowrap", "&:hover": { borderColor: "#15803d", bgcolor: "#f0fdf4" } }}>
+          <Button
+            variant="outlined"
+            startIcon={<PersonOutlinedIcon sx={{ fontSize: 18 }} />}
+            sx={{
+              ml: 1,
+              borderRadius: "8px",
+              borderColor: GREEN,
+              color: GREEN,
+              fontWeight: 600,
+              fontSize: 13,
+              textTransform: "none",
+              px: 2,
+              py: 0.9,
+              whiteSpace: "nowrap",
+              "&:hover": { borderColor: "#15803d", bgcolor: "#f0fdf4" },
+            }}
+          >
             Login / Signup
           </Button>
         </Box>
       )}
-
       {isMobile && (
         <IconButton sx={{ color: "#333", ml: "auto" }}>
           <MenuIcon />
@@ -625,32 +1113,82 @@ const StickyRightBar = ({ visible }) => {
 const CategoryTabs = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
   return (
-    <Box sx={{ bgcolor: "#f0f4f8", py: { xs: 1.5, md: 2 }, px: 2, display: "flex", justifyContent: "center" }}>
-      <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 1, md: 1.5 }, flexWrap: "wrap", justifyContent: "center" }}>
+    <Box
+      sx={{
+        bgcolor: "#f0f4f8",
+        py: { xs: 1.5, md: 2 },
+        px: 2,
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: { xs: 1, md: 1.5 },
+          flexWrap: "wrap",
+          justifyContent: "center",
+        }}
+      >
         {CATEGORIES.map((cat) => {
-          const isActive = location.pathname === cat.path || location.pathname.startsWith(cat.path + "/");
+          const isActive =
+            location.pathname === cat.path ||
+            location.pathname.startsWith(cat.path + "/");
           return (
-            <Box key={cat.label} onClick={() => navigate(cat.path)}
+            <Box
+              key={cat.label}
+              onClick={() => navigate(cat.path)}
               sx={{
-                display: "flex", alignItems: "center", gap: { xs: 0.8, md: 1 },
-                px: { xs: 1.8, md: 2.5 }, py: { xs: 0.8, md: 1.1 },
-                borderRadius: "50px", cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: { xs: 0.8, md: 1 },
+                px: { xs: 1.8, md: 2.5 },
+                py: { xs: 0.8, md: 1.1 },
+                borderRadius: "50px",
+                cursor: "pointer",
                 bgcolor: isActive ? "#ffffff" : "transparent",
                 boxShadow: isActive ? "0 2px 8px rgba(0,0,0,0.10)" : "none",
                 transition: "all 0.18s",
-                "&:hover": { bgcolor: isActive ? "#ffffff" : "rgba(255,255,255,0.6)" },
-              }}>
+                "&:hover": {
+                  bgcolor: isActive ? "#ffffff" : "rgba(255,255,255,0.6)",
+                },
+              }}
+            >
               {cat.img && (
-                <Box component="img" src={cat.img} alt={cat.label}
-                  sx={{ width: { xs: 24, md: 30 }, height: { xs: 24, md: 30 }, objectFit: "contain" }}
-                  onError={(e) => { e.target.style.display = "none"; e.target.nextSibling.style.display = "block"; }} />
+                <Box
+                  component="img"
+                  src={cat.img}
+                  alt={cat.label}
+                  sx={{
+                    width: { xs: 24, md: 30 },
+                    height: { xs: 24, md: 30 },
+                    objectFit: "contain",
+                  }}
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                    e.target.nextSibling.style.display = "block";
+                  }}
+                />
               )}
-              <Typography sx={{ fontSize: { xs: 22, md: 26 }, lineHeight: 1, display: cat.img ? "none" : "block" }}>
+              <Typography
+                sx={{
+                  fontSize: { xs: 22, md: 26 },
+                  lineHeight: 1,
+                  display: cat.img ? "none" : "block",
+                }}
+              >
                 {cat.emoji}
               </Typography>
-              <Typography sx={{ fontSize: { xs: 13, md: 15 }, fontWeight: isActive ? 700 : 500, color: isActive ? "#111827" : "#555", whiteSpace: "nowrap" }}>
+              <Typography
+                sx={{
+                  fontSize: { xs: 13, md: 15 },
+                  fontWeight: isActive ? 700 : 500,
+                  color: isActive ? "#111827" : "#555",
+                  whiteSpace: "nowrap",
+                }}
+              >
                 {cat.label}
               </Typography>
             </Box>
@@ -662,7 +1200,15 @@ const CategoryTabs = () => {
 };
 
 // ─── FieldBox helper ──────────────────────────
-const FieldBox = ({ legend, legendColor = "#6b6b6b", children, onClick, error, fieldRef, sx = {} }) => (
+const FieldBox = ({
+  legend,
+  legendColor = "#6b6b6b",
+  children,
+  onClick,
+  error,
+  fieldRef,
+  sx = {},
+}) => (
   <Box
     ref={fieldRef}
     onClick={onClick}
@@ -683,12 +1229,21 @@ const FieldBox = ({ legend, legendColor = "#6b6b6b", children, onClick, error, f
       ...sx,
     }}
   >
-    <Box component="span" sx={{
-      position: "absolute", top: -9, left: 10,
-      fontSize: "0.72rem", color: error ? "#dc2626" : legendColor,
-      backgroundColor: error ? "#fff5f5" : "#fff",
-      px: 0.5, lineHeight: 1, fontFamily: "'Inter', sans-serif", fontWeight: 500,
-    }}>
+    <Box
+      component="span"
+      sx={{
+        position: "absolute",
+        top: -9,
+        left: 10,
+        fontSize: "0.72rem",
+        color: error ? "#dc2626" : legendColor,
+        backgroundColor: error ? "#fff5f5" : "#fff",
+        px: 0.5,
+        lineHeight: 1,
+        fontFamily: "'Inter', sans-serif",
+        fontWeight: 500,
+      }}
+    >
       {legend}
     </Box>
     {children}
@@ -698,70 +1253,90 @@ const FieldBox = ({ legend, legendColor = "#6b6b6b", children, onClick, error, f
 // ─── FlightSearch (Main Component) ───────────
 export default function FlightSearch({
   initialFrom = null,
-  initialTo   = null,
+  initialTo = null,
   initialDate = null,
+  onSearch = null, // ← listing page se callback
 }) {
-  const theme    = useTheme();
+  const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
 
   const [scrolled, setScrolled] = useState(false);
 
-  // ── Hooks ──
   const { cities, loading: citiesLoading } = useFlightCities();
   const { searchFlights, loading: searchLoading } = useFlightSearch();
 
-  // ── Trip type ──
   const [tripType, setTripType] = useState("oneway");
+  const [fromCity, setFromCity] = useState(
+    initialFrom || { code: "BOM", name: "Mumbai, IN" },
+  );
+  const [toCity, setToCity] = useState(
+    initialTo || { code: "DEL", name: "New Delhi, IN" },
+  );
 
-  // ── City state ──
-  const [fromCity, setFromCity] = useState(initialFrom || { code: "BOM", name: "Mumbai, IN" });
-  const [toCity,   setToCity]   = useState(initialTo   || { code: "DEL", name: "New Delhi, IN" });
-
-  // ── City dropdown open state ──
   const [fromDropOpen, setFromDropOpen] = useState(false);
-  const [toDropOpen,   setToDropOpen]   = useState(false);
+  const [toDropOpen, setToDropOpen] = useState(false);
 
-  // ── Refs for city fields ──
   const fromFieldRef = useRef(null);
-  const toFieldRef   = useRef(null);
+  const toFieldRef = useRef(null);
 
-  // ── Validation errors ──
   const [errors, setErrors] = useState({ from: "", to: "" });
 
-  // ── Date state ──
   const [departureDate, setDepartureDate] = useState(() => {
-    if (initialDate) { const d = new Date(initialDate); d.setHours(0,0,0,0); return d; }
-    const d = new Date(); d.setHours(0,0,0,0); return d;
+    if (initialDate) {
+      const d = new Date(initialDate);
+      d.setHours(0, 0, 0, 0);
+      return d;
+    }
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
   });
   const [returnDate, setReturnDate] = useState(null);
 
-  // ── Dropdown open state ──
   const [depPickerOpen, setDepPickerOpen] = useState(false);
   const [retPickerOpen, setRetPickerOpen] = useState(false);
-  const [paxDropOpen,   setPaxDropOpen]   = useState(false);
+  const [paxDropOpen, setPaxDropOpen] = useState(false);
 
-  // ── Refs ──
   const depDateRef = useRef(null);
   const retDateRef = useRef(null);
-  const paxRef     = useRef(null);
+  const paxRef = useRef(null);
 
-  // ── Passengers & class ──
-  const [passengers, setPassengers] = useState({ adults: 1, children: 0, infants: 0 });
-  const [cabinClass, setCabinClass]  = useState("Economy");
+  const [passengers, setPassengers] = useState({
+    adults: 1,
+    children: 0,
+    infants: 0,
+  });
+  const [cabinClass, setCabinClass] = useState("Economy");
 
-  // ── Scroll listener ──
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // initialFrom/initialTo change hone pe sync karo (listing page reuse)
+  useEffect(() => {
+    if (initialFrom) setFromCity(initialFrom);
+  }, [initialFrom?.code]);
+  useEffect(() => {
+    if (initialTo) setToCity(initialTo);
+  }, [initialTo?.code]);
+
   const passengerLabel = () => {
     const parts = [];
-    if (passengers.adults)   parts.push(`${passengers.adults} Adult${passengers.adults > 1 ? "s" : ""}`);
-    if (passengers.children) parts.push(`${passengers.children} Child${passengers.children > 1 ? "ren" : ""}`);
-    if (passengers.infants)  parts.push(`${passengers.infants} Infant${passengers.infants > 1 ? "s" : ""}`);
+    if (passengers.adults)
+      parts.push(
+        `${passengers.adults} Adult${passengers.adults > 1 ? "s" : ""}`,
+      );
+    if (passengers.children)
+      parts.push(
+        `${passengers.children} Child${passengers.children > 1 ? "ren" : ""}`,
+      );
+    if (passengers.infants)
+      parts.push(
+        `${passengers.infants} Infant${passengers.infants > 1 ? "s" : ""}`,
+      );
     return `${parts.join(", ")} · ${cabinClass}`;
   };
 
@@ -780,7 +1355,6 @@ export default function FlightSearch({
     }
   };
 
-  // Close all dropdowns helper
   const closeAll = () => {
     setFromDropOpen(false);
     setToDropOpen(false);
@@ -792,12 +1366,17 @@ export default function FlightSearch({
   const handleSearch = async () => {
     const newErrors = { from: "", to: "" };
     let hasError = false;
-    if (!fromCity?.code) { newErrors.from = "Please select departure city"; hasError = true; }
-    if (!toCity?.code)   { newErrors.to   = "Please select destination city"; hasError = true; }
+    if (!fromCity?.code) {
+      newErrors.from = "Please select departure city";
+      hasError = true;
+    }
+    if (!toCity?.code) {
+      newErrors.to = "Please select destination city";
+      hasError = true;
+    }
     setErrors(newErrors);
     if (hasError) return;
 
-    // Call search API
     const result = await searchFlights({
       fromCity,
       toCity,
@@ -808,17 +1387,28 @@ export default function FlightSearch({
       tripType,
     });
 
-    // Navigate to listing page with results + search params
+    const params = {
+      fromCity,
+      toCity,
+      departureDate: departureDate.toISOString(),
+      returnDate: returnDate?.toISOString() ?? null,
+      passengers,
+      cabinClass,
+      tripType,
+    };
+
+    // Listing page se call ho raha hai to onSearch callback use karo
+    if (onSearch) {
+      onSearch(result, params);
+      return;
+    }
+
+    // Home/flights page se pehli baar — normal navigate
     navigate("/flights/listing", {
       state: {
         searchResult: result,
-        fromCity,
-        toCity,
-        departureDate: departureDate.toISOString(),
-        returnDate: returnDate?.toISOString() ?? null,
-        passengers,
-        cabinClass,
-        tripType,
+        flights: result?.data?.results?.Results || [],
+        ...params,
       },
     });
   };
@@ -829,47 +1419,117 @@ export default function FlightSearch({
         <StickyRightBar visible={scrolled} />
         <CategoryTabs />
 
-        <Box sx={{ backgroundColor: "#f0f4f8", display: "flex", alignItems: "center", justifyContent: "center", p: { xs: 1.5, sm: 2, md: 3 } }}>
-          <Paper elevation={0} sx={{
-            width: "100%", maxWidth: 1280,
-            borderRadius: { xs: 3, sm: 4 },
-            border: "1px solid #e8e8e8",
-            px: { xs: 2, sm: 3, md: 3 },
-            py: { xs: 2.5, sm: 3 },
-            position: "relative",
-            backgroundColor: "#fff",
-            fontFamily: "'Inter', sans-serif",
-          }}>
-
+        <Box
+          sx={{
+            backgroundColor: "#f0f4f8",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            p: { xs: 1.5, sm: 2, md: 3 },
+          }}
+        >
+          <Paper
+            elevation={0}
+            sx={{
+              width: "100%",
+              maxWidth: 1280,
+              borderRadius: { xs: 3, sm: 4 },
+              border: "1px solid #e8e8e8",
+              px: { xs: 2, sm: 3, md: 3 },
+              py: { xs: 2.5, sm: 3 },
+              position: "relative",
+              backgroundColor: "#fff",
+              fontFamily: "'Inter', sans-serif",
+            }}
+          >
             {/* Header */}
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: { xs: 1.5, sm: 2 } }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+                mb: { xs: 1.5, sm: 2 },
+              }}
+            >
               <Box>
-                <Typography variant="h5" fontWeight={700} fontSize={{ xs: "1.25rem", sm: "1.5rem" }} color="#1a1a1a" lineHeight={1.2} sx={{ fontFamily: "'Inter', sans-serif" }}>
+                <Typography
+                  variant="h5"
+                  fontWeight={700}
+                  fontSize={{ xs: "1.25rem", sm: "1.5rem" }}
+                  color="#1a1a1a"
+                  lineHeight={1.2}
+                  sx={{ fontFamily: "'Inter', sans-serif" }}
+                >
                   Flight Booking
                 </Typography>
-                <Typography variant="body2" color="text.secondary" fontSize={{ xs: "0.78rem", sm: "0.875rem" }} mt={0.4} sx={{ fontFamily: "'Inter', sans-serif" }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  fontSize={{ xs: "0.78rem", sm: "0.875rem" }}
+                  mt={0.4}
+                  sx={{ fontFamily: "'Inter', sans-serif" }}
+                >
                   Book International and Domestic Flights
                 </Typography>
               </Box>
-              <Link href="#" underline="none"
-                sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center", gap: 0.6, color: "#555", fontSize: "0.85rem", mt: 0.5, "&:hover": { color: "#2e7d32" }, fontFamily: "'Inter', sans-serif" }}>
+              <Link
+                href="#"
+                underline="none"
+                sx={{
+                  display: { xs: "none", sm: "flex" },
+                  alignItems: "center",
+                  gap: 0.6,
+                  color: "#555",
+                  fontSize: "0.85rem",
+                  mt: 0.5,
+                  "&:hover": { color: "#2e7d32" },
+                  fontFamily: "'Inter', sans-serif",
+                }}
+              >
                 <UserIcon /> Need some help?
               </Link>
             </Box>
 
             {/* Trip type radios */}
-            <Box sx={{ display: "flex", gap: { xs: 2, sm: 3 }, mb: { xs: 2, sm: 2.5 } }}>
+            <Box
+              sx={{
+                display: "flex",
+                gap: { xs: 2, sm: 3 },
+                mb: { xs: 2, sm: 2.5 },
+              }}
+            >
               {[
-                { val: "oneway",    label: "Oneway"     },
+                { val: "oneway", label: "Oneway" },
                 { val: "roundtrip", label: "Round Trip" },
               ].map(({ val, label }) => (
-                <Box key={val} onClick={() => handleRoundTripToggle(val)}
-                  sx={{ display: "flex", alignItems: "center", gap: 0.8, cursor: "pointer" }}>
-                  {tripType === val
-                    ? <RadioButtonCheckedIcon  sx={{ fontSize: 20, color: GREEN }} />
-                    : <RadioButtonUncheckedIcon sx={{ fontSize: 20, color: "#9ca3af" }} />
-                  }
-                  <Typography sx={{ fontSize: { xs: "0.85rem", sm: "0.95rem" }, fontWeight: tripType === val ? 600 : 500, color: tripType === val ? "#111827" : "#6b7280", fontFamily: "'Inter', sans-serif", userSelect: "none" }}>
+                <Box
+                  key={val}
+                  onClick={() => handleRoundTripToggle(val)}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.8,
+                    cursor: "pointer",
+                  }}
+                >
+                  {tripType === val ? (
+                    <RadioButtonCheckedIcon
+                      sx={{ fontSize: 20, color: GREEN }}
+                    />
+                  ) : (
+                    <RadioButtonUncheckedIcon
+                      sx={{ fontSize: 20, color: "#9ca3af" }}
+                    />
+                  )}
+                  <Typography
+                    sx={{
+                      fontSize: { xs: "0.85rem", sm: "0.95rem" },
+                      fontWeight: tripType === val ? 600 : 500,
+                      color: tripType === val ? "#111827" : "#6b7280",
+                      fontFamily: "'Inter', sans-serif",
+                      userSelect: "none",
+                    }}
+                  >
                     {label}
                   </Typography>
                 </Box>
@@ -877,74 +1537,147 @@ export default function FlightSearch({
             </Box>
 
             {/* Search row */}
-            <Box sx={{
-              display: "flex",
-              flexDirection: { xs: "column", md: "row" },
-              alignItems: { xs: "stretch", md: "center" },
-              gap: { xs: 1.5, md: 1 },
-            }}>
-
-              {/* FROM + SWAP + TO */}
-              <Box sx={{
+            <Box
+              sx={{
                 display: "flex",
-                flex: { md: "1 1 auto" },
-                alignItems: "center",
-                position: "relative",
-                gap: 0,
-                mt: "-6px",
-              }}>
+                flexDirection: { xs: "column", md: "row" },
+                alignItems: { xs: "stretch", md: "center" },
+                gap: { xs: 1.5, md: 1 },
+              }}
+            >
+              {/* FROM + SWAP + TO */}
+              <Box
+                sx={{
+                  display: "flex",
+                  flex: { md: "1 1 auto" },
+                  alignItems: "center",
+                  position: "relative",
+                  gap: 0,
+                  mt: "-6px",
+                  minWidth: 0,
+                }}
+              >
                 {/* FROM fieldset */}
                 <Box
                   component="fieldset"
                   ref={fromFieldRef}
-                  onClick={() => { closeAll(); setFromDropOpen(true); }}
+                  onClick={() => {
+                    closeAll();
+                    setFromDropOpen(true);
+                  }}
                   sx={{
                     flex: 1,
+                    minWidth: 0, // ← KEY: flex child overflow fix
                     border: `1px solid ${errors.from ? "#dc2626" : "#c8c8c8"}`,
                     borderRadius: "12px",
-                    m: 0, pl: "14px", pr: "30px",
-                    height: 58, minHeight: 58,
+                    m: 0,
+                    pl: "14px",
+                    pr: "30px",
+                    height: 58,
+                    minHeight: 58,
                     boxSizing: "border-box",
-                    display: "flex", alignItems: "center",
+                    display: "flex",
+                    alignItems: "center",
                     backgroundColor: errors.from ? "#fff5f5" : "#fff",
-                    minWidth: 0, mr: "8px", lineHeight: 1,
+                    mr: "8px",
+                    lineHeight: 1,
                     cursor: "pointer",
-                    "&:hover": { borderColor: errors.from ? "#dc2626" : "#2e7d32" },
+                    overflow: "hidden", // ← KEY
+                    "&:hover": {
+                      borderColor: errors.from ? "#dc2626" : "#2e7d32",
+                    },
                     transition: "border-color 0.15s",
                   }}
                 >
-                  <legend style={{
-                    fontSize: "0.72rem", color: errors.from ? "#dc2626" : "#6b6b6b",
-                    padding: "0 3px", lineHeight: 1, marginLeft: "30px",
-                    fontFamily: "'Inter', sans-serif",
-                  }}>From</legend>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%", marginLeft: "18px" }}>
+                  <legend
+                    style={{
+                      fontSize: "0.72rem",
+                      color: errors.from ? "#dc2626" : "#6b6b6b",
+                      padding: "0 3px",
+                      lineHeight: 1,
+                      marginLeft: "30px",
+                      fontFamily: "'Inter', sans-serif",
+                    }}
+                  >
+                    From
+                  </legend>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      width: "100%",
+                      marginLeft: "18px",
+                      minWidth: 0, // ← KEY
+                      overflow: "hidden", // ← KEY
+                    }}
+                  >
                     <FlightTakeoffIcon />
-                    <Typography sx={{
-                      fontSize: "0.95rem", fontWeight: 600,
-                      color: fromCity ? "#111827" : "#9ca3af",
-                      flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                      userSelect: "none", fontFamily: "'Inter', sans-serif",
-                    }}>
-                      {fromCity ? `${fromCity.code} - ${fromCity.name}` : "Leaving From"}
+                    <Typography
+                      sx={{
+                        fontSize: "0.95rem",
+                        fontWeight: 600,
+                        color: fromCity ? "#111827" : "#9ca3af",
+                        flex: 1,
+                        minWidth: 0, // ← KEY
+                        overflow: "hidden", // ← KEY
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        userSelect: "none",
+                        fontFamily: "'Inter', sans-serif",
+                      }}
+                    >
+                      {fromCity
+                        ? `${fromCity.code} - ${fromCity.name}`
+                        : "Leaving From"}
                     </Typography>
                   </Box>
                   {errors.from && (
-                    <Typography sx={{ fontSize: "0.68rem", color: "#dc2626", position: "absolute", bottom: -18, left: 4, whiteSpace: "nowrap" }}>
+                    <Typography
+                      sx={{
+                        fontSize: "0.68rem",
+                        color: "#dc2626",
+                        position: "absolute",
+                        bottom: -18,
+                        left: 4,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
                       ⚠ {errors.from}
                     </Typography>
                   )}
                 </Box>
 
                 {/* Swap button */}
-                <Box sx={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", zIndex: 5, flexShrink: 0 }}>
-                  <IconButton onClick={(e) => { e.stopPropagation(); handleSwap(); }}
+                <Box
+                  sx={{
+                    position: "absolute",
+                    left: "50%",
+                    top: "50%",
+                    transform: "translate(-50%, -50%)",
+                    zIndex: 5,
+                    flexShrink: 0,
+                  }}
+                >
+                  <IconButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSwap();
+                    }}
                     sx={{
-                      border: "1px solid #d4d4d4", backgroundColor: "#fff",
-                      width: 40, height: 40, borderRadius: "50%", boxShadow: "0 0 0 3px #fff",
-                      "&:hover": { backgroundColor: "#f1f8f1", borderColor: "#2e7d32" },
+                      border: "1px solid #d4d4d4",
+                      backgroundColor: "#fff",
+                      width: 40,
+                      height: 40,
+                      borderRadius: "50%",
+                      boxShadow: "0 0 0 3px #fff",
+                      "&:hover": {
+                        backgroundColor: "#f1f8f1",
+                        borderColor: "#2e7d32",
+                      },
                       transition: "all 0.2s",
-                    }}>
+                    }}
+                  >
                     <SwapIcon />
                   </IconButton>
                 </Box>
@@ -953,40 +1686,84 @@ export default function FlightSearch({
                 <Box
                   component="fieldset"
                   ref={toFieldRef}
-                  onClick={() => { closeAll(); setToDropOpen(true); }}
+                  onClick={() => {
+                    closeAll();
+                    setToDropOpen(true);
+                  }}
                   sx={{
                     flex: 1,
+                    minWidth: 0, // ← KEY
                     border: `1px solid ${errors.to ? "#dc2626" : "#c8c8c8"}`,
                     borderRadius: "12px",
-                    m: 0, pl: "30px", pr: "14px",
-                    height: 58, minHeight: 58,
+                    m: 0,
+                    pl: "30px",
+                    pr: "14px",
+                    height: 58,
+                    minHeight: 58,
                     boxSizing: "border-box",
-                    display: "flex", alignItems: "center",
+                    display: "flex",
+                    alignItems: "center",
                     backgroundColor: errors.to ? "#fff5f5" : "#fff",
-                    minWidth: 0, lineHeight: 1,
+                    lineHeight: 1,
                     cursor: "pointer",
-                    "&:hover": { borderColor: errors.to ? "#dc2626" : "#2e7d32" },
+                    overflow: "hidden", // ← KEY
+                    "&:hover": {
+                      borderColor: errors.to ? "#dc2626" : "#2e7d32",
+                    },
                     transition: "border-color 0.15s",
                   }}
                 >
-                  <legend style={{
-                    fontSize: "0.72rem", color: errors.to ? "#dc2626" : "#6b6b6b",
-                    padding: "0 3px", lineHeight: 1, marginLeft: "44px",
-                    fontFamily: "'Inter', sans-serif",
-                  }}>To</legend>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%", marginLeft: "24px" }}>
+                  <legend
+                    style={{
+                      fontSize: "0.72rem",
+                      color: errors.to ? "#dc2626" : "#6b6b6b",
+                      padding: "0 3px",
+                      lineHeight: 1,
+                      marginLeft: "44px",
+                      fontFamily: "'Inter', sans-serif",
+                    }}
+                  >
+                    To
+                  </legend>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      width: "100%",
+                      marginLeft: "24px",
+                      minWidth: 0, // ← KEY
+                      overflow: "hidden", // ← KEY
+                    }}
+                  >
                     <FlightLandIcon />
-                    <Typography sx={{
-                      fontSize: "0.95rem", fontWeight: 600,
-                      color: toCity ? "#111827" : "#9ca3af",
-                      flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                      userSelect: "none", fontFamily: "'Inter', sans-serif",
-                    }}>
+                    <Typography
+                      sx={{
+                        fontSize: "0.95rem",
+                        fontWeight: 600,
+                        color: toCity ? "#111827" : "#9ca3af",
+                        flex: 1,
+                        minWidth: 0, // ← KEY
+                        overflow: "hidden", // ← KEY
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        userSelect: "none",
+                        fontFamily: "'Inter', sans-serif",
+                      }}
+                    >
                       {toCity ? `${toCity.code} - ${toCity.name}` : "Going To"}
                     </Typography>
                   </Box>
                   {errors.to && (
-                    <Typography sx={{ fontSize: "0.68rem", color: "#dc2626", position: "absolute", bottom: -18, whiteSpace: "nowrap" }}>
+                    <Typography
+                      sx={{
+                        fontSize: "0.68rem",
+                        color: "#dc2626",
+                        position: "absolute",
+                        bottom: -18,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
                       ⚠ {errors.to}
                     </Typography>
                   )}
@@ -994,25 +1771,52 @@ export default function FlightSearch({
               </Box>
 
               {/* Date + Pax row */}
-              <Box sx={{
-                display: "flex",
-                flex: { md: "0 0 auto" },
-                alignItems: "center",
-                gap: 1.5,
-                flexDirection: { xs: "column", sm: "row" },
-              }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flex: { md: "0 0 auto" },
+                  alignItems: "center",
+                  gap: 1.5,
+                  flexDirection: { xs: "column", sm: "row" },
+                }}
+              >
                 {/* Departure date */}
                 <FieldBox
                   legend="Departure"
                   fieldRef={depDateRef}
-                  onClick={() => { closeAll(); setDepPickerOpen((o) => !o); }}
-                  sx={{ width: { xs: "100%", sm: 150, md: 150 }, cursor: "pointer" }}
+                  onClick={() => {
+                    closeAll();
+                    setDepPickerOpen((o) => !o);
+                  }}
+                  sx={{
+                    width: { xs: "100%", sm: 150, md: 150 },
+                    cursor: "pointer",
+                  }}
                 >
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <CalendarIcon />
                     <Box>
-                      <Typography sx={{ fontSize: "0.78rem", color: "#9ca3af", lineHeight: 1, mb: 0.3, fontFamily: "'Inter', sans-serif" }}>Departure</Typography>
-                      <Typography sx={{ fontSize: "0.9rem", fontWeight: 600, color: "#1a1a1a", lineHeight: 1.2, fontFamily: "'Inter', sans-serif", whiteSpace: "nowrap" }}>
+                      <Typography
+                        sx={{
+                          fontSize: "0.78rem",
+                          color: "#9ca3af",
+                          lineHeight: 1,
+                          mb: 0.3,
+                          fontFamily: "'Inter', sans-serif",
+                        }}
+                      >
+                        Departure
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontSize: "0.9rem",
+                          fontWeight: 600,
+                          color: "#1a1a1a",
+                          lineHeight: 1.2,
+                          fontFamily: "'Inter', sans-serif",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
                         {formatDisplayDate(departureDate)}
                       </Typography>
                     </Box>
@@ -1024,21 +1828,59 @@ export default function FlightSearch({
                   legend="Return"
                   fieldRef={retDateRef}
                   onClick={() => {
-                    if (tripType === "oneway") { handleRoundTripToggle("roundtrip"); closeAll(); setRetPickerOpen(true); return; }
-                    closeAll(); setRetPickerOpen((o) => !o);
+                    if (tripType === "oneway") {
+                      handleRoundTripToggle("roundtrip");
+                      closeAll();
+                      setRetPickerOpen(true);
+                      return;
+                    }
+                    closeAll();
+                    setRetPickerOpen((o) => !o);
                   }}
-                  sx={{ width: { xs: "100%", sm: 150, md: 150 }, cursor: "pointer", bgcolor: tripType === "oneway" ? "#fafafa" : "#fff" }}
+                  sx={{
+                    width: { xs: "100%", sm: 150, md: 150 },
+                    cursor: "pointer",
+                    bgcolor: tripType === "oneway" ? "#fafafa" : "#fff",
+                  }}
                 >
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <CalendarIcon />
                     <Box>
-                      <Typography sx={{ fontSize: "0.78rem", color: "#9ca3af", lineHeight: 1, mb: 0.3, fontFamily: "'Inter', sans-serif" }}>Return</Typography>
+                      <Typography
+                        sx={{
+                          fontSize: "0.78rem",
+                          color: "#9ca3af",
+                          lineHeight: 1,
+                          mb: 0.3,
+                          fontFamily: "'Inter', sans-serif",
+                        }}
+                      >
+                        Return
+                      </Typography>
                       {returnDate ? (
-                        <Typography sx={{ fontSize: "0.9rem", fontWeight: 600, color: "#1a1a1a", lineHeight: 1.2, fontFamily: "'Inter', sans-serif", whiteSpace: "nowrap" }}>
+                        <Typography
+                          sx={{
+                            fontSize: "0.9rem",
+                            fontWeight: 600,
+                            color: "#1a1a1a",
+                            lineHeight: 1.2,
+                            fontFamily: "'Inter', sans-serif",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
                           {formatDisplayDate(returnDate)}
                         </Typography>
                       ) : (
-                        <Typography sx={{ fontSize: "0.82rem", color: "#9ca3af", lineHeight: 1.2, fontFamily: "'Inter', sans-serif" }}>Add date</Typography>
+                        <Typography
+                          sx={{
+                            fontSize: "0.82rem",
+                            color: "#9ca3af",
+                            lineHeight: 1.2,
+                            fontFamily: "'Inter', sans-serif",
+                          }}
+                        >
+                          Add date
+                        </Typography>
                       )}
                     </Box>
                   </Box>
@@ -1048,14 +1890,48 @@ export default function FlightSearch({
                 <FieldBox
                   legend="Travellers & Class"
                   fieldRef={paxRef}
-                  onClick={() => { closeAll(); setPaxDropOpen((o) => !o); }}
-                  sx={{ width: { xs: "100%", sm: 175, md: 180 }, cursor: "pointer" }}
+                  onClick={() => {
+                    closeAll();
+                    setPaxDropOpen((o) => !o);
+                  }}
+                  sx={{
+                    width: { xs: "100%", sm: 175, md: 180 },
+                    cursor: "pointer",
+                  }}
                 >
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      width: "100%",
+                    }}
+                  >
                     <PassengerIcon />
                     <Box sx={{ minWidth: 0, flex: 1 }}>
-                      <Typography sx={{ fontSize: "0.78rem", color: "#9ca3af", lineHeight: 1, mb: 0.3, fontFamily: "'Inter', sans-serif" }}>Travellers & Class</Typography>
-                      <Typography sx={{ fontSize: "0.88rem", fontWeight: 600, color: "#1a1a1a", lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "'Inter', sans-serif" }}>
+                      <Typography
+                        sx={{
+                          fontSize: "0.78rem",
+                          color: "#9ca3af",
+                          lineHeight: 1,
+                          mb: 0.3,
+                          fontFamily: "'Inter', sans-serif",
+                        }}
+                      >
+                        Travellers & Class
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontSize: "0.88rem",
+                          fontWeight: 600,
+                          color: "#1a1a1a",
+                          lineHeight: 1.2,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          fontFamily: "'Inter', sans-serif",
+                        }}
+                      >
                         {passengerLabel()}
                       </Typography>
                     </Box>
@@ -1070,15 +1946,26 @@ export default function FlightSearch({
                 disableElevation
                 onClick={handleSearch}
                 disabled={searchLoading}
-                startIcon={searchLoading ? <CircularProgress size={16} sx={{ color: "#fff" }} /> : null}
+                startIcon={
+                  searchLoading ? (
+                    <CircularProgress size={16} sx={{ color: "#fff" }} />
+                  ) : null
+                }
                 sx={{
-                  backgroundColor: "#2e7d32", color: "#fff",
-                  fontWeight: 700, fontSize: { xs: "1rem", sm: "1.05rem" },
-                  borderRadius: 2.5, px: { xs: 3, sm: 4 }, py: { xs: 1.5, sm: "13px" },
-                  minWidth: { xs: "100%", md: 120 }, height: { sm: 50 },
-                  flexShrink: 0, letterSpacing: 0.3,
+                  backgroundColor: "#2e7d32",
+                  color: "#fff",
+                  fontWeight: 700,
+                  fontSize: { xs: "1rem", sm: "1.05rem" },
+                  borderRadius: 2.5,
+                  px: { xs: 3, sm: 4 },
+                  py: { xs: 1.5, sm: "13px" },
+                  minWidth: { xs: "100%", md: 120 },
+                  height: { sm: 50 },
+                  flexShrink: 0,
+                  letterSpacing: 0.3,
                   "&:hover": { backgroundColor: "#1b5e20" },
-                  transition: "background 0.2s", textTransform: "none",
+                  transition: "background 0.2s",
+                  textTransform: "none",
                   fontFamily: "'Inter', sans-serif",
                 }}
               >
@@ -1087,37 +1974,59 @@ export default function FlightSearch({
             </Box>
 
             {/* Help link mobile */}
-            <Box sx={{ display: { xs: "flex", sm: "none" }, justifyContent: "center", mt: 2 }}>
-              <Link href="#" underline="none"
-                sx={{ display: "flex", alignItems: "center", gap: 0.6, color: "#555", fontSize: "0.82rem", "&:hover": { color: "#2e7d32" }, fontFamily: "'Inter', sans-serif" }}>
+            <Box
+              sx={{
+                display: { xs: "flex", sm: "none" },
+                justifyContent: "center",
+                mt: 2,
+              }}
+            >
+              <Link
+                href="#"
+                underline="none"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.6,
+                  color: "#555",
+                  fontSize: "0.82rem",
+                  "&:hover": { color: "#2e7d32" },
+                  fontFamily: "'Inter', sans-serif",
+                }}
+              >
                 <UserIcon /> Need some help?
               </Link>
             </Box>
           </Paper>
         </Box>
 
-        {/* ── City Dropdowns ── */}
+        {/* City Dropdowns */}
         <CitySearchDropdown
           anchorEl={fromFieldRef.current}
           open={fromDropOpen}
           onClose={() => setFromDropOpen(false)}
-          onSelect={(city) => { setFromCity(city); setErrors((e) => ({ ...e, from: "" })); }}
+          onSelect={(city) => {
+            setFromCity(city);
+            setErrors((e) => ({ ...e, from: "" }));
+          }}
           cities={cities}
           loading={citiesLoading}
           placeholder="Search departure city..."
         />
-
         <CitySearchDropdown
           anchorEl={toFieldRef.current}
           open={toDropOpen}
           onClose={() => setToDropOpen(false)}
-          onSelect={(city) => { setToCity(city); setErrors((e) => ({ ...e, to: "" })); }}
+          onSelect={(city) => {
+            setToCity(city);
+            setErrors((e) => ({ ...e, to: "" }));
+          }}
           cities={cities}
           loading={citiesLoading}
           placeholder="Search destination city..."
         />
 
-        {/* ── Date Pickers ── */}
+        {/* Date Pickers */}
         <FlightDatePicker
           anchorEl={depDateRef.current}
           open={depPickerOpen}
@@ -1132,7 +2041,6 @@ export default function FlightSearch({
             }
           }}
         />
-
         <FlightDatePicker
           anchorEl={retDateRef.current}
           open={retPickerOpen}
@@ -1142,7 +2050,7 @@ export default function FlightSearch({
           minDate={departureDate}
         />
 
-        {/* ── Passenger & Class Dropdown ── */}
+        {/* Passenger & Class Dropdown */}
         <PassengerClassDropdown
           anchorEl={paxRef.current}
           open={paxDropOpen}

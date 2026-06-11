@@ -5,7 +5,7 @@ export const FLIGHT_API_HEADERS = {
   "x-api-key": "ft4xaqQzYscsEfWAqrl-iLqq67xzrHqGPxVHRXzm_NI",
   "x-user-id": "1",
 };
-
+  
 export async function flightFetch(
   endpoint,
   { params = {}, body = null, method = "GET" } = {},
