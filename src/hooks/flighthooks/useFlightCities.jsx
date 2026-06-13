@@ -9,9 +9,10 @@ async function fetchAllCountries() {
 
   while (nextUrl) {
     // Use page param after first call
-    const endpoint = pageNum === 1
-      ? FLIGHT_ENDPOINTS.COUNTRIES
-      : `${FLIGHT_ENDPOINTS.COUNTRIES}?page=${pageNum}`;
+    const endpoint =
+      pageNum === 1
+        ? FLIGHT_ENDPOINTS.COUNTRIES
+        : `${FLIGHT_ENDPOINTS.COUNTRIES}?page=${pageNum}`;
 
     const data = await flightFetch(endpoint);
 
@@ -40,7 +41,12 @@ export function useFlightCities() {
     setError(null);
     try {
       const list = await fetchAllCountries();
-      console.log("[useFlightCities] total fetched:", list.length, "| sample:", list[0]);
+      console.log(
+        "[useFlightCities] total fetched:",
+        list.length,
+        "| sample:",
+        list[0],
+      );
       setCities(list);
     } catch (err) {
       console.error("[useFlightCities] error:", err);

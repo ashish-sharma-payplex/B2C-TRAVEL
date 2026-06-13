@@ -10,6 +10,7 @@ import {
   useMediaQuery,
   useTheme,
   CircularProgress,
+  CssBaseline,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -33,6 +34,18 @@ const muiTheme = createTheme({
   },
   typography: {
     fontFamily: "'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+  },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        html: {
+          overflowY: "scroll",
+        },
+        body: {
+          overflowX: "hidden",
+        },
+      },
+    },
   },
 });
 
@@ -322,6 +335,7 @@ const CitySearchDropdown = ({
         boxShadow: "0 8px 40px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.07)",
         bgcolor: "#fff",
         overflow: "hidden",
+        boxSizing: "border-box",
         fontFamily: "'Inter', sans-serif",
       }}
     >
@@ -349,6 +363,7 @@ const CitySearchDropdown = ({
             fontFamily: "'Inter', sans-serif",
             color: "#111827",
             background: "transparent",
+            minWidth: 0,
           }}
         />
         {query && (
@@ -367,7 +382,16 @@ const CitySearchDropdown = ({
         )}
       </Box>
 
-      <Box sx={{ maxHeight: 320, overflowY: "auto" }}>
+      <Box
+        sx={{
+          maxHeight: 320,
+          overflowY: "auto",
+          overflowX: "hidden",
+          width: "100%",
+          boxSizing: "border-box",
+          scrollbarGutter: "stable",
+        }}
+      >
         {loading ? (
           <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
             <CircularProgress size={24} sx={{ color: GREEN }} />
@@ -563,6 +587,7 @@ const FlightDatePicker = ({
         bgcolor: "#ffffff",
         width: { xs: "calc(100vw - 16px)", md: "auto" },
         minWidth: { md: 300 },
+        boxSizing: "border-box",
         fontFamily: "'Inter', sans-serif",
       }}
     >
@@ -757,6 +782,7 @@ const PassengerClassDropdown = ({
         left: pos.left,
         zIndex: 9999,
         width: 300,
+        boxSizing: "border-box",
         background: "#fff",
         borderRadius: 16,
         border: "1px solid #f0f0f0",
@@ -1255,7 +1281,9 @@ export default function FlightSearch({
   initialFrom = null,
   initialTo = null,
   initialDate = null,
-  onSearch = null, // ← listing page se callback
+  initialReturnDate = null,  
+  initialTripType = "oneway",
+  onSearch = null,
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -1266,7 +1294,6 @@ export default function FlightSearch({
   const { cities, loading: citiesLoading } = useFlightCities();
   const { searchFlights, loading: searchLoading } = useFlightSearch();
 
-  const [tripType, setTripType] = useState("oneway");
   const [fromCity, setFromCity] = useState(
     initialFrom || { code: "BOM", name: "Mumbai, IN" },
   );
@@ -1276,7 +1303,15 @@ export default function FlightSearch({
 
   const [fromDropOpen, setFromDropOpen] = useState(false);
   const [toDropOpen, setToDropOpen] = useState(false);
-
+const [tripType, setTripType] = useState(initialTripType || "oneway");
+const [returnDate, setReturnDate] = useState(() => {
+  if (initialReturnDate) {
+    const d = new Date(initialReturnDate);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+  return null;
+});
   const fromFieldRef = useRef(null);
   const toFieldRef = useRef(null);
 
@@ -1292,7 +1327,7 @@ export default function FlightSearch({
     d.setHours(0, 0, 0, 0);
     return d;
   });
-  const [returnDate, setReturnDate] = useState(null);
+ 
 
   const [depPickerOpen, setDepPickerOpen] = useState(false);
   const [retPickerOpen, setRetPickerOpen] = useState(false);
@@ -1309,13 +1344,25 @@ export default function FlightSearch({
   });
   const [cabinClass, setCabinClass] = useState("Economy");
 
+
+
+  useEffect(() => {
+  if (initialTripType) setTripType(initialTripType);
+}, [initialTripType]);
+
+useEffect(() => {
+  if (initialReturnDate) {
+    const d = new Date(initialReturnDate);
+    d.setHours(0, 0, 0, 0);
+    setReturnDate(d);
+  }
+}, [initialReturnDate]);
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // initialFrom/initialTo change hone pe sync karo (listing page reuse)
   useEffect(() => {
     if (initialFrom) setFromCity(initialFrom);
   }, [initialFrom?.code]);
@@ -1397,13 +1444,11 @@ export default function FlightSearch({
       tripType,
     };
 
-    // Listing page se call ho raha hai to onSearch callback use karo
     if (onSearch) {
       onSearch(result, params);
       return;
     }
 
-    // Home/flights page se pehli baar — normal navigate
     navigate("/flights/listing", {
       state: {
         searchResult: result,
@@ -1415,6 +1460,7 @@ export default function FlightSearch({
 
   return (
     <ThemeProvider theme={muiTheme}>
+      <CssBaseline />
       <>
         <StickyRightBar visible={scrolled} />
         <CategoryTabs />
@@ -1567,7 +1613,7 @@ export default function FlightSearch({
                   }}
                   sx={{
                     flex: 1,
-                    minWidth: 0, // ← KEY: flex child overflow fix
+                    minWidth: 0,
                     border: `1px solid ${errors.from ? "#dc2626" : "#c8c8c8"}`,
                     borderRadius: "12px",
                     m: 0,
@@ -1582,7 +1628,7 @@ export default function FlightSearch({
                     mr: "8px",
                     lineHeight: 1,
                     cursor: "pointer",
-                    overflow: "hidden", // ← KEY
+                    overflow: "hidden",
                     "&:hover": {
                       borderColor: errors.from ? "#dc2626" : "#2e7d32",
                     },
@@ -1608,8 +1654,8 @@ export default function FlightSearch({
                       gap: 1,
                       width: "100%",
                       marginLeft: "18px",
-                      minWidth: 0, // ← KEY
-                      overflow: "hidden", // ← KEY
+                      minWidth: 0,
+                      overflow: "hidden",
                     }}
                   >
                     <FlightTakeoffIcon />
@@ -1619,8 +1665,8 @@ export default function FlightSearch({
                         fontWeight: 600,
                         color: fromCity ? "#111827" : "#9ca3af",
                         flex: 1,
-                        minWidth: 0, // ← KEY
-                        overflow: "hidden", // ← KEY
+                        minWidth: 0,
+                        overflow: "hidden",
                         textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
                         userSelect: "none",
@@ -1692,7 +1738,7 @@ export default function FlightSearch({
                   }}
                   sx={{
                     flex: 1,
-                    minWidth: 0, // ← KEY
+                    minWidth: 0,
                     border: `1px solid ${errors.to ? "#dc2626" : "#c8c8c8"}`,
                     borderRadius: "12px",
                     m: 0,
@@ -1706,7 +1752,7 @@ export default function FlightSearch({
                     backgroundColor: errors.to ? "#fff5f5" : "#fff",
                     lineHeight: 1,
                     cursor: "pointer",
-                    overflow: "hidden", // ← KEY
+                    overflow: "hidden",
                     "&:hover": {
                       borderColor: errors.to ? "#dc2626" : "#2e7d32",
                     },
@@ -1732,8 +1778,8 @@ export default function FlightSearch({
                       gap: 1,
                       width: "100%",
                       marginLeft: "24px",
-                      minWidth: 0, // ← KEY
-                      overflow: "hidden", // ← KEY
+                      minWidth: 0,
+                      overflow: "hidden",
                     }}
                   >
                     <FlightLandIcon />
@@ -1743,8 +1789,8 @@ export default function FlightSearch({
                         fontWeight: 600,
                         color: toCity ? "#111827" : "#9ca3af",
                         flex: 1,
-                        minWidth: 0, // ← KEY
-                        overflow: "hidden", // ← KEY
+                        minWidth: 0,
+                        overflow: "hidden",
                         textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
                         userSelect: "none",

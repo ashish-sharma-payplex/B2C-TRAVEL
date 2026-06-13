@@ -1,8 +1,8 @@
-import { useState, useCallback } from "react";
-import { FLIGHT_ENDPOINTS, flightFetch } from "../../api/flightApi";
+// ─── useFlightSearch.js ───────────────────────────────────────────────────────
 
-// FlightCabinClass mapping
-// 1 = Economy, 2 = Premium Economy, 3 = Business, 4 = First Class
+import { useState, useCallback } from "react";
+import { flightFetch, FLIGHT_ENDPOINTS } from "../../api/flightApi";
+
 const CABIN_CLASS_MAP = {
   Economy: 1,
   "Premium Economy": 2,
@@ -10,102 +10,137 @@ const CABIN_CLASS_MAP = {
   "First Class": 4,
 };
 
-function formatDateTime(date) {
+const SEARCH_TIMEOUT_MS = 15000;
+
+function formatSegmentDate(date) {
   if (!date) return "";
   const d = new Date(date);
-  // "2026-06-22T00:00:00"
   const pad = (n) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T00:00:00`;
 }
 
+function withTimeout(promise, ms, errorMsg = "Request timed out") {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(errorMsg)), ms),
+    ),
+  ]);
+}
+
+// ── Normalize API response into consistent shape ──────────────────────────────
+// Returns: { onwardFlights, returnFlights, isRoundTrip, raw }
+// Case 1: Old format  → data.results.Results (flat array, one-way)
+// Case 2: New format  → data.Outbound + data.Inbound (round trip)
+// Case 3: New format  → data.Outbound + Inbound: null (one-way)
+export function normalizeFlightResponse(data) {
+  if (!data) return { onwardFlights: [], returnFlights: [], isRoundTrip: false };
+
+  // New format
+  if (data.Outbound !== undefined) {
+    const outbound = data.Outbound?.results || [];
+    const inbound  = data.Inbound?.results  || [];
+    const isRoundTrip = !!data.Inbound;
+
+    return {
+      onwardFlights: outbound,
+      returnFlights: inbound,
+      isRoundTrip,
+    };
+  }
+
+  // Old format
+  const flat = data.results?.Results || [];
+  return {
+    onwardFlights: flat,
+    returnFlights: [],
+    isRoundTrip: false,
+  };
+}
+
 export function useFlightSearch() {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [results, setResults] = useState(null);
+  const [error, setError]     = useState(null);
 
-  const searchFlights = useCallback(async ({
-    fromCity,
-    toCity,
-    departureDate,
-    returnDate,
-    passengers,
-    cabinClass,
-    tripType, // "oneway" | "roundtrip"
-  }) => {
-    setLoading(true);
-    setError(null);
-    setResults(null);
+  const searchFlights = useCallback(
+    async ({
+      fromCity,
+      toCity,
+      departureDate,
+      returnDate,
+      passengers,
+      cabinClass,
+      tripType,
+      // ── Pagination params (optional, defaults provided) ──
+      outboundPage      = 1,
+      outboundPageSize  = 20,
+      inboundPage       = 1,
+      inboundPageSize   = 20,
+    }) => {
+      setLoading(true);
+      setError(null);
 
-    const cabinClassNum = CABIN_CLASS_MAP[cabinClass] ?? 1;
-    const journeyType = tripType === "roundtrip" ? "2" : "1";
-    const depTime = formatDateTime(departureDate);
+      try {
+        const journeyType = tripType === "roundtrip" ? 2 : 1;
+        const cabinCode   = CABIN_CLASS_MAP[cabinClass] || 1;
+        const depDate     = formatSegmentDate(departureDate);
 
-    let payload;
-
-    if (journeyType === "1") {
-      // One-way
-      payload = {
-        AdultCount: String(passengers.adults),
-        ChildCount: String(passengers.children),
-        InfantCount: String(passengers.infants),
-        DirectFlight: "false",
-        OneStopFlight: "false",
-        JourneyType: "1",
-        Segments: [
+        const segments = [
           {
             Origin: fromCity.code,
             Destination: toCity.code,
-            FlightCabinClass: cabinClassNum,
-            PreferredDepartureTime: depTime,
-            PreferredArrivalTime: depTime,
+            FlightCabinClass: cabinCode,
+            PreferredDepartureTime: depDate,
+            PreferredArrivalTime: depDate,
           },
-        ],
-      };
-    } else {
-      // Round-trip
-      const retTime = formatDateTime(returnDate);
-      payload = {
-        AdultCount: String(passengers.adults),
-        ChildCount: String(passengers.children),
-        InfantCount: String(passengers.infants),
-        DirectFlight: "false",
-        OneStopFlight: "false",
-        JourneyType: "2",
-        PreferredAirlines: null,
-        Segments: [
-          {
-            Origin: fromCity.code,
-            Destination: toCity.code,
-            FlightCabinClass: String(cabinClassNum),
-            PreferredDepartureTime: depTime,
-            PreferredArrivalTime: depTime,
-          },
-          {
+        ];
+
+        if (tripType === "roundtrip" && returnDate) {
+          const retDate = formatSegmentDate(returnDate);
+          segments.push({
             Origin: toCity.code,
             Destination: fromCity.code,
-            FlightCabinClass: String(cabinClassNum),
-            PreferredDepartureTime: retTime,
-            PreferredArrivalTime: retTime,
-          },
-        ],
-        Sources: null,
-      };
-    }
+            FlightCabinClass: cabinCode,
+            PreferredDepartureTime: retDate,
+            PreferredArrivalTime: retDate,
+          });
+        }
 
-    try {
-      const data = await flightFetch(FLIGHT_ENDPOINTS.SEARCH, {
-        method: "POST",
-        body: payload,
-      });
-      setResults(data);
-      return data;
-    } catch (err) {
-      setError(err.message);
-      return { success: false, error: { message: err.message } };
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+        const body = {
+          EndUserIp:        "192.168.10.10",
+          TokenId:          "ac2751e9-4cc3-406f-b678-c947e4f57a00",
+          AdultCount:       String(passengers.adults   || 1),
+          ChildCount:       String(passengers.children || 0),
+          InfantCount:      String(passengers.infants  || 0),
+          DirectFlight:     "false",
+          OneStopFlight:    "false",
+          JourneyType:      journeyType,
+          PreferredAirlines: [],
+          Segments:         segments,
+          Sources:          [],
+          // ── New pagination params ──
+          outbound_page:      outboundPage,
+          outbound_page_size: outboundPageSize,
+          inbound_page:       inboundPage,
+          inbound_page_size:  inboundPageSize,
+        };
 
-  return { searchFlights, loading, error, results };
+        const result = await withTimeout(
+          flightFetch(FLIGHT_ENDPOINTS.SEARCH, { method: "POST", body }),
+          SEARCH_TIMEOUT_MS,
+          "Flight search timed out. Please try again.",
+        );
+
+        return result;
+      } catch (err) {
+        setError(err.message);
+        return null;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
+  );
+
+  return { searchFlights, loading, error };
 }

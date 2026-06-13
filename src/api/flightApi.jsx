@@ -5,7 +5,7 @@ export const FLIGHT_API_HEADERS = {
   "x-api-key": "ft4xaqQzYscsEfWAqrl-iLqq67xzrHqGPxVHRXzm_NI",
   "x-user-id": "1",
 };
-  
+
 export async function flightFetch(
   endpoint,
   { params = {}, body = null, method = "GET" } = {},
@@ -22,11 +22,12 @@ export async function flightFetch(
   if (method === "POST" && body) options.body = JSON.stringify(body);
 
   const res = await fetch(url.toString(), options);
-  const data = await res.json();
-  return data;
+  if (!res.ok) throw new Error(`API error ${res.status}: ${res.statusText}`);
+  return res.json();
 }
 
 export const FLIGHT_ENDPOINTS = {
   COUNTRIES: "/api/flightv2/airports",
   SEARCH: "/api/flightv2/search/",
+  CALENDAR_FARE: "/api/flightv2/calendar-fare/",
 };
