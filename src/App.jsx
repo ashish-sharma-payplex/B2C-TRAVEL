@@ -18,6 +18,8 @@ import BookingSuccessPage from "./components/hotel/BookingSuccessPage";
 import BusResultsPage from "../pages/buses/Results";
 import BusPassengerPage from "../pages/buses/busPassangerPage";
 import FlightsListingPage from "./components/flights/FlightsListingPage";
+import BookFlight from "./components/flights/BookFlight";
+
 
 function ScrollHandler({ setScrolled }) {
   const location = useLocation();
@@ -101,6 +103,7 @@ function App() {
           <Route path="/buses/results" element={<BusResultsPage />} /> 
           <Route path="/buses/passenger-details" element={<BusPassengerPage />} /> 
           <Route path="/trains" element={<TrainsPage />} />
+          <Route path="/book-flight" element={<BookFlight />} />
         </Routes>
       </div>
     </BrowserRouter>
