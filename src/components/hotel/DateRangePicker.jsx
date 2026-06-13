@@ -308,7 +308,7 @@ export default function DateRangePicker({
 
         {/* ✅ Check In Calendar */}
         <Box>
-          <Typography sx={{ fontSize: "0.7rem", fontWeight: 700, color: "#9ca3af", letterSpacing: "0.8px", mb: 1, textAlign: "center" }}>
+          <Typography sx={{ fontSize: "0.7rem", fontWeight: 700, fontFamily: "Inter, sans-serif", color: "#9ca3af", letterSpacing: "0.8px", mb: 1, textAlign: "center" }}>
             CHECK IN
           </Typography>
           <MonthGrid

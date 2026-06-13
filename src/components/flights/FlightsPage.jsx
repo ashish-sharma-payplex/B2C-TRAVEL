@@ -30,7 +30,7 @@
 //     nonstop: true,
 //   },
 //   // add more flights...
-// ];
+// ];   
 
 // const FlightsPage = () => {
 //   const [priceRange, setPriceRange] = useState([4000, 22000]);

@@ -672,7 +672,7 @@ const HotelsPage = ({ scrolled }) => {
 
       <Box
         sx={{
-          fontFamily: "Inter",
+         fontFamily: "Inter, sans-serif",
           position: "relative",
           px: { xs: 2, md: 4 },
           pb: { xs: 3, md: 5 },
@@ -723,6 +723,7 @@ const HotelsPage = ({ scrolled }) => {
                 sx={{
                   fontSize: { xs: "1.25rem", md: "1.65rem" },
                   fontWeight: 800,
+                  fontFamily: "Inter, sans-serif",
                   color: "#111827",
                   letterSpacing: "-0.3px",
                   lineHeight: 1.2,
@@ -734,6 +735,7 @@ const HotelsPage = ({ scrolled }) => {
               <Typography
                 sx={{
                   fontSize: "0.875rem",
+                  fontFamily: "Inter, sans-serif",
                   color: "#6b7280",
                   mt: 0.5,
                 }}
@@ -754,6 +756,7 @@ const HotelsPage = ({ scrolled }) => {
                 color: GREEN,
                 fontWeight: 500,
                 fontSize: "0.875rem",
+                fontFamily: "Inter, sans-serif",
                 textTransform: "none",
                 background: "none",
                 boxShadow: "none",
@@ -805,6 +808,7 @@ const HotelsPage = ({ scrolled }) => {
                   color: "#fff",
                   fontWeight: 700,
                   fontSize: "0.95rem",
+                  fontFamily: "Inter, sans-serif",
                   textTransform: "none",
                   borderRadius: "10px",
                   px: { xs: 3, md: 3 },

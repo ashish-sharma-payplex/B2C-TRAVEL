@@ -297,9 +297,9 @@
         <Box sx={{ flex: 1, p: { xs: 2, sm: 2, md: 2.5 }, display: "flex", flexDirection: { xs: "column", md: "row" }, gap: { xs: 1.5, md: 0 } }}>
           <Box sx={{ flex: 1 }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap", mb: 1.2 }}>
-              <Typography sx={{ fontSize: { xs: 15, sm: 16 }, fontWeight: 700, color: "#111827" }}>{name}</Typography>
+              <Typography sx={{ fontSize: { xs: 15, sm: 16 }, fontWeight: 700, color: "#111827", fontFamily: "Inter, sans-serif" }}>{name}</Typography>
               {isRefundable !== null && (
-                <Typography sx={{ fontSize: 11.5, fontWeight: 600, color: isRefundable ? GREEN : "#f59e0b", bgcolor: isRefundable ? "#dcfce7" : "#fef3c7", px: 1, py: 0.2, borderRadius: "4px" }}>
+                <Typography sx={{ fontSize: 11.5, fontWeight: 600,fontFamily: "Inter, sans-serif", color: isRefundable ? GREEN : "#f59e0b", bgcolor: isRefundable ? "#dcfce7" : "#fef3c7", px: 1, py: 0.2, borderRadius: "4px" }}>
                   {isRefundable ? "Refundable" : "Non-refundable"}
                 </Typography>
               )}
@@ -307,21 +307,21 @@
 
             {(size || bedType || viewType || maxOccupancy) && (
               <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: { xs: "6px 12px", sm: "8px 16px" }, mb: 1.5 }}>
-                {size && <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}><SquareFootIcon sx={{ fontSize: 16, color: "#555" }} /><Typography sx={{ fontSize: 13, color: "#374151" }}>{size}</Typography></Box>}
-                {bedType && <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}><KingBedOutlinedIcon sx={{ fontSize: 16, color: "#555" }} /><Typography sx={{ fontSize: 13, color: "#374151" }}>{bedType}</Typography></Box>}
-                {viewType && <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}><VisibilityIcon sx={{ fontSize: 16, color: "#555" }} /><Typography sx={{ fontSize: 13, color: "#374151" }}>{viewType}</Typography></Box>}
+                {size && <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}><SquareFootIcon sx={{ fontSize: 16, color: "#555" }} /><Typography sx={{ fontSize: 13, color: "#374151", fontFamily: "Inter, sans-serif" }}>{size}</Typography></Box>}
+                {bedType && <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}><KingBedOutlinedIcon sx={{ fontSize: 16, color: "#555" }} /><Typography sx={{ fontSize: 13, color: "#374151", fontFamily: "Inter, sans-serif" }}>{bedType}</Typography></Box>}
+                {viewType && <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}><VisibilityIcon sx={{ fontSize: 16, color: "#555" }} /><Typography sx={{ fontSize: 13, color: "#374151", fontFamily: "Inter, sans-serif" }}>{viewType}</Typography></Box>}
                 {maxOccupancy && <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}><PeopleAltOutlinedIcon sx={{ fontSize: 16, color: "#555" }} /><Typography sx={{ fontSize: 13, color: "#374151" }}>Sleeps {maxOccupancy}</Typography></Box>}
               </Box>
             )}
 
             {inclusions.length > 0 && (
               <>
-                <Typography sx={{ fontSize: 12.5, color: "#6b7280", fontWeight: 500, mb: 0.8 }}>Inclusions</Typography>
+                <Typography sx={{ fontSize: 12.5, color: "#6b7280", fontWeight: 500, fontFamily: "Inter, sans-serif", mb: 0.8 }}>Inclusions</Typography>
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: { xs: "6px 10px", sm: "6px 14px" } }}>
                   {inclusions.slice(0, 6).map((item, i) => (
                     <Box key={i} sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                       <FreeBreakfastOutlinedIcon sx={{ fontSize: 15, color: "#555" }} />
-                      <Typography sx={{ fontSize: { xs: 12, sm: 12.5 }, color: "#555" }}>{item}</Typography>
+                      <Typography sx={{ fontSize: { xs: 12, sm: 12.5 }, color: "#555", fontFamily: "Inter, sans-serif" }}>{item}</Typography>
                     </Box>
                   ))}
                 </Box>
@@ -337,21 +337,21 @@
               {originalPrice && originalPrice > price && (
                 <Typography sx={{ fontSize: 12, color: "#9ca3af", textDecoration: "line-through" }}>₹{Number(originalPrice).toLocaleString("en-IN")}</Typography>
               )}
-              <Typography sx={{ fontSize: { xs: 17, sm: 18 }, fontWeight: 800, color: "#111827" }}>₹{Number(price).toLocaleString("en-IN")}</Typography>
+              <Typography sx={{ fontSize: { xs: 17, sm: 18 }, fontWeight: 800, color: "#111827", fontFamily: "Inter, sans-serif" }}>₹{Number(price).toLocaleString("en-IN")}</Typography>
               {taxes > 0 && (
-                <Typography sx={{ fontSize: 11, color: "#6b7280", lineHeight: 1.4 }}>+₹{Number(taxes).toLocaleString("en-IN")} taxes & fees<br />per night</Typography>
+                <Typography sx={{ fontSize: 11, color: "#6b7280", lineHeight: 1.4, fontFamily: "Inter, sans-serif" }}>+₹{Number(taxes).toLocaleString("en-IN")} taxes & fees<br />per night</Typography>
               )}
             </Box>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 0.8, alignItems: "flex-end" }}>
               <Box sx={{ display: "flex", alignItems: "center", gap: 0.4, cursor: "pointer" }}>
-                <Typography sx={{ fontSize: 13, color: GREEN, fontWeight: 600 }}>View details</Typography>
+                <Typography sx={{ fontSize: 13, color: GREEN, fontWeight: 600, fontFamily: "Inter, sans-serif" }}>View details</Typography>
                 <ChevronRightIcon sx={{ fontSize: 16, color: GREEN }} />
               </Box>
               {/* ── Reserve now → navigate to checkout ── */}
               <Button
                 variant="contained"
                 onClick={handleReserve}
-                sx={{ bgcolor: GREEN, color: "#fff", fontSize: { xs: 12.5, sm: 13 }, fontWeight: 600, textTransform: "none", borderRadius: "8px", px: { xs: 2, sm: 2.5 }, py: 0.9, boxShadow: "none", whiteSpace: "nowrap", "&:hover": { bgcolor: "#15803d", boxShadow: "none" } }}
+                sx={{ bgcolor: GREEN, color: "#fff", fontSize: { xs: 12.5, sm: 13 }, fontWeight: 600,fontFamily: "Inter, sans-serif", textTransform: "none", borderRadius: "8px", px: { xs: 2, sm: 2.5 }, py: 0.9, boxShadow: "none", whiteSpace: "nowrap", "&:hover": { bgcolor: "#15803d", boxShadow: "none" } }}
               >
                 Reserve now
               </Button>
@@ -377,8 +377,8 @@
     if (loading) return <RoomsSkeleton />;
 
     return (
-      <Box sx={{ px: { xs: 2, sm: 3, md: 4, lg: 6 }, pt: 3, pb: 3, borderTop: "1px solid #f3f4f6" }}>
-        <Typography sx={{ fontSize: { xs: "1.05rem", md: "1.15rem" }, fontWeight: 800, color: "#111827", mb: 2 }}>
+      <Box sx={{ px: { xs: 2, sm: 3, md: 4, lg: 6 }, pt: 3, pb: 3,fontFamily: "Inter, sans-serif", borderTop: "1px solid #f3f4f6" }}>
+        <Typography sx={{ fontSize: { xs: "1.05rem", md: "1.15rem" }, fontWeight: 800,fontFamily: "Inter, sans-serif", color: "#111827", mb: 2 }}>
           Select your rooms
         </Typography>
         {rooms.map((room, i) => (
@@ -412,7 +412,7 @@
 
     return (
       <Box sx={{ px: { xs: 2, sm: 3, md: 4, lg: 6 }, pt: 3, pb: 4, borderTop: "1px solid #f3f4f6" }}>
-        <Typography sx={{ fontSize: { xs: "1.05rem", md: "1.15rem" }, fontWeight: 800, color: "#111827", mb: 0.5 }}>Location</Typography>
+        <Typography sx={{ fontSize: { xs: "1.05rem", md: "1.15rem" }, fontWeight: 800, fontFamily: "Inter, sans-serif", color: "#111827", mb: 0.5 }}>Location</Typography>
         <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 2, alignItems: "stretch" }}>
           {hasMap && (
             <Box sx={{ flex: { md: 7 }, position: "relative", borderRadius: "16px", overflow: "hidden", border: "1px solid #e5e7eb", height: { xs: 240, sm: 320, md: 430 }, boxShadow: "0 2px 12px rgba(0,0,0,0.08)", flexShrink: 0 }}>
@@ -426,12 +426,12 @@
           {attractionList.length > 0 && (
             <Box sx={{ flex: hasMap ? { md: 3 } : 1, border: "1px solid #e5e7eb", borderRadius: "16px", overflow: "hidden", display: "flex", flexDirection: "column" }}>
               <Box sx={{ px: 2.5, py: 2, borderBottom: "1px solid #f3f4f6" }}>
-                <Typography sx={{ fontSize: { xs: 14, sm: 15 }, fontWeight: 800, color: "#111827" }}>Explore the Area</Typography>
+                <Typography sx={{ fontSize: { xs: 14, sm: 15 }, fontWeight: 800, fontFamily: "Inter, sans-serif", color: "#111827" }}>Explore the Area</Typography>
               </Box>
               <Box sx={{ flex: 1, overflowY: "auto", maxHeight: { xs: 280, md: hasMap ? 374 : "none" }, "&::-webkit-scrollbar": { width: "4px" }, "&::-webkit-scrollbar-thumb": { bgcolor: "#e5e7eb", borderRadius: "4px" } }}>
                 {attractionList.map((place, i) => (
                   <Box key={i} sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", px: 2.5, py: 1.5, borderBottom: i < attractionList.length - 1 ? "1px solid #f3f4f6" : "none", "&:hover": { bgcolor: "#f9fafb" }, transition: "background 0.15s" }}>
-                    <Typography sx={{ fontSize: { xs: 12.5, sm: 13 }, color: "#374151", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", pr: 1 }}>{place}</Typography>
+                    <Typography sx={{ fontSize: { xs: 12.5, sm: 13 }, fontFamily: "Inter, sans-serif", color: "#374151", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", pr: 1 }}>{place}</Typography>
                   </Box>
                 ))}
               </Box>
@@ -460,7 +460,7 @@
 
     return (
       <Box sx={{ px: { xs: 2, sm: 3, md: 4, lg: 6 }, pt: 3, pb: 5, borderTop: "1px solid #f3f4f6" }}>
-        <Typography sx={{ fontSize: { xs: "1.05rem", md: "1.15rem" }, fontWeight: 800, color: "#111827", mb: 2 }}>Policies</Typography>
+        <Typography sx={{ fontSize: { xs: "1.05rem", md: "1.15rem" }, fontWeight: 800, fontFamily: "Inter, sans-serif", color: "#111827", mb: 2 }}>Policies</Typography>
 
         {policyRows.length > 0 && (
           <Box sx={{ border: "1px solid #e5e7eb", borderRadius: "12px", overflow: "hidden", mb: hasFees ? 3 : 0 }}>
@@ -468,11 +468,11 @@
               <Box key={i} sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, borderBottom: i < policyRows.length - 1 ? "1px solid #e5e7eb" : "none", px: { xs: 2, sm: 2.5 }, py: { xs: 1.8, sm: 2.2 } }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: { sm: "36%", md: "30%" }, flexShrink: 0, mb: { xs: 0.6, sm: 0 } }}>
                   {row.icon}
-                  <Typography sx={{ fontSize: { xs: 13.5, sm: 14 }, fontWeight: 700, color: "#111827" }}>{row.label}</Typography>
+                  <Typography sx={{ fontSize: { xs: 13.5, sm: 14 }, fontWeight: 700, color: "#111827", fontFamily: "Inter, sans-serif" }}>{row.label}</Typography>
                 </Box>
                 <Box sx={{ flex: 1 }}>
-                  <Typography sx={{ fontSize: { xs: 13, sm: 13.5 }, color: "#374151", lineHeight: 1.7 }}>{row.value}</Typography>
-                  {row.sub && <Typography sx={{ fontSize: { xs: 11.5, sm: 12 }, color: "#6b7280", mt: 0.5, lineHeight: 1.6 }}>{row.sub}</Typography>}
+                  <Typography sx={{ fontSize: { xs: 13, sm: 13.5 }, color: "#374151", fontFamily: "Inter, sans-serif", lineHeight: 1.7 }}>{row.value}</Typography>
+                  {row.sub && <Typography sx={{ fontSize: { xs: 11.5, sm: 12 }, color: "#6b7280", mt: 0.5, lineHeight: 1.6, fontFamily: "Inter, sans-serif" }}>{row.sub}</Typography>}
                 </Box>
               </Box>
             ))}
@@ -483,14 +483,14 @@
           <Box sx={{ mt: 1 }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
               <ReceiptLongIcon sx={{ fontSize: 18, color: "#374151" }} />
-              <Typography sx={{ fontSize: { xs: 14, sm: 15 }, fontWeight: 700, color: "#111827" }}>Optional charges</Typography>
+              <Typography sx={{ fontSize: { xs: 14, sm: 15 }, fontWeight: 700, color: "#111827", fontFamily: "Inter, sans-serif" }}>Optional charges</Typography>
             </Box>
             <Box sx={{ border: "1px solid #e5e7eb", borderRadius: "12px", overflow: "hidden" }}>
               {optional.map((fee, i) => (
                 <Box key={i} sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, alignItems: { sm: "center" }, justifyContent: "space-between", px: { xs: 2, sm: 2.5 }, py: { xs: 1.5, sm: 1.8 }, borderBottom: i < optional.length - 1 ? "1px solid #e5e7eb" : "none", gap: { xs: 0.4, sm: 1 } }}>
                   <Box>
-                    <Typography sx={{ fontSize: { xs: 13, sm: 13.5 }, fontWeight: 600, color: "#111827" }}>{fee.FeesType}</Typography>
-                    {fee.ChargeType && <Typography sx={{ fontSize: { xs: 11.5, sm: 12 }, color: "#6b7280", mt: 0.3 }}>{fee.ChargeType}</Typography>}
+                    <Typography sx={{ fontSize: { xs: 13, sm: 13.5 }, fontWeight: 600, color: "#111827", fontFamily: "Inter, sans-serif" }}>{fee.FeesType}</Typography>
+                    {fee.ChargeType && <Typography sx={{ fontSize: { xs: 11.5, sm: 12 }, color: "#6b7280", mt: 0.3, fontFamily: "Inter, sans-serif" }}>{fee.ChargeType}</Typography>}
                   </Box>
                   <Typography sx={{ fontSize: { xs: 13, sm: 13.5 }, fontWeight: 700, color: "#374151", whiteSpace: "nowrap", flexShrink: 0 }}>{fee.Currency} {Number(fee.FeesValue).toLocaleString("en-IN")}</Typography>
                 </Box>
@@ -673,7 +673,7 @@
 
     return (
       <Box sx={{ px: { xs: 2, sm: 3, md: 4, lg: 6 }, pt: 2.5, pb: 3, borderTop: "1px solid #f3f4f6" }}>
-        <Typography sx={{ fontSize: { xs: "1.05rem", md: "1.15rem" }, fontWeight: 800, color: "#111827", mb: 2 }}>About</Typography>
+        <Typography sx={{ fontSize: { xs: "1.05rem", md: "1.15rem" }, fontWeight: 800, fontFamily: "Inter, sans-serif", color: "#111827", mb: 2 }}>About</Typography>
 
         {allDescriptions.length > 0 && (
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2.5 }}>
@@ -682,7 +682,7 @@
               const isActive = activeAboutTab === i;
               return (
                 <Box key={desc.title} onClick={() => setActiveAboutTab(i)}
-                  sx={{ px: { xs: 1.4, sm: 1.8 }, py: 0.6, borderRadius: "20px", fontSize: { xs: 12, sm: 13 }, cursor: "pointer", border: "1.5px solid", borderColor: isActive ? (isNote ? "#fde68a" : "#86efac") : "#e5e7eb", bgcolor: isActive ? (isNote ? "#fffbeb" : "#dcfce7") : "#fff", color: isActive ? (isNote ? "#d97706" : GREEN) : "#555", fontWeight: isActive ? 600 : 500, userSelect: "none", transition: "all 0.15s", "&:hover": { borderColor: isNote ? "#fde68a" : "#86efac", bgcolor: isActive ? (isNote ? "#fffbeb" : "#dcfce7") : "#f9fafb" } }}>
+                  sx={{ px: { xs: 1.4, sm: 1.8 }, py: 0.6, borderRadius: "20px", fontSize: { xs: 12, sm: 13 }, fontFamily: "Inter, sans-serif", cursor: "pointer", border: "1.5px solid", borderColor: isActive ? (isNote ? "#fde68a" : "#86efac") : "#e5e7eb", bgcolor: isActive ? (isNote ? "#fffbeb" : "#dcfce7") : "#fff", color: isActive ? (isNote ? "#d97706" : GREEN) : "#555", fontWeight: isActive ? 600 : 500, userSelect: "none", transition: "all 0.15s", "&:hover": { borderColor: isNote ? "#fde68a" : "#86efac", bgcolor: isActive ? (isNote ? "#fffbeb" : "#dcfce7") : "#f9fafb" } }}>
                   {desc.title}
                 </Box>
               );
@@ -693,27 +693,27 @@
         {activeContent ? (
           <Box sx={{ mb: 2.5, ...(activeType === "note" && { bgcolor: "#fffbeb", border: "1px solid #fde68a", borderRadius: "8px", px: 1.8, py: 1.4 }) }}>
             {activeType === "note" && <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#d97706", mb: 0.6, textTransform: "uppercase", letterSpacing: 0.5 }}>ℹ️ Note</Typography>}
-            <Typography sx={{ fontSize: { xs: 13, sm: 13.5 }, color: activeType === "note" ? "#92400e" : "#374151", lineHeight: 1.75, whiteSpace: "pre-line" }}>{activeContent}</Typography>
+            <Typography sx={{ fontSize: { xs: 13, sm: 13.5 }, color: activeType === "note" ? "#92400e" : "#374151", lineHeight: 1.75, whiteSpace: "pre-line", fontFamily: "Inter, sans-serif" }}>{activeContent}</Typography>
           </Box>
         ) : null}
 
         {facilities.length > 0 && (
           <>
             <Box sx={{ height: "1px", bgcolor: "#f3f4f6", mb: 2.5 }} />
-            <Typography sx={{ fontSize: { xs: 14, sm: 15 }, fontWeight: 700, color: "#111827", mb: 1.5 }}>Popular Facilities</Typography>
+            <Typography sx={{ fontSize: { xs: 14, sm: 15 }, fontWeight: 700, color: "#111827", mb: 1.5, fontFamily: "Inter, sans-serif" }}>Popular Facilities</Typography>
             <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr 1fr", sm: "1fr 1fr" }, rowGap: 0, columnGap: { xs: 1, sm: 2 } }}>
               {visibleFacilities.map((fac, i) => {
                 const label = typeof fac === "string" ? fac : (fac?.FacilityName ?? fac?.name ?? "");
                 return (
                   <Box key={i} sx={{ display: "flex", alignItems: "center", gap: 1.2, py: { xs: 1, sm: 1.2 } }}>
                     <Box sx={{ display: "flex", alignItems: "center", flexShrink: 0 }}>{getFacilityIcon(label)}</Box>
-                    <Typography sx={{ fontSize: { xs: 13, sm: 13.5 }, color: "#374151" }}>{label}</Typography>
+                    <Typography sx={{ fontSize: { xs: 13, sm: 13.5 }, color: "#374151", fontFamily: "Inter, sans-serif" }}>{label}</Typography>
                   </Box>
                 );
               })}
             </Box>
             <Box onClick={() => setShowAllFacilities((v) => !v)} sx={{ display: "flex", alignItems: "center", gap: 0.4, mt: 1, cursor: "pointer" }}>
-              <Typography sx={{ fontSize: { xs: 13, sm: 13.5 }, color: GREEN, fontWeight: 600 }}>{showAllFacilities ? "Show Less" : "View More"}</Typography>
+              <Typography sx={{ fontSize: { xs: 13, sm: 13.5 }, color: GREEN, fontWeight: 600, fontFamily: "Inter, sans-serif" }}>{showAllFacilities ? "Show Less" : "View More"}</Typography>
               <ExpandMoreIcon sx={{ fontSize: 18, color: GREEN, transform: showAllFacilities ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
             </Box>
           </>
@@ -748,11 +748,11 @@
           <Box sx={{ px: { xs: 2, sm: 3, md: 4, lg: 6 }, pt: { xs: 2, md: 3 }, pb: 1.5 }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 1 }}>
               {renderStars(stars)}
-              <Typography sx={{ fontSize: 13, color: "#9ca3af", ml: 0.5 }}>•</Typography>
-              <Typography sx={{ fontSize: 13, color: "#555", ml: 0.5 }}>Hotel</Typography>
+              <Typography sx={{ fontSize: 13, color: "#9ca3af", ml: 0.5, fontFamily: "Inter, sans-serif" }}>•</Typography>
+              <Typography sx={{ fontSize: 13, color: "#555", ml: 0.5, fontFamily: "Inter, sans-serif" }}>Hotel</Typography>
             </Box>
             <Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 2 }}>
-              <Typography sx={{ fontSize: { xs: "1.3rem", sm: "1.5rem", md: "1.75rem" }, fontWeight: 800, color: "#111827", lineHeight: 1.25, letterSpacing: "-0.3px" }}>{name}</Typography>
+              <Typography sx={{ fontSize: { xs: "1.3rem", sm: "1.5rem", md: "1.75rem" }, fontWeight: 800, fontFamily: "Inter, sans-serif", color: "#111827", lineHeight: 1.25, letterSpacing: "-0.3px" }}>{name}</Typography>
               {!isMobile && (
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexShrink: 0, mt: 0.5 }}>
                   {/* <Button startIcon={<FavoriteIcon sx={{ fontSize: "17px !important" }} />} sx={{ color: "#111", fontWeight: 600, fontSize: 13, textTransform: "none", borderRadius: "8px", px: 1.5, py: 0.7, border: "1.5px solid #e5e7eb", "&:hover": { bgcolor: "#f9fafb", borderColor: "#d1d5db" } }}>Save</Button> */}
@@ -765,10 +765,10 @@
                 {address && (
                   <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                     <LocationOnIcon sx={{ fontSize: 17, color: GREEN, flexShrink: 0 }} />
-                    <Typography sx={{ fontSize: 13, color: "#374151" }}>{address}</Typography>
+                    <Typography sx={{ fontSize: 13, fontFamily: "Inter, sans-serif", color: "#374151" }}>{address}</Typography>
                   </Box>
                 )}
-                <Typography sx={{ fontSize: 13, color: GREEN, fontWeight: 600, mt: 0.4, cursor: "pointer", "&:hover": { textDecoration: "underline" }, ml: address ? "22px" : 0 }}>View on map</Typography>
+                <Typography sx={{ fontSize: 13, color: GREEN, fontWeight: 600, fontFamily: "Inter, sans-serif", mt: 0.4, cursor: "pointer", "&:hover": { textDecoration: "underline" }, ml: address ? "22px" : 0 }}>View on map</Typography>
               </Box>
               {isMobile && (
                 <Box sx={{ display: "flex", gap: 0.8, flexShrink: 0 }}>

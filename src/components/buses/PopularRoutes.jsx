@@ -20,7 +20,7 @@ const routes = [
 const PopularRoutes = () => {
   return (
     <Box sx={{ mt: 6, px: { xs: 2, sm: 3, md: 0 } }}>
-      <Typography sx={{ fontSize: { xs: 20, sm: 22, md: 24 }, fontWeight: 600, mb: 3 }}>
+      <Typography sx={{ fontSize: { xs: 20, sm: 22, md: 24 }, fontWeight: 600, mb: 3,fontFamily: "Inter, sans-serif" }}>
         Popular Routes🔥
       </Typography>
 
@@ -36,6 +36,7 @@ const PopularRoutes = () => {
             key={route.city}
             sx={{
               display: "flex",
+              fontFamily: "Inter, sans-serif",
               alignItems: "center",
               gap: { xs: 1.5, sm: 2 },
             }}
@@ -47,13 +48,14 @@ const PopularRoutes = () => {
               sx={{ width: 70, height: 70, borderRadius: 2, objectFit: "cover" }}
             />
             <Box>
-              <Typography sx={{ fontSize: { xs: 16, sm: 18, md: 20 }, fontWeight: 500, lineHeight: "28px" }}>
+              <Typography sx={{ fontSize: { xs: 16, sm: 18, md: 20 }, fontWeight: 500, fontFamily: "Inter, sans-serif", lineHeight: "28px" }}>
                 {route.city}
               </Typography>
               <Typography
                 sx={{
                   fontSize: { xs: 14, sm: 15, md: 16 },
                   fontWeight: 400,
+                  fontFamily: "Inter, sans-serif",
                   lineHeight: "19px",
                   color: "#5E5E5E",
                 }}

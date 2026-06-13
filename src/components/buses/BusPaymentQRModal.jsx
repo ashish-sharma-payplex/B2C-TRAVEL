@@ -49,7 +49,7 @@ const MODAL_CSS = `
   box-shadow: 0 24px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.06);
   overflow: hidden;
   animation: bpqSlideUp 0.28s cubic-bezier(0.34,1.56,0.64,1);
-  font-family: 'DM Sans', sans-serif;
+  font-family: "Inter, sans-serif";
   position: relative;
 }
 @keyframes bpqSlideUp {
@@ -139,7 +139,7 @@ const MODAL_CSS = `
   border-radius: 8px; padding: 9px 20px;
   font-size: 13px; font-weight: 600; cursor: pointer;
   display: flex; align-items: center; gap: 6px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "Inter, sans-serif";
   transition: background 0.15s, transform 0.1s;
 }
 .bpq-retry-btn:hover { background: #15803d; transform: scale(1.03) }
@@ -190,7 +190,7 @@ const MODAL_CSS = `
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "Inter, sans-serif";
   display: flex; align-items: center; justify-content: center; gap: 8px;
   box-shadow: 0 4px 16px rgba(22,163,74,0.35);
   transition: opacity 0.15s, transform 0.1s;
@@ -208,7 +208,7 @@ const MODAL_CSS = `
   font-size: 11px;
   color: #9ca3af;
   margin-top: 6px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "Inter, sans-serif";
 }
 
 /* Cancel button row */
@@ -225,7 +225,7 @@ const MODAL_CSS = `
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "Inter, sans-serif";
   display: flex; align-items: center; justify-content: center; gap: 6px;
   transition: background 0.15s, border-color 0.15s, opacity 0.15s;
 }
@@ -435,7 +435,7 @@ export default function BusPaymentQRModal({
         {/* ── Header ── */}
         <div className="bpq-header">
           <div className="bpq-header-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg font-family="Inter, sans-serif" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="5" y="2" width="14" height="20" rx="2" />
               <path d="M12 18h.01" />
             </svg>
@@ -445,7 +445,7 @@ export default function BusPaymentQRModal({
             <div className="bpq-header-sub">Open any UPI app and scan the QR code</div>
           </div>
           <button className="bpq-close-btn" onClick={onClose}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round">
+            <svg font-family="Inter, sans-serif" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round">
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
@@ -467,7 +467,7 @@ export default function BusPaymentQRModal({
                 background: showExpired || showFailed ? "#ef4444" : showSuccess ? "#16a34a" : "#f59e0b",
               }}
             />
-            <span style={{ fontSize: 12, fontWeight: 600, color: showExpired || showFailed ? "#ef4444" : showSuccess ? "#16a34a" : "#92400e" }}>
+            <span style={{ fontSize: 12, fontWeight: 600, fontFamily: "Inter, sans-serif", color: showExpired || showFailed ? "#ef4444" : showSuccess ? "#16a34a" : "#92400e" }}>
               {showFailed ? "Failed" : showSuccess ? "Paid" : showExpired ? "Expired" : "Awaiting Payment"}
             </span>
           </div>
@@ -508,8 +508,8 @@ export default function BusPaymentQRModal({
                     <circle cx="12" cy="12" r="10" />
                     <polyline points="12 6 12 12 16 14" />
                   </svg>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "#111827" }}>QR Expired</div>
-                  <div style={{ fontSize: 12, color: "#6b7280", marginTop: -2 }}>Generate a new QR code</div>
+                  <div style={{ fontSize: 14, fontFamily: "Inter, sans-serif", fontWeight: 700, color: "#111827" }}>QR Expired</div>
+                  <div style={{ fontSize: 12, fontFamily: "Inter, sans-serif", color: "#6b7280", marginTop: -2 }}>Generate a new QR code</div>
                   <button className="bpq-retry-btn" onClick={onRetry}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round">
                       <polyline points="23 4 23 10 17 10" />
@@ -530,8 +530,8 @@ export default function BusPaymentQRModal({
                       <polyline points="20 6 9 17 4 12" />
                     </svg>
                   </div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: "#111827" }}>Payment Successful!</div>
-                  <div style={{ fontSize: 12, color: "#6b7280" }}>Redirecting to ticket...</div>
+                  <div style={{ fontSize: 15, fontFamily: "Inter, sans-serif", fontWeight: 700, color: "#111827" }}>Payment Successful!</div>
+                  <div style={{ fontSize: 12, fontFamily: "Inter, sans-serif", color: "#6b7280" }}>Redirecting to ticket...</div>
                 </div>
               </div>
             )}
@@ -543,7 +543,7 @@ export default function BusPaymentQRModal({
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2">
                 <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
               </svg>
-              Waiting for payment confirmation...
+              <span style={{ fontSize: 12, fontFamily: "Inter, sans-serif", color: "#6b7280" }}>Waiting for payment confirmation...</span>
             </div>
           )}
         </div>
@@ -605,7 +605,7 @@ export default function BusPaymentQRModal({
               </>
             ) : (
               <>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" fontFamily="Inter, sans-serif" strokeWidth="2.5" strokeLinecap="round">
                   <line x1="18" y1="6" x2="6" y2="18" />
                   <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>

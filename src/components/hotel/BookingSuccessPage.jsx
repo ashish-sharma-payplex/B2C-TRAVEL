@@ -32,7 +32,7 @@ const InfoItem = ({ icon, text }) =>
   text ? (
     <Box sx={{ display: "flex", alignItems: "center", gap: 0.7 }}>
       {icon}
-      <Typography sx={{ fontSize: 13, color: "#374151", fontFamily: FONT }}>
+      <Typography sx={{ fontSize: 13, color: "#374151", fontFamily:"Inter, sans-serif" }}>
         {text}
       </Typography>
     </Box>
@@ -41,7 +41,7 @@ const InfoItem = ({ icon, text }) =>
 const Facility = ({ label }) => (
   <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
     <CheckCircleIcon sx={{ fontSize: 14, color: GREEN }} />
-    <Typography sx={{ fontSize: 12.5, color: "#374151", fontFamily: FONT }}>
+    <Typography sx={{ fontSize: 12.5, color: "#374151", fontFamily:"Inter, sans-serif" }}>
       {label}
     </Typography>
   </Box>
@@ -56,7 +56,7 @@ const Stars = ({ count = 4 }) => (
       borderRadius: "6px",
       fontSize: 12,
       fontWeight: 700,
-      fontFamily: FONT,
+      fontFamily:"Inter, sans-serif",
     }}
   >
     {count} ★
@@ -75,7 +75,7 @@ const CancelTimeline = ({ cancelPolicies, isRefundable }) => {
           fontSize: 13,
           color: "#374151",
           mb: 1.5,
-          fontFamily: FONT,
+          fontFamily:"Inter, sans-serif",
         }}
       >
         {isRefundable ? "Partially Refundable" : "Non Refundable"}
@@ -129,10 +129,10 @@ const CancelTimeline = ({ cancelPolicies, isRefundable }) => {
 
       {/* Labels */}
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography sx={{ fontSize: 12, color: LIGHT, fontFamily: FONT }}>
+        <Typography sx={{ fontSize: 12, color: LIGHT, fontFamily:"Inter, sans-serif" }}>
           Now
         </Typography>
-        <Typography sx={{ fontSize: 12, color: LIGHT, fontFamily: FONT }}>
+        <Typography sx={{ fontSize: 12, color: LIGHT, fontFamily:"Inter, sans-serif" }}>
           Check-in
         </Typography>
       </Box>
@@ -170,7 +170,7 @@ const StatusHeader = ({ paymentStatus, leadEmail, isCancelled }) => {
               fontSize: { xs: 18, sm: 20 },
               fontWeight: 800,
               color: GREEN,
-              fontFamily: FONT,
+              fontFamily:"Inter, sans-serif",
             }}
           >
             Booking Confirmed
@@ -181,7 +181,7 @@ const StatusHeader = ({ paymentStatus, leadEmail, isCancelled }) => {
               color: "#374151",
               mt: 0.5,
               lineHeight: 1.6,
-              fontFamily: FONT,
+              fontFamily:"Inter, sans-serif",
             }}
           >
             Your booking is confirmed.
@@ -211,7 +211,7 @@ const StatusHeader = ({ paymentStatus, leadEmail, isCancelled }) => {
               fontSize: { xs: 18, sm: 20 },
               fontWeight: 800,
               color: "#ef4444",
-              fontFamily: FONT,
+              fontFamily:"Inter, sans-serif",
             }}
           >
             Payment Failed
@@ -222,7 +222,7 @@ const StatusHeader = ({ paymentStatus, leadEmail, isCancelled }) => {
               color: "#374151",
               mt: 0.5,
               lineHeight: 1.6,
-              fontFamily: FONT,
+              fontFamily:"Inter, sans-serif",
             }}
           >
             Your payment could not be processed. Please try again.
@@ -250,7 +250,7 @@ const StatusHeader = ({ paymentStatus, leadEmail, isCancelled }) => {
               fontSize: { xs: 18, sm: 20 },
               fontWeight: 800,
               color: DARK,
-              fontFamily: FONT,
+              fontFamily:"Inter, sans-serif",
             }}
           >
             Payment Cancelled
@@ -261,7 +261,7 @@ const StatusHeader = ({ paymentStatus, leadEmail, isCancelled }) => {
               color: "#374151",
               mt: 0.5,
               lineHeight: 1.6,
-              fontFamily: FONT,
+              fontFamily:"Inter, sans-serif",
             }}
           >
             You have cancelled the payment.
@@ -292,7 +292,7 @@ const StatusHeader = ({ paymentStatus, leadEmail, isCancelled }) => {
               fontSize: { xs: 18, sm: 20 },
               fontWeight: 800,
               color: "#ca8a04",
-              fontFamily: FONT,
+              fontFamily:"Inter, sans-serif",
             }}
           >
             Payment Pending
@@ -303,7 +303,7 @@ const StatusHeader = ({ paymentStatus, leadEmail, isCancelled }) => {
               color: "#374151",
               mt: 0.5,
               lineHeight: 1.6,
-              fontFamily: FONT,
+              fontFamily:"Inter, sans-serif",
             }}
           >
             Your payment is being processed. Please wait...
@@ -448,7 +448,7 @@ const BookingSuccessPage = () => {
         minHeight: "100vh",
         bgcolor: BG,
         p: { xs: 1.5, sm: 2.5, md: 4 },
-        fontFamily: FONT,
+        fontFamily:"Inter, sans-serif",
       }}
     >
       <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');`}</style>
@@ -482,7 +482,7 @@ const BookingSuccessPage = () => {
 
           <Box sx={{ p: { xs: 2, sm: 3 } }}>
             <Typography
-              sx={{ fontSize: 13, color: LIGHT, mb: 2.5, fontFamily: FONT }}
+              sx={{ fontSize: 13, color: LIGHT, mb: 2.5, fontFamily:"Inter, sans-serif" }}
             >
               Booking ID : {bookingId}
             </Typography>
@@ -522,7 +522,7 @@ const BookingSuccessPage = () => {
                 >
                   <Stars count={hotelStars} />
                   <Typography
-                    sx={{ fontSize: 12.5, color: LIGHT, fontFamily: FONT }}
+                    sx={{ fontSize: 12.5, color: LIGHT, fontFamily:"Inter, sans-serif" }}
                   >
                     Hotel
                   </Typography>
@@ -532,7 +532,7 @@ const BookingSuccessPage = () => {
                     fontSize: { xs: 18, sm: 22 },
                     fontWeight: 800,
                     color: DARK,
-                    fontFamily: FONT,
+                    fontFamily:"Inter, sans-serif",
                     lineHeight: 1.3,
                   }}
                 >
@@ -545,7 +545,7 @@ const BookingSuccessPage = () => {
                       color: LIGHT,
                       mt: 0.5,
                       lineHeight: 1.6,
-                      fontFamily: FONT,
+                      fontFamily:"Inter, sans-serif",
                     }}
                   >
                     {hotelLocation}
@@ -581,7 +581,7 @@ const BookingSuccessPage = () => {
                     sx={{ fontSize: 14, color: LIGHT }}
                   />
                   <Typography
-                    sx={{ fontSize: 12, color: LIGHT, fontFamily: FONT }}
+                    sx={{ fontSize: 12, color: LIGHT, fontFamily:"Inter, sans-serif" }}
                   >
                     Check-in
                   </Typography>
@@ -591,7 +591,7 @@ const BookingSuccessPage = () => {
                     fontSize: { xs: 20, sm: 24 },
                     fontWeight: 800,
                     color: DARK,
-                    fontFamily: FONT,
+                    fontFamily:"Inter, sans-serif",
                   }}
                 >
                   {checkInDay}
@@ -604,7 +604,7 @@ const BookingSuccessPage = () => {
                       fontSize: 12.5,
                       color: LIGHT,
                       mt: 0.3,
-                      fontFamily: FONT,
+                      fontFamily:"Inter, sans-serif",
                     }}
                   >
                     {checkInTime}
@@ -622,7 +622,7 @@ const BookingSuccessPage = () => {
                   fontWeight: 700,
                   fontSize: 13,
                   width: "fit-content",
-                  fontFamily: FONT,
+                  fontFamily:"Inter, sans-serif",
                 }}
               >
                 {nights} Night{nights > 1 ? "s" : ""}
@@ -642,7 +642,7 @@ const BookingSuccessPage = () => {
                     sx={{ fontSize: 14, color: LIGHT }}
                   />
                   <Typography
-                    sx={{ fontSize: 12, color: LIGHT, fontFamily: FONT }}
+                    sx={{ fontSize: 12, color: LIGHT, fontFamily:"Inter, sans-serif" }}
                   >
                     Check-out
                   </Typography>
@@ -652,7 +652,7 @@ const BookingSuccessPage = () => {
                     fontSize: { xs: 20, sm: 24 },
                     fontWeight: 800,
                     color: DARK,
-                    fontFamily: FONT,
+                    fontFamily:"Inter, sans-serif",
                   }}
                 >
                   {checkOutDay}
@@ -665,7 +665,7 @@ const BookingSuccessPage = () => {
                       fontSize: 12.5,
                       color: LIGHT,
                       mt: 0.3,
-                      fontFamily: FONT,
+                      fontFamily:"Inter, sans-serif",
                     }}
                   >
                     {checkOutTime}
@@ -710,7 +710,7 @@ const BookingSuccessPage = () => {
                       fontWeight: 700,
                       color: DARK,
                       mb: 1.2,
-                      fontFamily: FONT,
+                      fontFamily:"Inter, sans-serif",
                     }}
                   >
                     {roomQty} x {roomName}
@@ -780,7 +780,7 @@ const BookingSuccessPage = () => {
                     fontWeight: 700,
                     color: DARK,
                     mb: 1.2,
-                    fontFamily: FONT,
+                    fontFamily:"Inter, sans-serif",
                   }}
                 >
                   Cancellation Dates
@@ -795,7 +795,7 @@ const BookingSuccessPage = () => {
                     }}
                   >
                     <Typography
-                      sx={{ fontSize: 13, color: LIGHT, fontFamily: FONT }}
+                      sx={{ fontSize: 13, color: LIGHT, fontFamily:"Inter, sans-serif" }}
                     >
                       From {p.FromDate}
                     </Typography>
@@ -803,7 +803,7 @@ const BookingSuccessPage = () => {
                       sx={{
                         fontSize: 13,
                         fontWeight: 600,
-                        fontFamily: FONT,
+                        fontFamily:"Inter, sans-serif",
                         color: p.CancellationCharge > 0 ? "#ef4444" : GREEN,
                       }}
                     >
@@ -847,7 +847,7 @@ const BookingSuccessPage = () => {
                 fontWeight: 800,
                 color: DARK,
                 mb: 2,
-                fontFamily: FONT,
+                fontFamily:"Inter, sans-serif",
               }}
             >
               Fare Summary
@@ -871,7 +871,7 @@ const BookingSuccessPage = () => {
                 }}
               >
                 <Typography
-                  sx={{ fontSize: 13.5, color: "#374151", fontFamily: FONT }}
+                  sx={{ fontSize: 13.5, color: "#374151", fontFamily:"Inter, sans-serif" }}
                 >
                   {row.label}
                 </Typography>
@@ -880,7 +880,7 @@ const BookingSuccessPage = () => {
                     fontSize: 13.5,
                     fontWeight: 600,
                     color: DARK,
-                    fontFamily: FONT,
+                    fontFamily:"Inter, sans-serif",
                   }}
                 >
                   {row.value}
@@ -891,7 +891,7 @@ const BookingSuccessPage = () => {
               sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}
             >
               <Typography
-                sx={{ fontSize: 13.5, color: "#374151", fontFamily: FONT }}
+                sx={{ fontSize: 13.5, color: "#374151", fontFamily:"Inter, sans-serif" }}
               >
                 Convenience Fee
               </Typography>
@@ -902,7 +902,7 @@ const BookingSuccessPage = () => {
                       fontSize: 12.5,
                       color: "#9ca3af",
                       textDecoration: "line-through",
-                      fontFamily: FONT,
+                      fontFamily:"Inter, sans-serif",
                     }}
                   >
                     ₹100
@@ -912,7 +912,7 @@ const BookingSuccessPage = () => {
                   sx={{
                     fontSize: 13.5,
                     fontWeight: 700,
-                    fontFamily: FONT,
+                    fontFamily:"Inter, sans-serif",
                     color: convenienceFee === 0 ? GREEN : DARK,
                   }}
                 >
@@ -930,7 +930,7 @@ const BookingSuccessPage = () => {
                   fontSize: 14,
                   fontWeight: 700,
                   color: DARK,
-                  fontFamily: FONT,
+                  fontFamily:"Inter, sans-serif",
                 }}
               >
                 Net Amount Payable
@@ -940,7 +940,7 @@ const BookingSuccessPage = () => {
                   fontSize: 17,
                   fontWeight: 800,
                   color: DARK,
-                  fontFamily: FONT,
+                  fontFamily:"Inter, sans-serif",
                 }}
               >
                 {currency}
@@ -964,7 +964,7 @@ const BookingSuccessPage = () => {
                 fontWeight: 800,
                 color: DARK,
                 mb: 1,
-                fontFamily: FONT,
+                fontFamily:"Inter, sans-serif",
               }}
             >
               Cancellation Policy
@@ -977,7 +977,7 @@ const BookingSuccessPage = () => {
                 color: LIGHT,
                 mb: 2,
                 lineHeight: 1.7,
-                fontFamily: FONT,
+                fontFamily:"Inter, sans-serif",
               }}
             >
               {dynamicCancellationDesc}
@@ -995,7 +995,7 @@ const BookingSuccessPage = () => {
                 fontWeight: 700,
                 color: GREEN,
                 cursor: "pointer",
-                fontFamily: FONT,
+                fontFamily:"Inter, sans-serif",
               }}
             >
               View Cancellation Policy
@@ -1015,7 +1015,7 @@ const BookingSuccessPage = () => {
               fontWeight: 700,
               textTransform: "none",
               fontSize: 16,
-              fontFamily: FONT,
+              fontFamily:"Inter, sans-serif",
               boxShadow: "0 4px 14px rgba(22,163,74,0.3)",
               "&:hover": { bgcolor: "#15803d" },
               "&.Mui-disabled": { bgcolor: "#86efac", color: "#fff" },
@@ -1039,7 +1039,7 @@ const BookingSuccessPage = () => {
                   textAlign: "center",
                   fontSize: 13,
                   color: "#ef4444",
-                  fontFamily: FONT,
+                  fontFamily:"Inter, sans-serif",
                 }}
               >
                 Payment {paymentStatus.toLowerCase()}. Please try again.

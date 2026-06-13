@@ -28,7 +28,7 @@ const muiTheme = createTheme({
     background: { default: "#f5f5f5" },
   },
   typography: {
-    fontFamily: "Inter",
+    fontFamily: "Inter, sans-serif",
   },
   components: {
     MuiOutlinedInput: {
@@ -647,7 +647,7 @@ const BusDatePicker = ({ anchorEl, open, onClose, selectedDate, onChange }) => {
 
       {/* Footer */}
       <Box sx={{ textAlign: "center", mt: 2 }}>
-        <Typography sx={{ fontSize: "0.78rem", color: "#9ca3af" }}>
+        <Typography sx={{ fontSize: "0.78rem", fontFamily: "Inter, sans-serif", color: "#9ca3af" }}>
           {selectedDate
             ? selectedDate.toLocaleDateString("en-GB", {
                 day: "2-digit",
@@ -1049,6 +1049,7 @@ const [toCity, setToCity] = useState(initialTo);
       duration: `${hrs}h ${mins}m`,
       price: Math.round(bus.price),
       seatsAvailable: bus.available_seats,
+     
       priceTiers: [],
       footerTags: ["Boarding & Dropping points", "Cancellation Policy"],
       // ← bus.raw se boarding/dropping points
@@ -1164,7 +1165,7 @@ const [toCity, setToCity] = useState(initialTo);
                 <Typography
                   variant="h5"
                   fontWeight={700}
-                  fontFamily="Inter"
+                  fontFamily="Inter, sans-serif"
                   fontSize={{ xs: "1.25rem", sm: "1.5rem" }}
                   color="#1a1a1a"
                   lineHeight={1.2}
@@ -1175,6 +1176,7 @@ const [toCity, setToCity] = useState(initialTo);
                   variant="body2"
                   color="text.secondary"
                   fontSize={{ xs: "0.78rem", sm: "0.875rem" }}
+                  fontFamily="Inter, sans-serif"
                   mt={0.4}
                 >
                   Enjoy hassle free bookings with Dealplex
@@ -1191,7 +1193,7 @@ const [toCity, setToCity] = useState(initialTo);
                   gap: 0.6,
                   color: "#555",
                   fontSize: "0.85rem",
-                  fontFamily: "Inter",
+                  fontFamily: "Inter, sans-serif",
                   mt: 0.5,
                   "&:hover": { color: "#2e7d32" },
                 }}
@@ -1259,6 +1261,7 @@ const [toCity, setToCity] = useState(initialTo);
                       fontSize: "0.72rem",
                       color: errors.from ? "#dc2626" : "#6b6b6b",
                       padding: "0 3px",
+                      fontFamily: "Inter, sans-serif",
                       lineHeight: 1,
                       marginLeft: "30px",
                     }}
@@ -1278,6 +1281,7 @@ const [toCity, setToCity] = useState(initialTo);
                     <Typography
                       sx={{
                         fontSize: "0.95rem",
+                        fontFamily: "Inter, sans-serif",
                         color: fromCity ? "#111827" : "#9ca3af",
                         flex: 1,
                         overflow: "hidden",
@@ -1371,6 +1375,7 @@ const [toCity, setToCity] = useState(initialTo);
                       fontSize: "0.72rem",
                       color: errors.to ? "#dc2626" : "#6b6b6b",
                       padding: "0 3px",
+                      fontFamily: "Inter, sans-serif",
                       lineHeight: 1,
                       marginLeft: "44px",
                     }}
@@ -1456,6 +1461,7 @@ const [toCity, setToCity] = useState(initialTo);
                       top: -9,
                       left: 10,
                       fontSize: "0.72rem",
+                      fontFamily: "Inter, sans-serif",
                       color: "#6b6b6b",
                       backgroundColor: "#fff",
                       px: 0.5,

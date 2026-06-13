@@ -311,7 +311,7 @@ const PassengerBlock = ({
           marginBottom: 2,
         }}
       >
-        <div style={{ fontSize: 14,fontFamily: "Inter", fontWeight: 600, color: "#111" }}>
+        <div style={{ fontSize: 14,fontFamily: "Inter, sans-serif", fontWeight: 600, color: "#111" }}>
           Passenger {index}
         </div>
         {isLead && (
@@ -331,7 +331,7 @@ const PassengerBlock = ({
           </span>
         )}
       </div>
-      <div style={{ fontSize: 12,fontFamily: "Inter", color: "#9ca3af", marginBottom: 12 }}>
+      <div style={{ fontSize: 12,fontFamily: "Inter, sans-serif", color: "#9ca3af", marginBottom: 12 }}>
         {seatLabel}
       </div>
       <div className="pdf-fields-3">
@@ -383,7 +383,7 @@ const Stop = ({ time, date, place }) => (
       >
         {time}
       </div>
-      <div style={{ fontSize: 11,fontFamily: "Inter", color: "#9ca3af", marginTop: 2 }}>{date}</div>
+      <div style={{ fontSize: 11,fontFamily: "Inter, sans-serif", color: "#9ca3af", marginTop: 2 }}>{date}</div>
     </div>
     <div style={{ paddingTop: 3, flexShrink: 0 }}>
       <div
@@ -416,13 +416,13 @@ const SummaryPanel = ({
   const seatLabels = selectedSeatObjects.map((s) => s.SeatName);
   return (
     <div className="pdf-summary">
-      <div style={{ fontSize: 15, fontWeight: 700, fontFamily: "Inter", color: "#111" }}>
+      <div style={{ fontSize: 15, fontWeight: 700,fontFamily: "Inter, sans-serif", color: "#111" }}>
         {bus.operatorName}
       </div>
       <div
         style={{
           fontSize: 12,
-          fontFamily: "Inter",
+         fontFamily: "Inter, sans-serif",
           color: "#9ca3af",
           marginTop: 3,
           marginBottom: 16,
@@ -463,7 +463,7 @@ const SummaryPanel = ({
         style={{
           fontSize: 13,
           fontWeight: 600,
-          fontFamily: "Inter",
+         fontFamily: "Inter, sans-serif",
           color: "#111",
           marginBottom: 4,
         }}
@@ -495,7 +495,7 @@ const SummaryPanel = ({
         style={{
           fontSize: 14,
           fontWeight: 700,
-          fontFamily: "Inter",
+         fontFamily: "Inter, sans-serif",
           color: "#111",
           marginBottom: 10,
         }}
@@ -527,10 +527,10 @@ const SummaryPanel = ({
           marginBottom: 14,
         }}
       >
-        <span style={{ fontSize: 13, fontWeight: 700,fontFamily: "Inter", color: "#111" }}>
+        <span style={{ fontSize: 13, fontWeight: 700,fontFamily: "Inter, sans-serif", color: "#111" }}>
           Total Amount
         </span>
-        <span style={{ fontSize: 15, fontWeight: 700, fontFamily: "Inter", color: "#111" }}>
+        <span style={{ fontSize: 15, fontWeight: 700,fontFamily: "Inter, sans-serif", color: "#111" }}>
           ₹{totalFare.toLocaleString("en-IN")}
         </span>
       </div>
@@ -546,7 +546,7 @@ const SummaryPanel = ({
           borderRadius: 8,
           height: 44,
           fontSize: 14,
-          fontFamily: "Inter",
+         fontFamily: "Inter, sans-serif",
           fontWeight: 600,
           cursor: paying ? "not-allowed" : "pointer",
           transition: "background 0.15s",
@@ -886,7 +886,7 @@ const PassengerDetailsForm = ({
         Swal.fire({
           icon: "error",
           title: "Booking Failed",
-          fontFamily: "Inter",
+         fontFamily: "Inter, sans-serif",
           text:
             res?.error?.message ||
             res?.message ||
@@ -899,7 +899,7 @@ const PassengerDetailsForm = ({
       Swal.fire({
         icon: "error",
         title: "Error",
-        fontFamily: "Inter",
+       fontFamily: "Inter, sans-serif",
         text: "Something went wrong. Please try again.",
         confirmButtonColor: GREEN,
       });
@@ -916,7 +916,7 @@ const PassengerDetailsForm = ({
               style={{
                 fontSize: 16,
                 fontWeight: 700,
-                fontFamily: "Inter",
+               fontFamily: "Inter, sans-serif",
                 color: "#111",
                 marginBottom: 16,
               }}
@@ -942,14 +942,14 @@ const PassengerDetailsForm = ({
               style={{
                 fontSize: 16,
                 fontWeight: 700,
-                fontFamily: "Inter",
+               fontFamily: "Inter, sans-serif",
                 color: "#111",
                 marginBottom: 4,
               }}
             >
               Contact Details
             </div>
-            <div style={{ fontSize: 13,fontFamily: "Inter",color: "#9ca3af", marginBottom: 14 }}>
+            <div style={{ fontSize: 13,fontFamily: "Inter, sans-serif",color: "#9ca3af", marginBottom: 14 }}>
               Ticket details will be sent to
             </div>
             <div className="pdf-fields-2">
@@ -1001,7 +1001,7 @@ const PassengerDetailsForm = ({
               style={{
                 fontSize: 16,
                 fontWeight: 700,
-                fontFamily: "Inter",
+               fontFamily: "Inter, sans-serif",
                 color: "#111",
                 marginBottom: 16,
               }}

@@ -206,16 +206,16 @@ const QRPaymentModal = ({
                 </Box>
 
                 {/* Order ID */}
-                <Typography sx={{ fontSize: { xs: 12, sm: 11 }, color: LIGHT, fontFamily: FONT, mb: 0.4, letterSpacing: 0.2 }}>
+                <Typography sx={{ fontSize: { xs: 12, sm: 11 }, color: LIGHT, fontFamily: "Inter, sans-serif", mb: 0.4, letterSpacing: 0.2 }}>
                   Order · {paymentData.orderId}
                 </Typography>
 
                 {/* Amount */}
                 <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.4, mb: 1 }}>
-                  <Typography sx={{ fontSize: { xs: 13, sm: 12 }, fontWeight: 600, color: LIGHT, fontFamily: FONT }}>
+                  <Typography sx={{ fontSize: { xs: 13, sm: 12 }, fontWeight: 600, color: LIGHT, fontFamily: "Inter, sans-serif" }}>
                     {currency}
                   </Typography>
-                  <Typography sx={{ fontSize: { xs: 26, sm: 24 }, fontWeight: 800, color: DARK, fontFamily: FONT, lineHeight: 1 }}>
+                  <Typography sx={{ fontSize: { xs: 26, sm: 24 }, fontWeight: 800, color: DARK, fontFamily: "Inter, sans-serif", lineHeight: 1 }}>
                     {Number(paymentData.amount).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </Typography>
                 </Box>
@@ -224,7 +224,7 @@ const QRPaymentModal = ({
                 <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.6, px: 1.2, py: 0.35, borderRadius: "20px", bgcolor: statusBg, border: `1px solid ${statusBorder}` }}>
                   {isPending && <Box sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: "#ca8a04", animation: "pulse-dot 1.6s ease-in-out infinite" }} />}
                   {isSuccess && <CheckCircleIcon sx={{ fontSize: 12, color: GREEN }} />}
-                  <Typography sx={{ fontSize: { xs: 11.5, sm: 11 }, fontWeight: 700, color: statusColor, fontFamily: FONT }}>
+                  <Typography sx={{ fontSize: { xs: 11.5, sm: 11 }, fontWeight: 700, color: statusColor, fontFamily: "Inter, sans-serif" }}>
                     {statusText}
                   </Typography>
                 </Box>
@@ -286,7 +286,7 @@ const QRPaymentModal = ({
                     {isExpired && !initiating && (
                       <Box onClick={onRetry} sx={{ ...overlayBox, gap: 0.8, cursor: "pointer", "&:hover .ri": { transform: "scale(1.1) rotate(-18deg)" } }}>
                         <Box className="ri" sx={{ width: 40, height: 40, borderRadius: "50%", bgcolor: "#fff", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 6px 20px rgba(0,0,0,0.28)", transition: "transform 0.25s ease", fontSize: 20, color: DARK }}>↻</Box>
-                        <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#fff", fontFamily: FONT }}>Tap to retry</Typography>
+                        <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#fff", fontFamily: "Inter, sans-serif" }}>Tap to retry</Typography>
                       </Box>
                     )}
 
@@ -294,7 +294,7 @@ const QRPaymentModal = ({
                     {initiating && (
                       <Box sx={{ ...overlayBox, gap: 1.2 }}>
                         <CircularProgress size={30} sx={{ color: "#fff" }} />
-                        <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#fff", fontFamily: FONT }}>Generating QR...</Typography>
+                        <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#fff", fontFamily: "Inter, sans-serif" }}>Generating QR...</Typography>
                       </Box>
                     )}
 
@@ -302,14 +302,14 @@ const QRPaymentModal = ({
                     {isFailed && !initiating && (
                       <Box onClick={onRetry} sx={{ ...overlayBox, gap: 0.8, cursor: "pointer", "&:hover .ri2": { transform: "scale(1.1) rotate(-18deg)" } }}>
                         <Box className="ri2" sx={{ width: 40, height: 40, borderRadius: "50%", bgcolor: "#fff", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 6px 20px rgba(0,0,0,0.28)", transition: "transform 0.25s ease", fontSize: 20, color: DARK }}>↻</Box>
-                        <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#fff", fontFamily: FONT }}>Tap to retry</Typography>
+                        <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#fff", fontFamily: "Inter, sans-serif" }}>Tap to retry</Typography>
                       </Box>
                     )}
 
                     {/* CANCELLED overlay */}
                     {isCancelled && (
                       <Box sx={{ ...overlayBox }}>
-                        <Typography sx={{ fontSize: { xs: 14, sm: 15 }, fontWeight: 800, color: "#fff", fontFamily: FONT, letterSpacing: 0.5 }}>Cancelled</Typography>
+                        <Typography sx={{ fontSize: { xs: 14, sm: 15 }, fontWeight: 800, color: "#fff", fontFamily: "Inter, sans-serif", letterSpacing: 0.5 }}>Cancelled</Typography>
                       </Box>
                     )}
 
@@ -317,7 +317,7 @@ const QRPaymentModal = ({
                     {isSuccess && (
                       <Box sx={{ ...overlayBox, bgcolor: "rgba(22,163,74,0.88)", gap: 0.8, animation: "spin-in 0.4s ease" }}>
                         <CheckCircleIcon sx={{ fontSize: { xs: 44, sm: 44 }, color: "#fff" }} />
-                        <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#fff", fontFamily: FONT }}>Payment done!</Typography>
+                        <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#fff", fontFamily: "Inter, sans-serif" }}>Payment done!</Typography>
                       </Box>
                     )}
                   </Box>
@@ -325,7 +325,7 @@ const QRPaymentModal = ({
 
                 {/* UPI apps label */}
                 {isPending && !initiating && (
-                  <Typography sx={{ fontSize: { xs: 12, sm: 11 }, color: LIGHT, fontFamily: FONT, mb: { xs: 1.2, sm: 1 }, textAlign: "center" }}>
+                  <Typography sx={{ fontSize: { xs: 12, sm: 11 }, color: LIGHT, fontFamily: "Inter, sans-serif", mb: { xs: 1.2, sm: 1 }, textAlign: "center" }}>
                     PhonePe · GPay · Paytm · Any UPI app
                   </Typography>
                 )}
@@ -338,7 +338,7 @@ const QRPaymentModal = ({
                       fontSize: { xs: 15, sm: 14 },
                       fontWeight: 700,
                       color: GREEN,
-                      fontFamily: FONT,
+                      fontFamily: "Inter, sans-serif",
                       letterSpacing: 0.5,
                       fontVariantNumeric: "tabular-nums", 
                       minWidth: "3.2ch",                  
@@ -367,7 +367,7 @@ const QRPaymentModal = ({
                     disabled={cancelling}
                     size="small"
                     sx={{
-                      color: "#ef4444", fontFamily: FONT,
+                      color: "#ef4444", fontFamily: "Inter, sans-serif",
                       textTransform: "none",
                       fontSize: { xs: 12.5, sm: 12 }, fontWeight: 600,
                       px: 1.5, py: 0.5,
@@ -401,19 +401,19 @@ const QRPaymentModal = ({
           <Box sx={{ width: { xs: 52, sm: 44 }, height: { xs: 52, sm: 44 }, borderRadius: "50%", bgcolor: "#fef2f2", display: "flex", alignItems: "center", justifyContent: "center", mx: "auto", mb: { xs: 1.8, sm: 1.5 }, fontSize: { xs: 24, sm: 20 } }}>
             ⚠️
           </Box>
-          <Typography sx={{ fontSize: { xs: 15, sm: 14 }, fontWeight: 700, color: DARK, fontFamily: FONT, mb: 0.6 }}>
+          <Typography sx={{ fontSize: { xs: 15, sm: 14 }, fontWeight: 700, color: DARK, fontFamily: "Inter, sans-serif", mb: 0.6 }}>
             Cancel payment?
           </Typography>
-          <Typography sx={{ fontSize: { xs: 12.5, sm: 12 }, color: LIGHT, fontFamily: FONT, mb: { xs: 2.5, sm: 2 }, lineHeight: 1.7 }}>
+          <Typography sx={{ fontSize: { xs: 12.5, sm: 12 }, color: LIGHT, fontFamily: "Inter, sans-serif", mb: { xs: 2.5, sm: 2 }, lineHeight: 1.7 }}>
             Are you sure you want to cancel this payment? This action cannot be undone.
           </Typography>
           <Box sx={{ display: "flex", gap: 1 }}>
             <Button fullWidth onClick={() => setShowCancelConfirm(false)}
-              sx={{ border: `1px solid ${BORDER}`, color: DARK, fontFamily: FONT, textTransform: "none", fontSize: 13, fontWeight: 600, borderRadius: "8px", py: 0.9, bgcolor: "#fff", "&:hover": { bgcolor: "#f3f4f6" } }}>
+              sx={{ border: `1px solid ${BORDER}`, color: DARK, fontFamily: "Inter, sans-serif", textTransform: "none", fontSize: 13, fontWeight: 600, borderRadius: "8px", py: 0.9, bgcolor: "#fff", "&:hover": { bgcolor: "#f3f4f6" } }}>
               No, go back
             </Button>
             <Button fullWidth onClick={() => { setShowCancelConfirm(false); onCancel(); }} disabled={cancelling}
-              sx={{ bgcolor: "#ef4444", color: "#fff", fontFamily: FONT, textTransform: "none", fontSize: 13, fontWeight: 600, borderRadius: "8px", py: 0.9, "&:hover": { bgcolor: "#dc2626" }, "&.Mui-disabled": { bgcolor: "#fca5a5", color: "#fff" } }}>
+              sx={{ bgcolor: "#ef4444", color: "#fff", fontFamily: "Inter, sans-serif", textTransform: "none", fontSize: 13, fontWeight: 600, borderRadius: "8px", py: 0.9, "&:hover": { bgcolor: "#dc2626" }, "&.Mui-disabled": { bgcolor: "#fca5a5", color: "#fff" } }}>
               {cancelling ? <CircularProgress size={13} sx={{ color: "#fff" }} /> : "Yes, cancel"}
             </Button>
           </Box>

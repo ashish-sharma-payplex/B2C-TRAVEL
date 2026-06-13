@@ -672,6 +672,7 @@ const HotelBooking = ({ scrolled }) => {
                 sx={{
                   fontSize: { xs: "1.25rem", md: "1.65rem" },
                   fontWeight: 800,
+                  fontFamily: "Inter, sans-serif",
                   color: "#111827",
                   letterSpacing: "-0.3px",
                   lineHeight: 1.2,
@@ -680,7 +681,7 @@ const HotelBooking = ({ scrolled }) => {
                 Book a Hotel
               </Typography>
               <Typography
-                sx={{ fontSize: "0.875rem", color: "#6b7280", mt: 0.5 }}
+                sx={{ fontSize: "0.875rem", fontFamily: "Inter, sans-serif", color: "#6b7280", mt: 0.5 }}
               >
                 Discover the perfect space for you!
               </Typography>
@@ -697,6 +698,7 @@ const HotelBooking = ({ scrolled }) => {
                 color: GREEN,
                 fontWeight: 500,
                 fontSize: "0.875rem",
+                fontFamily: "Inter, sans-serif",
                 textTransform: "none",
                 background: "none",
                 boxShadow: "none",

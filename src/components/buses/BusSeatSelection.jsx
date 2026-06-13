@@ -552,23 +552,23 @@ const BusCardExpanded = ({ bus }) => {
 
   return (
     <div
-      style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 12, overflow: "hidden", boxShadow: "0 2px 10px rgba(0,0,0,0.07)", transition: "box-shadow 0.2s" }}
+      style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 12, overflow: "hidden",fontFamily: "Inter, sans-serif", boxShadow: "0 2px 10px rgba(0,0,0,0.07)", transition: "box-shadow 0.2s" }}
       onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 6px 24px rgba(0,0,0,0.12)")}
       onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 2px 10px rgba(0,0,0,0.07)")}
     >
       {/* Card Header */}
       <div style={{ padding: "16px 18px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <div style={{ display: "flex", justifyContent: "space-between",fontFamily: "Inter, sans-serif", alignItems: "flex-start" }}>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 16, fontWeight: 700,family: "Inter", color: "#111", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{bus.operatorName}</div>
-            <div style={{ fontSize: 12,fontFamily: "Inter", color: "#6b7280", marginTop: 2 }}>{bus.busType}</div>
-            <div style={{ display: "flex",fontFamily: "Inter", alignItems: "center", gap: 8, marginTop: 14, flexWrap: "wrap" }}>
+            <div style={{ fontSize: 16, fontWeight: 700, fontFamily: "Inter, sans-serif", color: "#111", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{bus.operatorName}</div>
+            <div style={{ fontSize: 12, fontFamily: "Inter, sans-serif", color: "#6b7280", marginTop: 2 }}>{bus.busType}</div>
+            <div style={{ display: "flex", fontFamily: "Inter, sans-serif", alignItems: "center", gap: 8, marginTop: 14, flexWrap: "wrap" }}>
               <div>
-                <div style={{ fontSize: 20, fontWeight: 700, fontFamily: "Inter", color: "#111", lineHeight: 1 }}>{bus.departureTime}</div>
-                <div style={{ fontSize: 11,fontFamily: "Inter", color: "#9ca3af", marginTop: 3 }}>{bus.departureDate}</div>
+                <div style={{ fontSize: 20, fontWeight: 700, fontFamily: "Inter, sans-serif", color: "#111", lineHeight: 1 }}>{bus.departureTime}</div>
+                <div style={{ fontSize: 11, fontFamily: "Inter, sans-serif", color: "#9ca3af", marginTop: 3 }}>{bus.departureDate}</div>
               </div>
               <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, minWidth: 60 }}>
-                <span style={{ fontSize: 11, fontFamily: "Inter", color: "#9ca3af" }}>{bus.duration}</span>
+                <span style={{ fontSize: 11,fontFamily: "Inter, sans-serif", color: "#9ca3af" }}>{bus.duration}</span>
                 <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
                   <div style={{ flex: 1, height: 1, background: "#d1d5db" }} />
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 2 }}>
@@ -577,18 +577,18 @@ const BusCardExpanded = ({ bus }) => {
                 </div>
               </div>
               <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: 20, fontWeight: 700, fontFamily: "Inter", color: "#111", lineHeight: 1 }}>{bus.arrivalTime}</div>
-                <div style={{ fontSize: 11, fontFamily: "Inter", color: "#9ca3af", marginTop: 3 }}>{bus.arrivalDate}</div>
+                <div style={{ fontSize: 20, fontWeight: 700,fontFamily: "Inter, sans-serif", color: "#111", lineHeight: 1 }}>{bus.arrivalTime}</div>
+                <div style={{ fontSize: 11,fontFamily: "Inter, sans-serif", color: "#9ca3af", marginTop: 3 }}>{bus.arrivalDate}</div>
               </div>
             </div>
           </div>
           <div style={{ textAlign: "right", marginLeft: 16, flexShrink: 0 }}>
-            <div style={{ fontSize: 11, fontFamily: "Inter", color: "#9ca3af" }}>from</div>
-            <div style={{ fontSize: 18, fontWeight: 700, fontFamily: "Inter", color: "#111" }}>₹{bus.price?.toLocaleString("en-IN")}</div>
+            <div style={{ fontSize: 11,fontFamily: "Inter, sans-serif", color: "#9ca3af" }}>from</div>
+            <div style={{ fontSize: 18, fontWeight: 700,fontFamily: "Inter, sans-serif", color: "#111" }}>₹{bus.price?.toLocaleString("en-IN")}</div>
             <button
               onClick={handleToggleExpand}
               disabled={seatLoading && !seatLayoutLoaded}
-              style={{ background: expanded ? "#374151" : GREEN, color: "#fff", border: "none", borderRadius: 8, padding: "6px 14px", fontWeight: 600, fontSize: 13, fontFamily: "Inter", cursor: seatLoading ? "wait" : "pointer", marginTop: 8, whiteSpace: "nowrap", transition: "background 0.15s" }}
+              style={{ background: expanded ? "#374151" : GREEN, color: "#fff", border: "none", borderRadius: 8, padding: "6px 14px", fontWeight: 600, fontSize: 13,fontFamily: "Inter, sans-serif", cursor: seatLoading ? "wait" : "pointer", marginTop: 8, whiteSpace: "nowrap", transition: "background 0.15s" }}
             >
               {seatLoading && !seatLayoutLoaded ? "Loading..." : expanded ? "Hide seats" : "Select Seats"}
             </button>
@@ -734,28 +734,37 @@ const FilterContent = ({ filters, setFilters, buses, priceRange }) => {
 
   const hasActive = Object.values(filters.depSlots).some(Boolean) || Object.values(filters.busTypes).some(Boolean) || filters.operators.length > 0 || filters.minSeats > 0 || filters.search !== "" || filters.minPrice > priceRange.min || filters.maxPrice < priceRange.max;
 
+  // const timeSlots = [
+  //   { key: "slot1", label: "12AM – 6AM",  icon: "🌙" },
+  //   { key: "slot2", label: "6AM – 12PM",  icon: "🌅" },
+  //   { key: "slot3", label: "12PM – 6PM",  icon: "☀️" },
+  //   { key: "slot4", label: "6PM – 12AM",  icon: "🌃" },
+  // ];
   const timeSlots = [
-    { key: "slot1", label: "12AM – 6AM",  icon: "🌙" },
-    { key: "slot2", label: "6AM – 12PM",  icon: "🌅" },
-    { key: "slot3", label: "12PM – 6PM",  icon: "☀️" },
-    { key: "slot4", label: "6PM – 12AM",  icon: "🌃" },
-  ];
-  const busTypeButtons = [
-    { key: "ac",     label: "AC",      emoji: "❄️" },
-    { key: "nonAc",  label: "Non AC",  emoji: "🌬️" },
-    { key: "seater", label: "Seater",  emoji: "🪑" },
-    { key: "sleeper",label: "Sleeper", emoji: "🛏️" },
-  ];
+  { key: "slot1", label: "12AM – 6AM",  icon: "/morning.svg" },
+  { key: "slot2", label: "6AM – 12PM",  icon: "/afternoon.svg" },
+  { key: "slot3", label: "12PM – 6PM",  icon: "/evening.svg" },
+  { key: "slot4", label: "6PM – 12AM",  icon: "/night.svg " },
+];
+
+
+
+const busTypeButtons = [
+  { key: "ac",      label: "AC",      img: "/ac.svg" },
+  { key: "nonAc",   label: "Non AC",  img: "/non_ac.svg" },
+  { key: "seater",  label: "Seater",  img: "/seater.svg" },
+  { key: "sleeper", label: "Sleeper", img: "/sleeper.svg" },
+];
 
   const Divider      = () => <div style={{ height: 1, background: "#f3f4f6", margin: "14px 0" }} />;
-  const SectionTitle = ({ children }) => <div style={{ fontSize: 12, fontWeight: 700,fontFamily: "Inter", color: "#111", marginBottom: 8 }}>{children}</div>;
+  const SectionTitle = ({ children }) => <div style={{ fontSize: 12, fontWeight: 700,fontFamily: "Inter, sans-serif", color: "#111", marginBottom: 8 }}>{children}</div>;
 
   return (
     <div style={{ padding: "0 16px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
         <span style={{ fontSize: 14, fontWeight: 700, color: "#111" }}>Filters</span>
         {hasActive && (
-          <span onClick={clearAll} style={{ color: GREEN, fontSize: 12, cursor: "pointer", fontWeight: 600, background: GREEN_LIGHT, border: `1px solid ${GREEN_BORDER}`, borderRadius: 6, padding: "2px 8px" }}>
+          <span onClick={clearAll} style={{ color: GREEN, fontSize: 12, cursor: "pointer", fontFamily: "Inter, sans-serif", fontWeight: 600, background: GREEN_LIGHT, border: `1px solid ${GREEN_BORDER}`, borderRadius: 6, padding: "2px 8px" }}>
             Clear all
           </span>
         )}
@@ -764,7 +773,7 @@ const FilterContent = ({ filters, setFilters, buses, priceRange }) => {
       <SectionTitle>Search Bus</SectionTitle>
       <div style={{ display: "flex", alignItems: "center", gap: 6, border: "1px solid #e5e7eb", borderRadius: 8, padding: "7px 10px", background: "#fff", marginBottom: 14 }}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
-        <input type="text" placeholder="Operator name..." value={filters.search} onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))} style={{ border: "none", outline: "none", fontSize: 12, color: "#111", width: "100%", background: "transparent" }} />
+        <input type="text" placeholder="Operator name..." value={filters.search} onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))} style={{ border: "none", outline: "none", fontSize: 12, fontFamily: "Inter, sans-serif", color: "#111", width: "100%", background: "transparent" }} />
         {filters.search && <span onClick={() => setFilters((f) => ({ ...f, search: "" }))} style={{ cursor: "pointer", color: "#9ca3af", fontSize: 16, lineHeight: 1 }}>×</span>}
       </div>
 
@@ -772,11 +781,11 @@ const FilterContent = ({ filters, setFilters, buses, priceRange }) => {
 
       <SectionTitle>Price Range</SectionTitle>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-        <span style={{ fontSize: 11, color: "#6b7280", fontWeight: 600 }}>₹{filters.minPrice}</span>
-        <span style={{ fontSize: 11, color: "#6b7280", fontWeight: 600 }}>₹{filters.maxPrice}</span>
+        <span style={{ fontSize: 11, fontFamily: "Inter, sans-serif", color: "#6b7280", fontWeight: 600 }}>₹{filters.minPrice}</span>
+        <span style={{ fontSize: 11, fontFamily: "Inter, sans-serif", color: "#6b7280", fontWeight: 600 }}>₹{filters.maxPrice}</span>
       </div>
       <div style={{ position: "relative", height: 20, display: "flex", alignItems: "center", marginBottom: 8 }}>
-        <div style={{ position: "absolute", left: 0, right: 0, height: 4, background: "#e5e7eb", borderRadius: 2 }} />
+        <div style={{ position: "absolute", left: 0, right: 0, height: 4, background: "#e5e7eb", fontFamily: "Inter, sans-serif", borderRadius: 2 }} />
         <div style={{ position: "absolute", left: `${((filters.minPrice - priceRange.min) / (priceRange.max - priceRange.min || 1)) * 100}%`, right: `${100 - ((filters.maxPrice - priceRange.min) / (priceRange.max - priceRange.min || 1)) * 100}%`, height: 4, background: GREEN, borderRadius: 2 }} />
         <input type="range" min={priceRange.min} max={priceRange.max} value={filters.minPrice} onChange={(e) => { const v = Number(e.target.value); if (v < filters.maxPrice) setFilters((f) => ({ ...f, minPrice: v })); }} style={{ position: "absolute", width: "100%", opacity: 0, cursor: "pointer", height: 20, zIndex: 2 }} />
         <input type="range" min={priceRange.min} max={priceRange.max} value={filters.maxPrice} onChange={(e) => { const v = Number(e.target.value); if (v > filters.minPrice) setFilters((f) => ({ ...f, maxPrice: v })); }} style={{ position: "absolute", width: "100%", opacity: 0, cursor: "pointer", height: 20, zIndex: 2 }} />
@@ -784,34 +793,63 @@ const FilterContent = ({ filters, setFilters, buses, priceRange }) => {
       <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
         {["minPrice", "maxPrice"].map((key) => (
           <div key={key} style={{ flex: 1 }}>
-            <div style={{ fontSize: 10, color: "#9ca3af", marginBottom: 3 }}>{key === "minPrice" ? "Min" : "Max"}</div>
-            <input type="number" value={filters[key]} onChange={(e) => { const v = Number(e.target.value); if (key === "minPrice" && v >= priceRange.min && v < filters.maxPrice) setFilters((f) => ({ ...f, minPrice: v })); if (key === "maxPrice" && v <= priceRange.max && v > filters.minPrice) setFilters((f) => ({ ...f, maxPrice: v })); }} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: 6, padding: "4px 6px", fontSize: 12, color: "#111", outline: "none", boxSizing: "border-box" }} />
+            <div style={{ fontSize: 10, fontFamily: "Inter, sans-serif", color: "#9ca3af", marginBottom: 3 }}>{key === "minPrice" ? "Min" : "Max"}</div>
+            <input type="number" value={filters[key]} onChange={(e) => { const v = Number(e.target.value); if (key === "minPrice" && v >= priceRange.min && v < filters.maxPrice) setFilters((f) => ({ ...f, minPrice: v })); if (key === "maxPrice" && v <= priceRange.max && v > filters.minPrice) setFilters((f) => ({ ...f, maxPrice: v })); }} style={{ width: "100%", border: "1px solid #e5e7eb", borderRadius: 6, padding: "4px 6px", fontSize: 12, fontFamily: "Inter, sans-serif", color: "#111", outline: "none", boxSizing: "border-box" }} />
           </div>
         ))}
       </div>
 
       <Divider />
 
-      <SectionTitle>Departure Time</SectionTitle>
-      {timeSlots.map((slot) => (
-        <label key={slot.key} style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 0", cursor: "pointer" }}>
-          <input type="checkbox" checked={filters.depSlots[slot.key]} onChange={() => toggle("depSlots", slot.key)} style={{ accentColor: GREEN, width: 14, height: 14, flexShrink: 0 }} />
-          <span style={{ fontSize: 14 }}>{slot.icon}</span>
-          <span style={{ fontSize: 13, color: "#374151" }}>{slot.label}</span>
-        </label>
-      ))}
+<SectionTitle>Departure Time</SectionTitle>
+{timeSlots.map((slot) => (
+  <label key={slot.key} style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 0", cursor: "pointer" }}>
+    <input type="checkbox" checked={filters.depSlots[slot.key]} onChange={() => toggle("depSlots", slot.key)} style={{ accentColor: GREEN, width: 14, height: 14, flexShrink: 0 }} />
+    <img src={slot.icon} alt={slot.label} style={{ width: 18, height: 18, flexShrink: 0 }} />
+    <span style={{ fontSize: 13, color: "#374151" }}>{slot.label}</span>
+  </label>
+))} 
 
       <Divider />
 
-      <SectionTitle>Bus Type</SectionTitle>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 14 }}>
-        {busTypeButtons.map((btn) => (
-          <button key={btn.key} onClick={() => toggle("busTypes", btn.key)} style={{ border: filters.busTypes[btn.key] ? `1.5px solid ${GREEN}` : "1px solid #e5e7eb", borderRadius: 8, padding: "8px 4px", display: "flex", flexDirection: "column", alignItems: "center", gap: 4, cursor: "pointer", fontSize: 12, color: filters.busTypes[btn.key] ? GREEN : "#374151", fontWeight: filters.busTypes[btn.key] ? 700 : 400, background: filters.busTypes[btn.key] ? GREEN_LIGHT : "#fff", transition: "all 0.15s" }}>
-            <span style={{ fontSize: 18, fontFamily: "Inter" }}>{btn.emoji}</span>
-            {btn.label}
-          </button>
-        ))}
-      </div>
+<SectionTitle>Bus Type</SectionTitle>
+<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 14 }}>
+  {busTypeButtons.map((btn) => (
+    <button
+      key={btn.key}
+      onClick={() => toggle("busTypes", btn.key)}
+      style={{
+        width: 88,
+        height: 56,
+        border: filters.busTypes[btn.key] ? `1.5px solid ${GREEN}` : "1px solid #E3E8EE",
+        borderRadius: 8,
+        paddingTop: 8,
+        paddingRight: 16,
+        paddingLeft: 16,
+        paddingBottom: 0,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 4,
+        cursor: "pointer",
+        background: filters.busTypes[btn.key] ? GREEN_LIGHT : "#fff",
+        transition: "all 0.15s",
+        opacity: 1,
+      }}
+    >
+      <img src={btn.img} alt={btn.label} style={{ width: 20, height: 20 }} />
+      <span style={{
+        fontSize: 11,
+        color: filters.busTypes[btn.key] ? GREEN : "#374151",
+        fontWeight: filters.busTypes[btn.key] ? 700 : 400,
+        whiteSpace: "nowrap",
+      }}>
+        {btn.label}
+      </span>
+    </button>
+  ))}
+</div>
 
       <Divider />
 
@@ -830,7 +868,7 @@ const FilterContent = ({ filters, setFilters, buses, priceRange }) => {
           <SectionTitle>Operator</SectionTitle>
           <div style={{ display: "flex", alignItems: "center", gap: 6, border: "1px solid #e5e7eb", borderRadius: 8, padding: "7px 10px", marginBottom: 8, background: "#fff" }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
-            <input type="text" placeholder="Search operator..." value={operatorSearch} onChange={(e) => setOperatorSearch(e.target.value)} style={{ border: "none", outline: "none", fontSize: 12,fontFamily: "Inter", color: "#111", width: "100%", background: "transparent" }} />
+            <input type="text" placeholder="Search operator..." value={operatorSearch} onChange={(e) => setOperatorSearch(e.target.value)} style={{ border: "none", outline: "none", fontSize: 12,fontFamily: "Inter, sans-serif", color: "#111", width: "100%", background: "transparent" }} />
           </div>
           {visibleOps.map((op) => (
             <label key={op} style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 0", cursor: "pointer" }}>

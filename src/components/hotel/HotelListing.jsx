@@ -209,15 +209,15 @@ const HotelCard = React.memo(({ hotel, guestsData, searchParams = {} }) => {
       }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
-            <Typography sx={{ fontSize: 13, fontWeight: 500, color: "#222" }}>
+            <Typography sx={{ fontSize: 13, fontWeight: 500, fontFamily: "Inter, sans-serif", color: "#222" }}>
               {hotel.stars ?? hotel.HotelRating ?? ""}
             </Typography>
             {(hotel.stars || hotel.HotelRating) && (
               <StarIcon sx={{ fontSize: 15, color: "#f5a623" }} />
             )}
           </Box>
-          <Typography sx={{ fontSize: 13, color: "#aaa" }}>•</Typography>
-          <Typography sx={{ fontSize: 13, color: "#666" }}>
+          <Typography sx={{ fontSize: 13, fontFamily: "Inter, sans-serif", color: "#aaa" }}>•</Typography>
+          <Typography sx={{ fontSize: 13, fontFamily: "Inter, sans-serif", color: "#666" }}>
             {hotel.type ?? hotel.HotelType ?? "Hotel"}
           </Typography>
           <Button
@@ -230,7 +230,7 @@ const HotelCard = React.memo(({ hotel, guestsData, searchParams = {} }) => {
             }}
             sx={{
               ml: "auto", bgcolor: GREEN, color: "#fff",
-              fontWeight: 600, fontSize: "0.8rem",
+              fontWeight: 600, fontSize: "0.8rem",fontFamily: "Inter, sans-serif",
               textTransform: "none", borderRadius: "8px",
               px: 2, py: 0.7, "&:hover": { bgcolor: "#15803d" },
             }}
@@ -239,11 +239,11 @@ const HotelCard = React.memo(({ hotel, guestsData, searchParams = {} }) => {
           </Button>
         </Box>
 
-        <Typography sx={{ fontSize: { xs: 17, md: 21 }, fontWeight: 700, color: "#111", mt: "2px", lineHeight: 1.3 }}>
+        <Typography sx={{ fontSize: { xs: 17, md: 21 }, fontWeight: 700, fontFamily: "Inter, sans-serif", color: "#111", mt: "2px", lineHeight: 1.3 }}>
           {hotel.name ?? hotel.hotelName ?? hotel.HotelName ?? "Hotel"}
         </Typography>
 
-        <Typography sx={{ fontSize: 13, color: "#777", mt: "-4px" }}>
+        <Typography sx={{ fontSize: 13, fontFamily: "Inter, sans-serif", color: "#777", mt: "-4px" }}>
           {hotel.location ?? hotel.address ?? hotel.Address ?? ""}
           {hotel.area && <> &nbsp;|&nbsp; {hotel.area}</>}
         </Typography>
@@ -253,7 +253,7 @@ const HotelCard = React.memo(({ hotel, guestsData, searchParams = {} }) => {
             {(hotel.amenities ?? hotel.Amenities ?? []).map((amenity) => (
               <Box key={amenity} sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
                 <CheckIcon sx={{ fontSize: 14, color: GREEN }} />
-                <Typography sx={{ fontSize: 13, color: "#374151" }}>{amenity}</Typography>
+                <Typography sx={{ fontSize: 13, fontFamily: "Inter, sans-serif", color: "#374151" }}>{amenity}</Typography>
               </Box>
             ))}
           </Box>
@@ -295,7 +295,7 @@ const StarRatingRow = React.memo(({ starCount, label, checked, onChange }) => (
         )
       )}
     </Box>
-    <Typography sx={{ fontSize: 13, color: "#374151", lineHeight: 1 }}>
+    <Typography sx={{ fontSize: 13, fontFamily: "Inter, sans-serif", color: "#374151", lineHeight: 1 }}>
       {label}
     </Typography>
   </Box>
@@ -427,7 +427,7 @@ const FilterPanel = React.memo(({ filters, setFilters, cityCode, onGeoSearch, ci
               px: 2.5, pt: 2, pb: geoOpen ? 1 : 2, cursor: "pointer",
             }}
           >
-            <Typography sx={{ fontSize: 15, fontWeight: 600, color: "#111" }}>Search by Area</Typography>
+            <Typography sx={{ fontSize: 15, fontWeight: 600, fontFamily: "Inter, sans-serif", color: "#111" }}>Search by Area</Typography>
             {geoOpen
               ? <ExpandLessIcon sx={{ color: "#555", fontSize: 20 }} />
               : <ExpandMoreIcon sx={{ color: "#555", fontSize: 20 }} />
@@ -438,7 +438,7 @@ const FilterPanel = React.memo(({ filters, setFilters, cityCode, onGeoSearch, ci
             <Box sx={{ px: 2.5, pb: 2 }}>
               {boundsError && (
                 <Box sx={{ mb: 1.5, px: 2, py: 1, bgcolor: "#fef2f2", border: "1px solid #fecaca", borderRadius: "8px" }}>
-                  <Typography sx={{ fontSize: 12, color: "#dc2626", fontWeight: 500 }}>
+                  <Typography sx={{ fontSize: 12, color: "#dc2626", fontWeight: 500, fontFamily: "Inter, sans-serif" }}>
                     ⚠️ Ye location city boundary ke bahar hai ({MAX_CITY_RADIUS_KM}km se zyada). Kripya city ke andar select karein.
                   </Typography>
                 </Box>
@@ -489,11 +489,11 @@ const FilterPanel = React.memo(({ filters, setFilters, cityCode, onGeoSearch, ci
                         icon={hotelDotIcon}
                       >
                         <Popup>
-                          <strong style={{ fontSize: 12, display: "block", marginBottom: 2 }}>
+                          <strong style={{ fontSize: 12, display: "block", marginBottom: 2, fontFamily: "Inter, sans-serif" }}>
                             {hotel.name ?? hotel._raw?.HotelName ?? hotel?.HotelName ?? "Hotel"}
                           </strong>
                           {hotel.stars && (
-                            <span style={{ fontSize: 11, color: "#555" }}>{"⭐".repeat(hotel.stars)}</span>
+                            <span style={{ fontSize: 11, color: "#555", fontFamily: "Inter, sans-serif" }}>{"⭐".repeat(hotel.stars)}</span>
                           )}
                         </Popup>
                       </Marker>
@@ -513,7 +513,7 @@ const FilterPanel = React.memo(({ filters, setFilters, cityCode, onGeoSearch, ci
                       <Box sx={{ position: "absolute", width: 32, height: 32, borderRadius: "50%", bgcolor: "rgba(37,99,235,0.2)", animation: "maplocring 1.4s ease-out infinite 0.3s" }} />
                       <Box sx={{ width: 16, height: 16, borderRadius: "50%", bgcolor: "#2563eb", border: "3px solid #fff", boxShadow: "0 2px 8px rgba(37,99,235,0.5)", zIndex: 1 }} />
                     </Box>
-                    <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#1d4ed8" }}>
+                    <Typography sx={{ fontSize: 12, fontWeight: 600, color: "#1d4ed8", fontFamily: "Inter, sans-serif" }}>
                       Fetching your location...
                     </Typography>
                     <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5, alignItems: "center" }}>
@@ -551,7 +551,7 @@ const FilterPanel = React.memo(({ filters, setFilters, cityCode, onGeoSearch, ci
                 </Box>
               </Box>
 
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1,fontFamily: "Inter, sans-serif" }}>
                 <TextField
                   label="Radius (km)"
                   type="number"
@@ -601,7 +601,7 @@ const FilterPanel = React.memo(({ filters, setFilters, cityCode, onGeoSearch, ci
                 onClick={handleGeoSearch}
                 disabled={geoSearching}
                 sx={{
-                  bgcolor: GREEN, color: "#fff", fontWeight: 600,
+                  bgcolor: GREEN, color: "#fff", fontWeight: 600,fontFamily: "Inter, sans-serif",
                   fontSize: "0.82rem", textTransform: "none",
                   borderRadius: "8px", py: 1,
                   "&:hover": { bgcolor: "#15803d" },
@@ -623,11 +623,11 @@ const FilterPanel = React.memo(({ filters, setFilters, cityCode, onGeoSearch, ci
           px: 2.5, pt: 2, pb: 1,
           display: "flex", justifyContent: "space-between", alignItems: "center",
         }}>
-          <Typography sx={{ fontSize: 16, fontWeight: 600, color: "#111" }}>Filter by:</Typography>
+          <Typography sx={{ fontSize: 16, fontWeight: 600, fontFamily: "Inter, sans-serif", color: "#111" }}>Filter by:</Typography>
           <Typography
             onClick={() => setFilters(DEFAULT_FILTERS)}
             sx={{
-              fontSize: 14, fontWeight: 500, color: "#111",
+              fontSize: 14, fontWeight: 500, fontFamily: "Inter, sans-serif", color: "#111",
               cursor: "pointer", textDecoration: "underline",
               "&:hover": { color: GREEN },
             }}
@@ -643,7 +643,7 @@ const FilterPanel = React.memo(({ filters, setFilters, cityCode, onGeoSearch, ci
             sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer", mb: 1 }}
             onClick={() => setRatingOpen(o => !o)}
           >
-            <Typography sx={{ fontSize: 15, fontWeight: 600, color: "#111" }}>Star Rating</Typography>
+            <Typography sx={{ fontSize: 15, fontWeight: 600, fontFamily: "Inter, sans-serif", color: "#111" }}>Star Rating</Typography>
             {ratingOpen
               ? <ExpandLessIcon sx={{ color: "#555", fontSize: 20 }} />
               : <ExpandMoreIcon sx={{ color: "#555", fontSize: 20 }} />
@@ -825,16 +825,16 @@ const HotelListing = ({
 
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 2 }}>
           <Box sx={{ flexShrink: 0 }}>
-            <Typography sx={{ fontSize: { xs: 16, md: 20 }, fontWeight: 700, color: "#111" }}>
+            <Typography sx={{ fontSize: { xs: 16, md: 20 }, fontWeight: 700, fontFamily: "Inter, sans-serif", color: "#111" }}>
               {cityName ? `Hotels in ${cityName.split(",")[0]}` : "Available Hotels"}
             </Typography>
-            <Typography sx={{ fontSize: 13, color: "#6b7280", mt: 0.3 }}>
+            <Typography sx={{ fontSize: 13, fontFamily: "Inter, sans-serif", color: "#6b7280", mt: 0.3 }}>
               {displayedHotels.length} properties found
               {geoActive && (
                 <Box
                   component="span"
                   onClick={clearGeoFilter}
-                  sx={{ ml: 1.5, fontSize: 12, color: GREEN, cursor: "pointer", textDecoration: "underline" }}
+                  sx={{ ml: 1.5, fontSize: 12,fontFamily: "Inter, sans-serif", color: GREEN, cursor: "pointer", textDecoration: "underline" }}
                 >
                   Clear area filter
                 </Box>
@@ -842,7 +842,7 @@ const HotelListing = ({
             </Typography>
           </Box>
 
-          <Box sx={{ minWidth: 220, maxWidth: 320, flex: 1 }}>
+          <Box sx={{ minWidth: 220, maxWidth: 320, flex: 1,fontFamily: "Inter, sans-serif" }}>
             <TextField
               fullWidth
               placeholder="Search hotels, area, address..."
@@ -863,8 +863,8 @@ const HotelListing = ({
             borderRadius: "12px", border: "1px solid #e5e7eb",
           }}>
             <Typography sx={{ fontSize: 40, mb: 2 }}>🏨</Typography>
-            <Typography sx={{ fontSize: 16, fontWeight: 600, color: "#374151" }}>No hotels found</Typography>
-            <Typography sx={{ fontSize: 13, color: "#9ca3af", mt: 1 }}>
+            <Typography sx={{ fontSize: 16, fontWeight: 600,fontFamily: "Inter, sans-serif", color: "#374151" }}>No hotels found</Typography>
+            <Typography sx={{ fontSize: 13, fontFamily: "Inter, sans-serif", color: "#9ca3af", mt: 1 }}>
               {searchTerm
                 ? `"${searchTerm}" se koi hotel nahi mila`
                 : "Try a different location or date range"}

@@ -77,14 +77,14 @@ const validateMobile = (value) => {
 
 // ─── Sub-components ───────────────────────────
 const FieldLabel = ({ children }) => (
-  <Typography sx={{ fontSize: 12, color: TEXT_LIGHT, fontWeight: 500, mb: 0.6, fontFamily: FONT }}>
+  <Typography sx={{ fontSize: 12, color: TEXT_LIGHT, fontWeight: 500, mb: 0.6, fontFamily: "Inter, sans-serif" }}>
     {children}
   </Typography>
 );
 
 const FieldError = ({ message }) =>
   message ? (
-    <Typography sx={{ fontSize: 11.5, color: ERROR_COLOR, mt: 0.5, fontFamily: FONT, fontWeight: 500 }}>
+    <Typography sx={{ fontSize: 11.5, color: ERROR_COLOR, mt: 0.5, fontFamily: "Inter, sans-serif", fontWeight: 500 }}>
       {message}
     </Typography>
   ) : null;
@@ -93,7 +93,7 @@ const getInputSx = (hasError) => ({
   "& .MuiOutlinedInput-root": {
     borderRadius: "10px",
     fontSize: 14,
-    fontFamily: FONT,
+    fontFamily: "Inter, sans-serif",
     color: TEXT_DARK,
     bgcolor: "#fafafa",
     height: FIELD_HEIGHT,
@@ -114,7 +114,7 @@ const Stars = ({ count = 4 }) =>
 const InclusionChip = ({ label }) => (
   <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
     <CheckIcon sx={{ fontSize: 13, color: GREEN }} />
-    <Typography sx={{ fontSize: 12.5, color: TEXT_MID, fontFamily: FONT }}>{label}</Typography>
+    <Typography sx={{ fontSize: 12.5, color: TEXT_MID, fontFamily: "Inter, sans-serif" }}>{label}</Typography>
   </Box>
 );
 
@@ -147,17 +147,17 @@ const PassengerForm = ({ passenger, onChange, errors = {}, onErrorChange, select
         {isLead && (
           <Box sx={{
             display: "inline-flex", alignItems: "center", gap: 0.5,
-            bgcolor: "#dcfce7", color: GREEN, fontSize: 12, fontWeight: 600,
-            px: 1.5, py: 0.4, borderRadius: "20px", fontFamily: FONT,
+            bgcolor: "#dcfce7", color: GREEN, fontSize: 12, fontWeight: 600,fontFamily: "Inter, sans-serif",
+            px: 1.5, py: 0.4, borderRadius: "20px", fontFamily: "Inter, sans-serif",
           }}>
-            <CheckIcon sx={{ fontSize: 13 }} /> Lead Passenger
+            <CheckIcon sx={{ fontSize: 13, fontFamily: "Inter, sans-serif" }} /> Lead Passenger
           </Box>
         )}
         {isChild && (
           <Box sx={{
             display: "inline-flex", alignItems: "center", gap: 0.5,
             bgcolor: "#fef9c3", color: "#ca8a04", fontSize: 12, fontWeight: 600,
-            px: 1.5, py: 0.4, borderRadius: "20px", fontFamily: FONT,
+            px: 1.5, py: 0.4, borderRadius: "20px", fontFamily: "Inter, sans-serif",
           }}>
             🧒 Child • Age: {passenger.age} yrs
           </Box>
@@ -173,7 +173,7 @@ const PassengerForm = ({ passenger, onChange, errors = {}, onErrorChange, select
           <FormControlLabel
             key={s} value={s} label={s}
             control={<Radio size="small" sx={{ color: BORDER, "&.Mui-checked": { color: GREEN }, p: 0.8 }} />}
-            sx={{ mr: 0, "& .MuiFormControlLabel-label": { fontSize: 14, color: TEXT_MID, fontFamily: FONT, fontWeight: 500 } }}
+            sx={{ mr: 0, "& .MuiFormControlLabel-label": { fontSize: 14, color: TEXT_MID, fontFamily: "Inter, sans-serif", fontWeight: 500 } }}
           />
         ))}
       </RadioGroup>
@@ -236,7 +236,7 @@ const PassengerForm = ({ passenger, onChange, errors = {}, onErrorChange, select
                   border: `1.5px solid ${errors.mobile ? ERROR_COLOR : BORDER}`,
                   borderRight: "none",
                   bgcolor: "#f3f4f6",
-                  fontSize: 13.5, fontFamily: FONT, color: TEXT_MID, fontWeight: 600,
+                  fontSize: 13.5, fontFamily: "Inter, sans-serif", color: TEXT_MID, fontWeight: 600,
                   whiteSpace: "nowrap", userSelect: "none",
                   boxSizing: "border-box",
                 }}>
@@ -253,7 +253,7 @@ const PassengerForm = ({ passenger, onChange, errors = {}, onErrorChange, select
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: "0 10px 10px 0",
-                      fontSize: 14, fontFamily: FONT, color: TEXT_DARK, bgcolor: "#fafafa",
+                      fontSize: 14, fontFamily: "Inter, sans-serif", color: TEXT_DARK, bgcolor: "#fafafa",
                       height: FIELD_HEIGHT,
                       "& fieldset": { borderColor: errors.mobile ? ERROR_COLOR : BORDER },
                       "&:hover fieldset": { borderColor: errors.mobile ? ERROR_COLOR : "#9ca3af" },
@@ -290,7 +290,7 @@ const PassengerForm = ({ passenger, onChange, errors = {}, onErrorChange, select
                 borderRadius: "10px",
                 border: `1.5px solid ${BORDER}`,
                 bgcolor: "#f3f4f6",
-                fontSize: 14, fontFamily: FONT, color: TEXT_MID, fontWeight: 500,
+                fontSize: 14, fontFamily: "Inter, sans-serif", color: TEXT_MID, fontWeight: 500,
                 userSelect: "none",
               }}>
                 🇮🇳 India
@@ -413,7 +413,7 @@ const HotelCheckoutPage = (props) => {
   const netAmount = baseAmount + taxAmount + convenienceFee;
 
   const selectBaseSx = {
-    borderRadius: "10px", fontFamily: FONT, color: TEXT_DARK, bgcolor: "#fafafa",
+    borderRadius: "10px", fontFamily: "Inter, sans-serif", color: TEXT_DARK, bgcolor: "#fafafa",
     "& .MuiOutlinedInput-notchedOutline": { borderColor: BORDER },
     "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#9ca3af" },
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: GREEN, borderWidth: "1.5px" },
@@ -579,13 +579,13 @@ const HotelCheckoutPage = (props) => {
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.6, mb: 0.4 }}>
             <Stars count={hotelStars} />
-            <Typography sx={{ fontSize: 12, color: TEXT_LIGHT, fontFamily: FONT }}>Hotel</Typography>
+            <Typography sx={{ fontSize: 12, color: TEXT_LIGHT, fontFamily: "Inter, sans-serif" }}>Hotel</Typography>
           </Box>
-          <Typography sx={{ fontSize: 14, fontWeight: 800, color: TEXT_DARK, fontFamily: FONT, lineHeight: 1.25, mb: 0.3 }}>
+          <Typography sx={{ fontSize: 14, fontWeight: 800, color: TEXT_DARK, fontFamily: "Inter, sans-serif", lineHeight: 1.25, mb: 0.3 }}>
             {hotelName}
           </Typography>
           {hotelLocation && (
-            <Typography sx={{ fontSize: 12, color: TEXT_LIGHT, fontFamily: FONT, lineHeight: 1.4 }}>
+            <Typography sx={{ fontSize: 12, color: TEXT_LIGHT, fontFamily: "Inter, sans-serif", lineHeight: 1.4 }}>
               {hotelLocation}
             </Typography>
           )}
@@ -597,31 +597,31 @@ const HotelCheckoutPage = (props) => {
           <Box sx={{ flex: 1 }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 0.3 }}>
               <CalendarMonthIcon sx={{ fontSize: 13, color: TEXT_LIGHT }} />
-              <Typography sx={{ fontSize: 11, color: TEXT_LIGHT, fontFamily: FONT }}>Check-in</Typography>
+              <Typography sx={{ fontSize: 11, color: TEXT_LIGHT, fontFamily: "Inter, sans-serif" }}>Check-in</Typography>
             </Box>
-            <Typography sx={{ fontSize: 14, fontWeight: 800, color: TEXT_DARK, fontFamily: FONT }}>
+            <Typography sx={{ fontSize: 14, fontWeight: 800, color: TEXT_DARK, fontFamily: "Inter, sans-serif" }}>
               {checkInDay}{checkInDay && checkInDate ? ", " : ""}{checkInDate}
             </Typography>
-            {checkInTime && <Typography sx={{ fontSize: 11, color: TEXT_LIGHT, fontFamily: FONT, mt: 0.2 }}>{checkInTime}</Typography>}
+            {checkInTime && <Typography sx={{ fontSize: 11, color: TEXT_LIGHT, fontFamily: "Inter, sans-serif", mt: 0.2 }}>{checkInTime}</Typography>}
           </Box>
-          <Box sx={{ px: 1.2, py: 0.4, bgcolor: "#dcfce7", color: GREEN, borderRadius: "20px", fontWeight: 700, fontSize: 11, fontFamily: FONT, whiteSpace: "nowrap" }}>
+          <Box sx={{ px: 1.2, py: 0.4, bgcolor: "#dcfce7", color: GREEN, borderRadius: "20px", fontWeight: 700, fontSize: 11, fontFamily: "Inter, sans-serif", whiteSpace: "nowrap" }}>
             {nights}N
           </Box>
           <Box sx={{ flex: 1, textAlign: "right" }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 0.3, justifyContent: "flex-end" }}>
               <CalendarMonthIcon sx={{ fontSize: 13, color: TEXT_LIGHT }} />
-              <Typography sx={{ fontSize: 11, color: TEXT_LIGHT, fontFamily: FONT }}>Check-out</Typography>
+              <Typography sx={{ fontSize: 11, color: TEXT_LIGHT, fontFamily: "Inter, sans-serif" }}>Check-out</Typography>
             </Box>
-            <Typography sx={{ fontSize: 14, fontWeight: 800, color: TEXT_DARK, fontFamily: FONT }}>
+            <Typography sx={{ fontSize: 14, fontWeight: 800, color: TEXT_DARK, fontFamily: "Inter, sans-serif" }}>
               {checkOutDay}{checkOutDay && checkOutDate ? ", " : ""}{checkOutDate}
             </Typography>
-            {checkOutTime && <Typography sx={{ fontSize: 11, color: TEXT_LIGHT, fontFamily: FONT, mt: 0.2 }}>{checkOutTime}</Typography>}
+            {checkOutTime && <Typography sx={{ fontSize: 11, color: TEXT_LIGHT, fontFamily: "Inter, sans-serif", mt: 0.2 }}>{checkOutTime}</Typography>}
           </Box>
         </Box>
       </Box>
 
       <Divider sx={{ mb: 1.5, borderColor: BORDER }} />
-      <Typography sx={{ fontSize: 13, fontWeight: 700, color: TEXT_DARK, mb: 1.2, fontFamily: FONT }}>Room Details</Typography>
+      <Typography sx={{ fontSize: 13, fontWeight: 700, color: TEXT_DARK, mb: 1.2, fontFamily: "Inter, sans-serif" }}>Room Details</Typography>
       <Box sx={{ display: "flex", gap: 1.5 }}>
         <Box sx={{ width: 60, height: 55, borderRadius: "8px", overflow: "hidden", flexShrink: 0 }}>
           <Box component="img" src={roomImage} alt={roomName}
@@ -630,14 +630,14 @@ const HotelCheckoutPage = (props) => {
           />
         </Box>
         <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Typography sx={{ fontSize: 13, fontWeight: 700, color: TEXT_DARK, mb: 0.8, fontFamily: FONT }}>
+          <Typography sx={{ fontSize: 13, fontWeight: 700, color: TEXT_DARK, mb: 0.8, fontFamily: "Inter, sans-serif" }}>
             {roomQty} x {roomName}
           </Typography>
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: "4px 12px", mb: 0.8 }}>
-            {roomSize && <Box sx={{ display: "flex", alignItems: "center", gap: 0.4 }}><SquareFootIcon sx={{ fontSize: 13, color: TEXT_LIGHT }} /><Typography sx={{ fontSize: 12, color: TEXT_MID, fontFamily: FONT }}>{roomSize}</Typography></Box>}
-            {bedType && <Box sx={{ display: "flex", alignItems: "center", gap: 0.4 }}><KingBedOutlinedIcon sx={{ fontSize: 13, color: TEXT_LIGHT }} /><Typography sx={{ fontSize: 12, color: TEXT_MID, fontFamily: FONT }}>{bedType}</Typography></Box>}
-            {sleeps && <Box sx={{ display: "flex", alignItems: "center", gap: 0.4 }}><PeopleAltOutlinedIcon sx={{ fontSize: 13, color: TEXT_LIGHT }} /><Typography sx={{ fontSize: 12, color: TEXT_MID, fontFamily: FONT }}>Sleeps {sleeps}</Typography></Box>}
-            {viewType && <Box sx={{ display: "flex", alignItems: "center", gap: 0.4 }}><WindowIcon sx={{ fontSize: 13, color: TEXT_LIGHT }} /><Typography sx={{ fontSize: 12, color: TEXT_MID, fontFamily: FONT }}>{viewType}</Typography></Box>}
+            {roomSize && <Box sx={{ display: "flex", alignItems: "center", gap: 0.4 }}><SquareFootIcon sx={{ fontSize: 13, color: TEXT_LIGHT }} /><Typography sx={{ fontSize: 12, color: TEXT_MID, fontFamily: "Inter, sans-serif" }}>{roomSize}</Typography></Box>}
+            {bedType && <Box sx={{ display: "flex", alignItems: "center", gap: 0.4 }}><KingBedOutlinedIcon sx={{ fontSize: 13, color: TEXT_LIGHT }} /><Typography sx={{ fontSize: 12, color: TEXT_MID, fontFamily: "Inter, sans-serif" }}>{bedType}</Typography></Box>}
+            {sleeps && <Box sx={{ display: "flex", alignItems: "center", gap: 0.4 }}><PeopleAltOutlinedIcon sx={{ fontSize: 13, color: TEXT_LIGHT }} /><Typography sx={{ fontSize: 12, color: TEXT_MID, fontFamily: "Inter, sans-serif" }}>Sleeps {sleeps}</Typography></Box>}
+            {viewType && <Box sx={{ display: "flex", alignItems: "center", gap: 0.4 }}><WindowIcon sx={{ fontSize: 13, color: TEXT_LIGHT }} /><Typography sx={{ fontSize: 12, color: TEXT_MID, fontFamily: "Inter, sans-serif" }}>{viewType}</Typography></Box>}
           </Box>
           {inclusions.length > 0 && (
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: "4px 10px" }}>
@@ -650,7 +650,7 @@ const HotelCheckoutPage = (props) => {
   );
 
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: LIGHT_BG, fontFamily: FONT, px: { xs: 1.5, sm: 3, md: 4, lg: 6 }, py: { xs: 2, sm: 3, md: 4 } }}>
+    <Box sx={{ minHeight: "100vh", bgcolor: LIGHT_BG, fontFamily: "Inter, sans-serif", px: { xs: 1.5, sm: 3, md: 4, lg: 6 }, py: { xs: 2, sm: 3, md: 4 } }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');`}</style>
 
       <Snackbar
@@ -659,14 +659,14 @@ const HotelCheckoutPage = (props) => {
         onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert severity={snackbar.severity} onClose={() => setSnackbar((s) => ({ ...s, open: false }))} sx={{ fontFamily: FONT }}>
+        <Alert severity={snackbar.severity} onClose={() => setSnackbar((s) => ({ ...s, open: false }))} sx={{ fontFamily: "Inter, sans-serif" }}>
           {snackbar.message}
         </Alert>
       </Snackbar>
 
       <Box sx={{ maxWidth: 1160, mx: "auto", mb: 2 }}>
         <Button startIcon={<ArrowBackIcon />} onClick={() => navigate(-1)}
-          sx={{ color: TEXT_MID, fontFamily: FONT, textTransform: "none", fontSize: 14, fontWeight: 600, pl: 0, "&:hover": { bgcolor: "transparent", color: TEXT_DARK } }}
+          sx={{ color: TEXT_MID, fontFamily: "Inter, sans-serif", textTransform: "none", fontSize: 14, fontWeight: 600, pl: 0, "&:hover": { bgcolor: "transparent", color: TEXT_DARK } }}
         >
           Back
         </Button>
@@ -677,7 +677,7 @@ const HotelCheckoutPage = (props) => {
         {/* ══ LEFT — Passenger Form ══ */}
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Box sx={{ bgcolor: CARD_BG, borderRadius: "16px", p: { xs: 2, sm: 2.5, md: 3 }, border: `1px solid ${BORDER}`, boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
-            <Typography sx={{ fontSize: { xs: 16, sm: 18 }, fontWeight: 800, color: TEXT_DARK, mb: 2, fontFamily: FONT }}>
+            <Typography sx={{ fontSize: { xs: 16, sm: 18 }, fontWeight: 800,fontFamily: "Inter, sans-serif", color: TEXT_DARK, mb: 2 }}>
               Enter Passenger Details
             </Typography>
 
@@ -696,7 +696,7 @@ const HotelCheckoutPage = (props) => {
                       bgcolor: hasErr ? "#fef2f2" : isActive ? "#dcfce7" : "#fff",
                       color: hasErr ? ERROR_COLOR : isActive ? GREEN : TEXT_MID,
                       fontSize: 13, fontWeight: isActive ? 700 : 500,
-                      cursor: "pointer", fontFamily: FONT,
+                      cursor: "pointer", fontFamily: "Inter, sans-serif",
                       display: "flex", alignItems: "center", gap: 0.6,
                       transition: "all 0.15s",
                       "&:hover": {
@@ -741,7 +741,7 @@ const HotelCheckoutPage = (props) => {
                     onClick={() => setActiveTab((t) => t - 1)}
                     variant="outlined"
                     sx={{
-                      borderColor: BORDER, color: TEXT_MID, fontFamily: FONT,
+                      borderColor: BORDER, color: TEXT_MID, fontFamily: "Inter, sans-serif",
                       textTransform: "none", fontSize: 13, fontWeight: 600,
                       borderRadius: "10px", px: 3.5, py: 1.2,
                       "&:hover": { borderColor: GREEN, color: GREEN, bgcolor: "#f0fdf4" },
@@ -756,7 +756,7 @@ const HotelCheckoutPage = (props) => {
                     variant="contained"
                     disableElevation
                     sx={{
-                      bgcolor: GREEN, color: "#fff", fontFamily: FONT,
+                      bgcolor: GREEN, color: "#fff", fontFamily: "Inter, sans-serif",
                       textTransform: "none", fontSize: 13, fontWeight: 600,
                       borderRadius: "10px", px: 3.5, py: 1.2,
                       "&:hover": { bgcolor: "#15803d" },
@@ -774,7 +774,7 @@ const HotelCheckoutPage = (props) => {
                 sx={{
                   bgcolor: GREEN, color: "#fff", fontWeight: 700, fontSize: 13,
                   textTransform: "none", borderRadius: "10px", px: 3.5, py: 1.2,
-                  fontFamily: FONT, boxShadow: "0 4px 14px rgba(22,163,74,0.3)",
+                  fontFamily: "Inter, sans-serif", boxShadow: "0 4px 14px rgba(22,163,74,0.3)",
                   "&:hover": { bgcolor: "#15803d" },
                   "&.Mui-disabled": { bgcolor: "#86efac", color: "#fff" },
                 }}

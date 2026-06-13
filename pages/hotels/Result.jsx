@@ -360,6 +360,7 @@ const SearchHeader = ({ initialData }) => {
                 color: GREEN,
                 fontWeight: 600,
                 fontSize: 13,
+                fontFamily: "Inter, sans-serif",
                 textTransform: "none",
                 px: 2,
                 py: 0.9,
