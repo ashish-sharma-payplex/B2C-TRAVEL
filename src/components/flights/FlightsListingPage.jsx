@@ -289,7 +289,7 @@ const SearchErrorBanner = ({ message, onClose }) => {
 };
 
 // ─── Flight Detail Sidebar ────────────────────────────────────────────────────
-const FlightDetailSidebar = ({ open, onClose, flight, searchMeta }) => {
+const FlightDetailSidebar = ({ open, onClose, flight, searchMeta,traceId  }) => {
   const navigate = useNavigate();
   if (!flight) return null;
   const segs = flight.Segments?.[0] || [];
@@ -331,10 +331,15 @@ const FlightDetailSidebar = ({ open, onClose, flight, searchMeta }) => {
       })
       : "";
 
-  const handleContinue = () => {
-    onClose();
-    navigate("/book-flight", { state: { flight, searchMeta } });
-  };
+ const handleContinue = () => {
+  onClose();
+  navigate("/book-flight", {
+    state: {
+      flight,
+      searchMeta: { ...searchMeta, traceId },
+    },
+  });
+};
 
   const SegmentBlock = ({ seg }) => {
     const segDepTime = seg.Origin?.DepTime
@@ -760,7 +765,7 @@ const FlightDetailSidebar = ({ open, onClose, flight, searchMeta }) => {
 };
 
 // ─── Round Trip Detail Sidebar ─────────────────────────────────────────────
-const RoundTripDetailSidebar = ({ open, onClose, onwardFlight, returnFlight, searchMeta, onBook }) => {
+const RoundTripDetailSidebar = ({ open, onClose, onwardFlight, returnFlight, searchMeta, onBook, traceId }) => {
   const navigate = useNavigate();
   if (!onwardFlight || !returnFlight) return null;
 
@@ -784,11 +789,15 @@ const RoundTripDetailSidebar = ({ open, onClose, onwardFlight, returnFlight, sea
     d ? d.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" }) : "";
 
   const handleContinue = () => {
-    onClose();
-    navigate("/book-flight", {
-      state: { onwardFlight, returnFlight, searchMeta },
-    });
-  };
+  onClose();
+  navigate("/book-flight", {
+    state: {
+      onwardFlight,
+      returnFlight,
+      searchMeta: { ...searchMeta, traceId },
+    },
+  });
+};
 
   // Reusable segment block (same as FlightDetailSidebar)
   const SegmentBlock = ({ seg }) => {
@@ -2284,7 +2293,13 @@ const FlightsListingPage = () => {
   } = useCalendarFare();
 
   const searchMeta = location.state || {};
+  const traceId = location.state?.searchResult?.data?.TraceId 
+             || location.state?.searchResult?.data?.results?.TraceId
+             || location.state?.traceId;
   const tripType = searchMeta.tripType || "oneway";
+
+  console.log("TraceId found:", traceId);
+console.log("searchResult structure:", location.state?.searchResult?.data);
 
   // ── Fetch calendar fare on mount / searchMeta change ─────────────────────
   useEffect(() => {
@@ -2970,6 +2985,8 @@ const FlightsListingPage = () => {
         initialDate={searchMeta.departureDate}
         initialReturnDate={searchMeta.returnDate}
         initialTripType={searchMeta.tripType}
+        initialPassengers={searchMeta.passengers}   
+  initialCabinClass={searchMeta.cabinClass} 
         onSearch={handleSearchFromBar}
       />
 
@@ -3187,6 +3204,7 @@ const FlightsListingPage = () => {
           onClose={() => setSidebarOpen(false)}
           flight={selectedFlight}
           searchMeta={searchMeta}
+          traceId={traceId}
         />
       )}
       <RoundTripDetailSidebar
@@ -3195,6 +3213,7 @@ const FlightsListingPage = () => {
         onwardFlight={selectedOnward}
         returnFlight={selectedReturn}
         searchMeta={searchMeta}
+        traceId={traceId}
       />
     </Box>
   );

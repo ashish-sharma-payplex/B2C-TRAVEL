@@ -19,6 +19,7 @@ import BusResultsPage from "../pages/buses/Results";
 import BusPassengerPage from "../pages/buses/busPassangerPage";
 import FlightsListingPage from "./components/flights/FlightsListingPage";
 import BookFlight from "./components/flights/BookFlight";
+import SSRPage from "./components/flights/SSRPage";
 
 
 function ScrollHandler({ setScrolled }) {
@@ -104,6 +105,7 @@ function App() {
           <Route path="/buses/passenger-details" element={<BusPassengerPage />} /> 
           <Route path="/trains" element={<TrainsPage />} />
           <Route path="/book-flight" element={<BookFlight />} />
+          <Route path="/ssr" element={<SSRPage />} />
         </Routes>
       </div>
     </BrowserRouter>

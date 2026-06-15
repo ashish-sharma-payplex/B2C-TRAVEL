@@ -30,4 +30,7 @@ export const FLIGHT_ENDPOINTS = {
   COUNTRIES: "/api/flightv2/airports",
   SEARCH: "/api/flightv2/search/",
   CALENDAR_FARE: "/api/flightv2/calendar-fare/",
+  FARE_RULE: "/api/flightv2/fare-rule/",
+  FARE_QUOTE: "/api/flightv2/fare-quote/",
+  SSR: "/api/flightv2/ssr/",
 };

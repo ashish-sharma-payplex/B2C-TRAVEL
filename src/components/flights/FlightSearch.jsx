@@ -1283,6 +1283,8 @@ export default function FlightSearch({
   initialDate = null,
   initialReturnDate = null,  
   initialTripType = "oneway",
+   initialPassengers = null, 
+  initialCabinClass = null, 
   onSearch = null,
 }) {
   const theme = useTheme();
@@ -1337,12 +1339,10 @@ const [returnDate, setReturnDate] = useState(() => {
   const retDateRef = useRef(null);
   const paxRef = useRef(null);
 
-  const [passengers, setPassengers] = useState({
-    adults: 1,
-    children: 0,
-    infants: 0,
-  });
-  const [cabinClass, setCabinClass] = useState("Economy");
+  const [passengers, setPassengers] = useState(
+  initialPassengers || { adults: 1, children: 0, infants: 0 }
+);
+const [cabinClass, setCabinClass] = useState(initialCabinClass || "Economy");
 
 
 
@@ -1955,7 +1955,7 @@ useEffect(() => {
                   >
                     <PassengerIcon />
                     <Box sx={{ minWidth: 0, flex: 1 }}>
-                      <Typography
+                      {/* <Typography
                         sx={{
                           fontSize: "0.78rem",
                           color: "#9ca3af",
@@ -1965,7 +1965,7 @@ useEffect(() => {
                         }}
                       >
                         Travellers & Class
-                      </Typography>
+                      </Typography> */}
                       <Typography
                         sx={{
                           fontSize: "0.88rem",
