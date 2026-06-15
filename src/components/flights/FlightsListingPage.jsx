@@ -1,5 +1,8 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+
+
+
 import {
   Box,
   Button,
@@ -33,7 +36,7 @@ const planlogo = "/sidebarplanlogo.svg";
 const AIRLINE_LOGO_MAP = {
   indigo: "/navbaricons/indigo.png",
   "6e": "/navbaricons/indigo.png",
-  spicejet: "/navbaricons/spicejet.png",
+  spicejet: "/navbaricons/spicejet.svg",
   sg: "/navbaricons/spicejet.png",
   "air india": "/navbaricons/airindia.png",
   ai: "/navbaricons/airindia.png",
@@ -56,7 +59,8 @@ const getAirlineLogo = (name = "", code = "") => {
 };
 
 // ─── Airline Logo ─────────────────────────────────────────────────────────────
-const AirlineLogo = ({ name, code, size = 44 }) => {
+
+const AirlineLogo = ({ name, code, size = 36 }) => {  // default size changed to 36
   const [imgError, setImgError] = useState(false);
   const logoSrc = getAirlineLogo(name, code);
   const colors = {
@@ -83,7 +87,7 @@ const AirlineLogo = ({ name, code, size = 44 }) => {
         sx={{
           width: size,
           height: size,
-          borderRadius: "10px",
+          borderRadius: "7.5px",    // changed from 10px
           overflow: "hidden",
           flexShrink: 0,
           border: "1px solid #e5e7eb",
@@ -98,17 +102,23 @@ const AirlineLogo = ({ name, code, size = 44 }) => {
           src={logoSrc}
           alt={name}
           onError={() => setImgError(true)}
-          sx={{ width: "100%", height: "100%", objectFit: "contain", p: 0.5 }}
+          sx={{
+            width: "100%",
+            height: "100%",
+            objectFit: "contain",
+            p: 0,          // padding removed
+          }}
         />
       </Box>
     );
   }
+
   return (
     <Box
       sx={{
         width: size,
         height: size,
-        borderRadius: "10px",
+        borderRadius: "7.5px",     // changed from 10px
         bgcolor: fallbackBg,
         display: "flex",
         alignItems: "center",
@@ -123,6 +133,9 @@ const AirlineLogo = ({ name, code, size = 44 }) => {
     </Box>
   );
 };
+
+
+
 
 // ─── Airplane Loader ──────────────────────────────────────────────────────────
 const AirplaneLoader = ({ onDismiss }) => {
@@ -359,6 +372,7 @@ const FlightDetailSidebar = ({ open, onClose, flight, searchMeta,traceId  }) => 
             alignItems: "center",
             minWidth: 60,
             py: 1,
+            fontFamily: "Inter,Sans-serif",
           }}
         >
           <Box
@@ -368,9 +382,10 @@ const FlightDetailSidebar = ({ open, onClose, flight, searchMeta,traceId  }) => 
               borderRadius: "50%",
               bgcolor: "#E5E7EB",
               flexShrink: 0,
+              fontFamily: "Inter,Sans-serif",
             }}
           />
-          <Box sx={{ width: 2, height: 55, bgcolor: "#E5E7EB" }} />
+          <Box sx={{ width: 2, height: 55, bgcolor: "#E5E7EB", fontFamily: "Inter,Sans-serif" }} />
           <Box
             sx={{
               width: 34,
@@ -384,10 +399,10 @@ const FlightDetailSidebar = ({ open, onClose, flight, searchMeta,traceId  }) => 
             <img
               src={planlogo}
               alt="Flight"
-              style={{ width: 20, height: 20, objectFit: "contain" }}
+              style={{ width: 20, height: 20, objectFit: "contain", fontFamily: "Inter,Sans-serif" }}
             />
           </Box>
-          <Box sx={{ width: 2, height: 55, bgcolor: "#E5E7EB" }} />
+          <Box sx={{ width: 2, height: 55, bgcolor: "#E5E7EB", fontFamily: "Inter,Sans-serif" }} />
           <Box
             sx={{
               width: 10,
@@ -395,6 +410,7 @@ const FlightDetailSidebar = ({ open, onClose, flight, searchMeta,traceId  }) => 
               borderRadius: "50%",
               bgcolor: "#E5E7EB",
               flexShrink: 0,
+              fontFamily: "Inter,Sans-serif"
             }}
           />
         </Box>
@@ -419,12 +435,12 @@ const FlightDetailSidebar = ({ open, onClose, flight, searchMeta,traceId  }) => 
                 {formatTime(segDepTime)}
               </Typography>
               <Typography
-                sx={{ fontSize: 14, fontWeight: 600, color: "#222", mt: 0.3 }}
+                sx={{ fontSize: 14, fontWeight: 600,fontFamily: "Inter,Sans-serif", color: "#222", mt: 0.3 }}
               >
                 {seg.Origin?.Airport?.CityName} (
                 {seg.Origin?.Airport?.AirportCode})
               </Typography>
-              <Typography sx={{ fontSize: 12, color: "#888" }}>
+              <Typography sx={{ fontSize: 12, color: "#888", fontFamily: "Inter,Sans-serif" }}>
                 {seg.Origin?.Airport?.AirportName}
                 {seg.Origin?.Airport?.Terminal
                   ? `, Terminal ${seg.Origin.Airport.Terminal}`
@@ -457,12 +473,12 @@ const FlightDetailSidebar = ({ open, onClose, flight, searchMeta,traceId  }) => 
             />
             <Box>
               <Typography
-                sx={{ fontSize: 12.5, fontWeight: 700, color: "#333" }}
+                sx={{ fontSize: 12.5, fontWeight: 700, color: "#333", fontFamily: "Inter,Sans-serif" }}
               >
                 {seg.Airline?.AirlineName} &bull; {seg.Airline?.AirlineCode}-
                 {seg.Airline?.FlightNumber}
               </Typography>
-              <Typography sx={{ fontSize: 11.5, color: "#888" }}>
+              <Typography sx={{ fontSize: 11.5, color: "#888", fontFamily: "Inter,Sans-serif" }}>
                 {segDh}h {segDm}m &bull; {seg.CabinBaggage} cabin &bull;{" "}
                 {seg.Baggage} check-in
                 {seg.SupplierFareClass ? ` · ${seg.SupplierFareClass}` : ""}
@@ -481,12 +497,12 @@ const FlightDetailSidebar = ({ open, onClose, flight, searchMeta,traceId  }) => 
               {formatTime(segArrTime)}
             </Typography>
             <Typography
-              sx={{ fontSize: 14, fontWeight: 600, color: "#222", mt: 0.3 }}
+              sx={{ fontSize: 14, fontWeight: 600, color: "#222", mt: 0.3, fontFamily: "Inter,Sans-serif" }}
             >
               {seg.Destination?.Airport?.CityName} (
               {seg.Destination?.Airport?.AirportCode})
             </Typography>
-            <Typography sx={{ fontSize: 12, color: "#888" }}>
+            <Typography sx={{ fontSize: 12, color: "#888", fontFamily: "Inter,Sans-serif" }}>
               {seg.Destination?.Airport?.AirportName}
               {seg.Destination?.Airport?.Terminal
                 ? `, Terminal ${seg.Destination.Airport.Terminal}`
@@ -551,7 +567,7 @@ const FlightDetailSidebar = ({ open, onClose, flight, searchMeta,traceId  }) => 
           >
             Change of planes
           </Typography>
-          <Typography sx={{ fontSize: 12, color: "#16a34a", mt: 0.3 }}>
+          <Typography sx={{ fontSize: 12, color: "#16a34a", mt: 0.3, fontFamily: "Inter,Sans-serif" }}>
             {lh > 0 ? `${lh}h ` : ""}
             {lm > 0 ? `${lm}m ` : ""}Layover at {cityName}
           </Typography>
@@ -591,11 +607,11 @@ const FlightDetailSidebar = ({ open, onClose, flight, searchMeta,traceId  }) => 
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-            <Typography sx={{ fontSize: 20, fontWeight: 700, color: "#111" }}>
+            <Typography sx={{ fontSize: 20, fontWeight: 700, color: "#111", fontFamily: "Inter,Sans-serif" }}>
               {originCity}
             </Typography>
             <FlightTakeoff sx={{ fontSize: 18, color: "#1A914B" }} />
-            <Typography sx={{ fontSize: 20, fontWeight: 700, color: "#111" }}>
+            <Typography sx={{ fontSize: 20, fontWeight: 700, color: "#111", fontFamily: "Inter,Sans-serif" }}>
               {destCity}
             </Typography>
           </Box>
@@ -603,7 +619,7 @@ const FlightDetailSidebar = ({ open, onClose, flight, searchMeta,traceId  }) => 
             <Close />
           </IconButton>
         </Box>
-        <Typography sx={{ fontSize: 13, color: "#888" }}>
+        <Typography sx={{ fontSize: 13, color: "#888", fontFamily: "Inter,Sans-serif" }}>
           {formatDateShort(depDate)} &nbsp;·&nbsp;
           {totalPassengers} Adult{totalPassengers > 1 ? "s" : ""} &nbsp;·&nbsp;
           {searchMeta?.cabinClass || "Economy"} &nbsp;·&nbsp;
@@ -626,10 +642,10 @@ const FlightDetailSidebar = ({ open, onClose, flight, searchMeta,traceId  }) => 
             mb: 2,
           }}
         >
-          <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#1A914B" }}>
+          <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#1A914B", fontFamily: "Inter,Sans-serif" }}>
             {formatDateShort(depDate)}
           </Typography>
-          <Typography sx={{ fontSize: 12, color: "#555" }}>
+          <Typography sx={{ fontSize: 12, color: "#555", fontFamily: "Inter,Sans-serif" }}>
             {originCity} – {destCity} &bull; {dh}h {dm}m ({stopLabel})
           </Typography>
         </Paper>
@@ -643,16 +659,16 @@ const FlightDetailSidebar = ({ open, onClose, flight, searchMeta,traceId  }) => 
         ))}
         <Divider sx={{ my: 2 }} />
         <Typography
-          sx={{ fontSize: 14, fontWeight: 600, color: "#333", mb: 1.5 }}
+          sx={{ fontSize: 14, fontWeight: 600, color: "#333", mb: 1.5, fontFamily: "Inter,Sans-serif" }}
         >
           Fare Summary
         </Typography>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography sx={{ fontSize: 13, color: "#555" }}>
+            <Typography sx={{ fontSize: 13, color: "#555", fontFamily: "Inter,Sans-serif" }}>
               Base Fare × {totalPassengers}
             </Typography>
-            <Typography sx={{ fontSize: 13, color: "#222", fontWeight: 500 }}>
+            <Typography sx={{ fontSize: 13, color: "#222", fontWeight: 500, fontFamily: "Inter,Sans-serif" }}>
               ₹{" "}
               {(flight.Fare?.BaseFare * totalPassengers).toLocaleString(
                 "en-IN",
@@ -660,26 +676,26 @@ const FlightDetailSidebar = ({ open, onClose, flight, searchMeta,traceId  }) => 
             </Typography>
           </Box>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography sx={{ fontSize: 13, color: "#555" }}>
+            <Typography sx={{ fontSize: 13, color: "#555", fontFamily: "Inter,Sans-serif" }}>
               Taxes & Fees
             </Typography>
-            <Typography sx={{ fontSize: 13, color: "#222", fontWeight: 500 }}>
+            <Typography sx={{ fontSize: 13, color: "#222", fontWeight: 500, fontFamily: "Inter,Sans-serif" }}>
               ₹ {(flight.Fare?.Tax * totalPassengers).toLocaleString("en-IN")}
             </Typography>
           </Box>
           <Divider sx={{ my: 0.5 }} />
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography sx={{ fontSize: 14, fontWeight: 700, color: "#111" }}>
+            <Typography sx={{ fontSize: 14, fontWeight: 700, color: "#111", fontFamily: "Inter,Sans-serif" }}>
               Total
             </Typography>
             <Typography
-              sx={{ fontSize: 16, fontWeight: 700, color: "#1A914B" }}
+              sx={{ fontSize: 16, fontWeight: 700, color: "#1A914B", fontFamily: "Inter,Sans-serif" }}
             >
               ₹ {totalPrice.toLocaleString("en-IN")}
             </Typography>
           </Box>
           <Typography
-            sx={{ fontSize: 11, color: "#9ca3af", textAlign: "right" }}
+            sx={{ fontSize: 11, color: "#9ca3af", textAlign: "right", fontFamily: "Inter,Sans-serif" }}
           >
             For {totalPassengers} traveller{totalPassengers > 1 ? "s" : ""}
           </Typography>
@@ -699,6 +715,7 @@ const FlightDetailSidebar = ({ open, onClose, flight, searchMeta,traceId  }) => 
                 fontSize: 11.5,
                 fontWeight: 600,
                 color: flight.IsRefundable ? "#166534" : "#991B1B",
+                fontFamily: "Inter,Sans-serif"
               }}
             >
               {flight.IsRefundable ? "✓ Refundable" : "✗ Non-refundable"}
@@ -715,7 +732,7 @@ const FlightDetailSidebar = ({ open, onClose, flight, searchMeta,traceId  }) => 
               }}
             >
               <Typography
-                sx={{ fontSize: 11.5, fontWeight: 600, color: "#1D4ED8" }}
+                sx={{ fontSize: 11.5, fontWeight: 600, color: "#1D4ED8", fontFamily: "Inter,Sans-serif" }}
               >
                 {segs[0].SupplierFareClass}
               </Typography>
@@ -732,13 +749,14 @@ const FlightDetailSidebar = ({ open, onClose, flight, searchMeta,traceId  }) => 
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
+          fontFamily: "Inter,Sans-serif"
         }}
       >
         <Box>
-          <Typography sx={{ fontSize: 22, fontWeight: 700, color: "#111" }}>
+          <Typography sx={{ fontSize: 22, fontWeight: 700, color: "#111", fontFamily: "Inter,Sans-serif" }}>
             ₹ {totalPrice.toLocaleString("en-IN")}
           </Typography>
-          <Typography sx={{ fontSize: 12, color: "#888" }}>
+          <Typography sx={{ fontSize: 12, color: "#888", fontFamily: "Inter,Sans-serif" }}>
             For {totalPassengers} Traveller{totalPassengers > 1 ? "s" : ""}
           </Typography>
         </Box>
@@ -755,6 +773,7 @@ const FlightDetailSidebar = ({ open, onClose, flight, searchMeta,traceId  }) => 
             fontSize: 15,
             fontWeight: 700,
             boxShadow: "none",
+            fontFamily: "Inter,Sans-serif"
           }}
         >
           Continue
@@ -1339,10 +1358,10 @@ const CalendarFareStrip = ({
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <FlightTakeoff sx={{ fontSize: 16, color: "#1A914B" }} />
-          <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#111" }}>
+          <Typography sx={{ fontSize: 13, fontWeight: 700,fontFamily: "Inter,Sans-serif", color: "#111" }}>
             {label}
           </Typography>
-          <Typography sx={{ fontSize: 12, color: "#888" }}>
+          <Typography sx={{ fontSize: 12, fontFamily: "Inter,Sans-serif", color: "#888" }}>
             {originCode} → {destCode}
           </Typography>
         </Box>
@@ -1357,7 +1376,7 @@ const CalendarFareStrip = ({
             }}
           >
             <Typography
-              sx={{ fontSize: 11.5, fontWeight: 700, color: "#166534" }}
+              sx={{ fontSize: 11.5, fontWeight: 700, fontFamily: "Inter,Sans-serif", color: "#166534" }}
             >
               Lowest ₹ {lowestFare.toLocaleString("en-IN")}
             </Typography>
@@ -1416,6 +1435,7 @@ const CalendarFareStrip = ({
                     color: isSelected ? "#111" : "#374151",
                     lineHeight: 1.4,
                     whiteSpace: "nowrap",
+                    fontFamily: "Inter,Sans-serif",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                   }}
@@ -1426,6 +1446,7 @@ const CalendarFareStrip = ({
                   sx={{
                     fontSize: 13,
                     fontWeight: 600,
+                    fontFamily: "Inter,Sans-serif",
                     color: isSelected
                       ? "#1A914B"
                       : isLowest
@@ -1441,6 +1462,7 @@ const CalendarFareStrip = ({
                   <Box
                     sx={{
                       position: "absolute",
+                      fontFamily: "Inter,Sans-serif",
                       bottom: 0,
                       left: "15%",
                       right: "15%",
@@ -1680,10 +1702,10 @@ const RoundTripCalendarStrip = ({
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}>
             <FlightTakeoff sx={{ fontSize: 14, color: "#1A914B" }} />
-            <Typography sx={{ fontSize: 12.5, fontWeight: 700, color: "#111" }}>
+            <Typography sx={{ fontSize: 12.5, fontWeight: 700,fontFamily: "Inter,Sans-serif", color: "#111" }}>
               {label}
             </Typography>
-            <Typography sx={{ fontSize: 11.5, color: "#888" }}>
+            <Typography sx={{ fontSize: 11.5, fontFamily: "Inter,Sans-serif", color: "#888" }}>
               {fromCode} → {toCode}
             </Typography>
           </Box>
@@ -1698,7 +1720,7 @@ const RoundTripCalendarStrip = ({
               }}
             >
               <Typography
-                sx={{ fontSize: 10.5, fontWeight: 700, color: "#166534" }}
+                sx={{ fontSize: 10.5, fontWeight: 700, fontFamily: "Inter,Sans-serif", color: "#166534" }}
               >
                 ₹{lowestFare.toLocaleString("en-IN")}
               </Typography>
@@ -1965,15 +1987,15 @@ const RoundTripFlightCard = ({ flight, selected, onSelect }) => {
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <Box sx={{ textAlign: "center" }}>
-          <Typography sx={{ fontSize: 16, fontWeight: 700, color: "#111" }}>
+          <Typography sx={{ fontSize: 16, fontWeight: 700,fontFamily: "Inter,Sans-serif", color: "#111" }}>
             {depTime}
           </Typography>
-          <Typography sx={{ fontSize: 11, color: "#888" }}>
+          <Typography sx={{ fontSize: 11, fontFamily: "Inter,Sans-serif", color: "#888" }}>
             {originCity}
           </Typography>
         </Box>
         <Box sx={{ flex: 1, textAlign: "center" }}>
-          <Typography sx={{ fontSize: 11, color: "#F59E0B", fontWeight: 600 }}>
+          <Typography sx={{ fontSize: 11, color: "#F59E0B",fontFamily: "Inter,Sans-serif", fontWeight: 600 }}>
             {durationHours}h {durationMinutes}m
           </Typography>
           <Box
@@ -2010,15 +2032,15 @@ const RoundTripFlightCard = ({ flight, selected, onSelect }) => {
           </Typography>
         </Box>
         <Box sx={{ textAlign: "center" }}>
-          <Typography sx={{ fontSize: 16, fontWeight: 700, color: "#111" }}>
+          <Typography sx={{ fontSize: 16, fontWeight: 700, fontFamily: "Inter,Sans-serif", color: "#111" }}>
             {arrTime}
           </Typography>
-          <Typography sx={{ fontSize: 11, color: "#888" }}>
+          <Typography sx={{ fontSize: 11, fontFamily: "Inter,Sans-serif", color: "#888" }}>
             {destCity}
           </Typography>
         </Box>
         <Box sx={{ textAlign: "right", ml: 1 }}>
-          <Typography sx={{ fontSize: 15, fontWeight: 700, color: "#222" }}>
+          <Typography sx={{ fontSize: 15, fontWeight: 700, fontFamily: "Inter,Sans-serif", color: "#222" }}>
             ₹ {price?.toLocaleString("en-IN")}
           </Typography>
           <Typography sx={{ fontSize: 10, color: "#9ca3af" }}>
@@ -2089,10 +2111,10 @@ const RoundTripLayout = ({
             }}
           >
             <FlightTakeoff sx={{ fontSize: 16, color: "#1A914B" }} />
-            <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#111" }}>
+            <Typography sx={{ fontSize: 13, fontWeight: 700,fontFamily: "Inter,Sans-serif", color: "#111" }}>
               {fromCode} → {toCode}
             </Typography>
-            <Typography sx={{ fontSize: 12, color: "#888", ml: "auto" }}>
+            <Typography sx={{ fontSize: 12, color: "#888",fontFamily: "Inter,Sans-serif", ml: "auto" }}>
               {formatDateTab(depDate)}
             </Typography>
           </Box>
@@ -2129,7 +2151,7 @@ const RoundTripLayout = ({
                 bgcolor: "#fff",
               }}
             >
-              <Typography sx={{ fontSize: 14, color: "#888" }}>
+              <Typography sx={{ fontSize: 14,fontFamily: "Inter,Sans-serif", color: "#888" }}>
                 No onward flights found
               </Typography>
             </Paper>
@@ -2161,12 +2183,12 @@ const RoundTripLayout = ({
             }}
           >
             <FlightTakeoff
-              sx={{ fontSize: 16, color: "#1A914B", transform: "scaleX(-1)" }}
+              sx={{ fontSize: 16, color: "#1A914B",fontFamily: "Inter,Sans-serif", transform: "scaleX(-1)" }}
             />
-            <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#111" }}>
+            <Typography sx={{ fontSize: 13, fontWeight: 700,family: "Inter,Sans-serif", color: "#111" }}>
               {toCode} → {fromCode}
             </Typography>
-            <Typography sx={{ fontSize: 12, color: "#888", ml: "auto" }}>
+            <Typography sx={{ fontSize: 12,fontFamily: "Inter,Sans-serif", color: "#888", ml: "auto" }}>
               {formatDateTab(retDate)}
             </Typography>
           </Box>
@@ -2176,6 +2198,7 @@ const RoundTripLayout = ({
               gridTemplateColumns: "1fr 1fr 1fr 1fr",
               px: 1,
               mb: 0.5,
+              fontFamily: "Inter,Sans-serif",
             }}
           >
             {["Departure", "Duration", "Arrival", "Price"].map((h) => (
@@ -2183,6 +2206,7 @@ const RoundTripLayout = ({
                 key={h}
                 sx={{
                   fontSize: 11,
+                  fontFamily: "Inter,Sans-serif",
                   color: "#9CA3AF",
                   fontWeight: 500,
                   textAlign: h === "Price" ? "right" : "left",
@@ -2201,9 +2225,10 @@ const RoundTripLayout = ({
                 borderRadius: "12px",
                 border: "1px solid #E3E8EE",
                 bgcolor: "#fff",
+                fontFamily: "Inter,Sans-serif",
               }}
             >
-              <Typography sx={{ fontSize: 14, color: "#888" }}>
+              <Typography sx={{ fontSize: 14, color: "#888", fontFamily: "Inter,Sans-serif" }}>
                 No return flights found
               </Typography>
             </Paper>
@@ -2236,16 +2261,17 @@ const RoundTripLayout = ({
             alignItems: "center",
             justifyContent: "space-between",
             boxShadow: "0 4px 24px rgba(0,0,0,0.12)",
+            fontFamily: "Inter,Sans-serif",
           }}
         >
           <Box>
-            <Typography sx={{ fontSize: 13, color: "#555", mb: 0.3 }}>
+            <Typography sx={{ fontSize: 13, color: "#555", mb: 0.3, fontFamily: "Inter,Sans-serif" }}>
               {fromCode} → {toCode} &nbsp;+&nbsp; {toCode} → {fromCode}
             </Typography>
-            <Typography sx={{ fontSize: 22, fontWeight: 700, color: "#111" }}>
+            <Typography sx={{ fontSize: 22, fontWeight: 700, color: "#111", fontFamily: "Inter,Sans-serif" }}>
               ₹ {totalPrice.toLocaleString("en-IN")}
             </Typography>
-            <Typography sx={{ fontSize: 11, color: "#9ca3af" }}>
+            <Typography sx={{ fontSize: 11, color: "#9ca3af",fontFamily: "Inter,Sans-serif" }}>
               Total for both legs
             </Typography>
           </Box>
@@ -2262,6 +2288,7 @@ const RoundTripLayout = ({
               fontSize: 15,
               fontWeight: 700,
               boxShadow: "none",
+              fontFamily: "Inter,Sans-serif",
             }}
           >
             Book Round Trip
@@ -2545,7 +2572,7 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
         </Typography>
       </Box>
       <Typography
-        sx={{ fontSize: 15, fontWeight: 600, mb: 1.5, color: "#222" }}
+        sx={{ fontSize: 15, fontWeight: 600, mb: 1.5,fontFamily: "Inter,Sans-serif", color: "#222" }}
       >
         Price Range
       </Typography>
@@ -2560,15 +2587,15 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
         }}
       />
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-        <Typography sx={{ fontSize: 13, color: "#555" }}>
+        <Typography sx={{ fontSize: 13,fontFamily: "Inter,Sans-serif", color: "#555" }}>
           ₹ {effectivePriceRange[0].toLocaleString("en-IN")}
         </Typography>
-        <Typography sx={{ fontSize: 13, color: "#555" }}>
+        <Typography sx={{ fontSize: 13, fontFamily: "Inter,Sans-serif", color: "#555" }}>
           ₹ {effectivePriceRange[1].toLocaleString("en-IN")}
         </Typography>
       </Box>
       <Divider sx={{ borderStyle: "dashed", mb: 2 }} />
-      <Typography sx={{ fontSize: 15, fontWeight: 600, mb: 1, color: "#222" }}>
+      <Typography sx={{ fontSize: 15, fontWeight: 600, mb: 1, fontFamily: "Inter,Sans-serif", color: "#222" }}>
         Stops
       </Typography>
       {["Nonstop", "1 Stop", "2+ Stop"].map((stop) => (
@@ -2583,7 +2610,7 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
             />
           }
           label={
-            <Typography sx={{ fontSize: 13.5, color: "#444" }}>
+            <Typography sx={{ fontSize: 13.5, fontFamily: "Inter,Sans-serif", color: "#444" }}>
               {stop}
             </Typography>
           }
@@ -2592,7 +2619,7 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
       ))}
       <Divider sx={{ borderStyle: "dashed", my: 2 }} />
       <Typography
-        sx={{ fontSize: 15, fontWeight: 600, mb: 1.5, color: "#222" }}
+        sx={{ fontSize: 15, fontWeight: 600, mb: 1.5, fontFamily: "Inter,Sans-serif", color: "#222" }}
       >
         Departure from {searchMeta.fromCity?.code || "Origin"}
       </Typography>
@@ -2616,6 +2643,7 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
               textAlign: "center",
               borderRadius: "10px",
               cursor: "pointer",
+              fontFamily: "Inter,Sans-serif",
               border:
                 departureTime === label
                   ? "1.5px solid #1A914B"
@@ -2624,6 +2652,7 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
+              fontFamily: "Inter,Sans-serif",
               gap: 0.3,
               "&:hover": { borderColor: "#1A914B" },
               transition: "all .15s",
@@ -2646,7 +2675,7 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
         ))}
       </Box>
       <Typography
-        sx={{ fontSize: 15, fontWeight: 600, mb: 1.5, color: "#222" }}
+        sx={{ fontSize: 15, fontWeight: 600, mb: 1.5, fontFamily: "Inter,Sans-serif", color: "#222" }}
       >
         Arrival at {searchMeta.toCity?.code || "Destination"}
       </Typography>
@@ -2698,7 +2727,7 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
         ))}
       </Box>
       <Divider sx={{ borderStyle: "dashed", my: 2 }} />
-      <Typography sx={{ fontSize: 15, fontWeight: 600, mb: 1, color: "#222" }}>
+      <Typography sx={{ fontSize: 15, fontWeight: 600, mb: 1, fontFamily: "Inter,Sans-serif", color: "#222" }}>
         Airlines
       </Typography>
       {uniqueAirlines.map((airline) => (
@@ -2717,7 +2746,7 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
           label={
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <AirlineLogo name={airline} code="" size={24} />
-              <Typography sx={{ fontSize: 13.5, color: "#444" }}>
+              <Typography sx={{ fontSize: 13.5, fontFamily: "Inter,Sans-serif", color: "#444" }}>
                 {airline}
               </Typography>
             </Box>
@@ -2783,11 +2812,11 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
             <AirlineLogo name={airlineName} code={airlineCode} size={44} />
             <Box>
               <Typography
-                sx={{ fontSize: 14.5, fontWeight: 600, color: "#222" }}
+                sx={{ fontSize: 14.5, fontWeight: 600, fontFamily: "Inter,Sans-serif", color: "#222" }}
               >
                 {airlineName}
               </Typography>
-              <Typography sx={{ fontSize: 12.5, color: "#888" }}>
+              <Typography sx={{ fontSize: 12.5, fontFamily: "Inter,Sans-serif", color: "#888" }}>
                 {airlineCode}-{flightNumber}
                 {stopsCount > 0 &&
                   ` · ${stopsCount} stop${stopsCount > 1 ? "s" : ""}`}
@@ -2798,6 +2827,7 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
                 <Typography
                   sx={{
                     fontSize: 11,
+                    fontFamily: "Inter,Sans-serif",
                     color: flight.IsRefundable ? "#1A914B" : "#E57373",
                     fontWeight: 500,
                   }}
@@ -2805,7 +2835,7 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
                   {flight.IsRefundable ? "Refundable" : "Non-refundable"}
                 </Typography>
                 {fareClass && (
-                  <Typography sx={{ fontSize: 11, color: "#888" }}>
+                  <Typography sx={{ fontSize: 11, fontFamily: "Inter,Sans-serif", color: "#888" }}>
                     · {fareClass}
                   </Typography>
                 )}
@@ -2822,7 +2852,7 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
             >
               {depTime}
             </Typography>
-            <Typography sx={{ fontSize: 12.5, color: "#888" }}>
+            <Typography sx={{ fontSize: 12.5, fontFamily: "Inter,Sans-serif", color: "#888" }}>
               {originCity}
             </Typography>
           </Box>
@@ -2881,11 +2911,11 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
                 }}
               />
             </Box>
-            <Typography sx={{ fontSize: 11.5, color: "#888" }}>
+            <Typography sx={{ fontSize: 11.5, fontFamily: "Inter,Sans-serif", color: "#888" }}>
               {stopLabel}
             </Typography>
             {stopsCount > 0 && (
-              <Typography sx={{ fontSize: 10.5, color: "#aaa" }}>
+              <Typography sx={{ fontSize: 10.5, fontFamily: "Inter,Sans-serif", color: "#aaa" }}>
                 via{" "}
                 {segs
                   .slice(0, -1)
@@ -2904,7 +2934,7 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
             >
               {arrTime}
             </Typography>
-            <Typography sx={{ fontSize: 12.5, color: "#888" }}>
+            <Typography sx={{ fontSize: 12.5, fontFamily: "Inter,Sans-serif", color: "#888" }}>
               {destCity}
             </Typography>
           </Box>
@@ -2927,7 +2957,7 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
               >
                 ₹ {price?.toLocaleString("en-IN")}
               </Typography>
-              <Typography sx={{ fontSize: 11, color: "#6B7280" }}>
+              <Typography sx={{ fontSize: 11, fontFamily: "Inter,Sans-serif", color: "#6B7280" }}>
                 {seatsLeft <= 5 ? (
                   <span style={{ color: "#E57373", fontWeight: 600 }}>
                     {seatsLeft} seats left!
@@ -2936,7 +2966,7 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
                   `${seatsLeft} seats`
                 )}
               </Typography>
-              <Typography sx={{ fontSize: 10.5, color: "#9ca3af" }}>
+              <Typography sx={{ fontSize: 10.5, fontFamily: "Inter,Sans-serif", color: "#9ca3af" }}>
                 Cabin: {cabinBag} · Check-in: {baggage}
               </Typography>
             </Box>
@@ -2957,6 +2987,7 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
                 fontWeight: 600,
                 whiteSpace: "nowrap",
                 boxShadow: "none",
+                fontFamily: "Inter,Sans-serif",
               }}
             >
               Book Now
@@ -2968,7 +2999,7 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
   };
 
   return (
-    <Box sx={{ bgcolor: "#F5F7FA", minHeight: "100vh" }}>
+    <Box sx={{ bgcolor: "#F5F7FA", minHeight: "100vh", }}>
       {isSearching && (
         <AirplaneLoader onDismiss={() => setIsSearching(false)} />
       )}
@@ -3053,12 +3084,13 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
             textTransform: "none",
             fontSize: 13,
             fontWeight: 600,
+            fontFamily: "Inter,Sans-serif",
           }}
         >
           {filterOpen ? "Hide Filters" : "Show Filters"}
         </Button>
         <Typography
-          sx={{ fontSize: 13.5, color: "#555", alignSelf: "center", ml: 1 }}
+          sx={{ fontSize: 13.5, color: "#555", alignSelf: "center", ml: 1, fontFamily: "Inter,Sans-serif" }}
         >
           {tripType === "roundtrip"
             ? `${filteredOnwardFlights.length} onward · ${filteredReturnFlights.length} return`
@@ -3153,6 +3185,7 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
                         key={h}
                         sx={{
                           fontSize: 12.5,
+                          fontFamily: "Inter,Sans-serif",
                           color: "#9CA3AF",
                           fontWeight: 500,
                           textAlign: h === "Price" ? "right" : "left",
@@ -3176,13 +3209,13 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
                   }}
                 >
                   <Typography
-                    sx={{ fontSize: 17, color: "#555", fontWeight: 500 }}
+                    sx={{ fontSize: 17, color: "#555", fontWeight: 500, fontFamily: "Inter,Sans-serif" }}
                   >
                     {rawResults.length === 0
                       ? "No flights data received"
                       : "No flights match your filters"}
                   </Typography>
-                  <Typography sx={{ fontSize: 13.5, color: "#9CA3AF", mt: 1 }}>
+                  <Typography sx={{ fontSize: 13.5, color: "#9CA3AF", mt: 1, fontFamily: "Inter,Sans-serif" }}>
                     {rawResults.length === 0
                       ? "Please search again"
                       : "Try adjusting your filters"}

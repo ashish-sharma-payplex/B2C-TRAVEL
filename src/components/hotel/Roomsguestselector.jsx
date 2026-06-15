@@ -159,8 +159,16 @@ function RoomsGuestDropdown({ open, onClose, anchorEl, onDone }) {
         width: 320,
       }}
     >
+
+
       <CounterRow
-        icon="🏠"
+        icon={
+          <img
+            src="/rooms.svg"  
+            alt="Rooms"
+            style={{ width: 24, height: 24 }} 
+          />
+        }
         label="Rooms"
         subLabel="Minimum 1"
         value={rooms}
@@ -170,7 +178,13 @@ function RoomsGuestDropdown({ open, onClose, anchorEl, onDone }) {
       />
 
       <CounterRow
-        icon="👤"
+        icon={
+          <img
+            src="/adults.svg"
+            alt="Adults"
+            style={{ width: 24, height: 24 }}
+          />
+        }
         label="Adults"
         subLabel="13 years & above"
         value={adults}
@@ -180,14 +194,20 @@ function RoomsGuestDropdown({ open, onClose, anchorEl, onDone }) {
       />
 
       <CounterRow
-        icon="🧒"
-        label="Children"
-        subLabel="0-12 years"
-        value={children}
-        min={0}
-        onInc={() => handleChildrenChange(1)}
-        onDec={() => handleChildrenChange(-1)}
-      />
+      icon={
+        <img
+          src="/children.svg"   
+          alt="Children"
+          style={{ width: 24, height: 24 }} 
+        />
+      }
+      label="Children.svg"
+      subLabel="0-12 years"
+      value={children}
+      min={0}
+      onInc={() => handleChildrenChange(1)}
+      onDec={() => handleChildrenChange(-1)}
+    />
 
       {children > 0 && (
         <div style={{ marginTop: 8 }}>
