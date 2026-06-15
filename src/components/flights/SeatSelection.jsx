@@ -1,1253 +1,786 @@
-// import { useState, useMemo } from "react";
-// import {
-//   Box,
-//   Typography,
-//   Chip,
-//   Button,
-//   Divider,
-//   Paper,
-//   Tooltip,
-//   Avatar,
-//   Stack,
-//   IconButton,
-//   Tabs,
-//   Tab,
-//   Snackbar,
-//   Alert,
-//   useMediaQuery,
-//   useTheme,
-// } from "@mui/material";
-// import { createTheme, ThemeProvider } from "@mui/material/styles";
-// import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
-// import FlightLandIcon from "@mui/icons-material/FlightLand";
-// import AirlineSeatReclineNormalIcon from "@mui/icons-material/AirlineSeatReclineNormal";
-// import PersonIcon from "@mui/icons-material/Person";
-// import ChildCareIcon from "@mui/icons-material/ChildCare";
-// import BabyChangingStationIcon from "@mui/icons-material/BabyChangingStation";
-// import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-// import CheckIcon from "@mui/icons-material/Check";
+// src/components/flights/SeatSelectionPage.jsx
+// Drop-in replacement — reads SeatsBySegment from the SSR hook response
+// and renders an ixigo-style cabin map with fare summary.
 
-// // ─── Theme ───────────────────────────────────────────────────────────────────
-// const theme = createTheme({
-//   palette: {
-//     primary: { main: "#1B6B3A", light: "#2E8B57", contrastText: "#fff" },
-//     secondary: { main: "#F5A623", contrastText: "#fff" },
-//     background: { default: "#F0F4F8", paper: "#FFFFFF" },
-//     text: { primary: "#1A202C", secondary: "#4A5568" },
-//   },
-//   typography: {
-//     fontFamily: "'Inter', 'Roboto', sans-serif",
-//     h5: { fontWeight: 700, letterSpacing: "-0.5px" },
-//     h6: { fontWeight: 600 },
-//     subtitle2: { fontWeight: 600, fontSize: "0.78rem" },
-//     caption: { fontSize: "0.72rem" },
-//   },
-//   shape: { borderRadius: 12 },
-//   components: {
-//     MuiPaper: { styleOverrides: { root: { boxShadow: "0 2px 16px rgba(0,0,0,0.07)" } } },
-//     MuiButton: { styleOverrides: { root: { textTransform: "none", borderRadius: 8, fontWeight: 600 } } },
-//     MuiChip: { styleOverrides: { root: { borderRadius: 6 } } },
-//   },
-// });
+import { useState, useMemo, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useSSR } from "../../hooks/flighthooks/useSSR";
 
-// // ─── Constants ────────────────────────────────────────────────────────────────
-// const ROWS = 30;
-// const COLS = ["A", "B", "C", "D", "E", "F"];
-// const EXTRA_LEGROOM_ROWS = [1, 2, 12, 13];
-// const EXIT_ROW = 12;
+/* ─────────────────────────────────────────────────────────────────────────────
+   TINY ICON COMPONENTS  (no external icon lib needed)
+───────────────────────────────────────────────────────────────────────────── */
+const IconSeat = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 20v-4a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v4"/><circle cx="12" cy="7" r="3"/>
+  </svg>
+);
+const IconCheck = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
+const IconChevron = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="9 18 15 12 9 6"/>
+  </svg>
+);
+const IconFlight = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+  </svg>
+);
 
-// const SEAT_PRICE = (row, col) => {
-//   if (EXTRA_LEGROOM_ROWS.includes(row)) return col < 3 ? 1200 : 1500;
-//   if (row <= 5) return 800;
-//   if (row <= 15) return 500;
-//   return 300;
-// };
+/* ─────────────────────────────────────────────────────────────────────────────
+   HELPERS
+───────────────────────────────────────────────────────────────────────────── */
+// AvailablityType: 1 = available, 3 = occupied/blocked, 0 = no-seat row
+const isAvailable = (seat) => seat.AvailablityType === 1;
 
-// const BOOKED_SEATS = new Set([
-//   "1A","1D","2B","2E","3C","3F","4A","4B","5D","6C","7A","7F",
-//   "8B","8E","9C","10D","10F","11A","12B","12E","13C","14A","14F",
-//   "15B","16C","16D","17A","18F","19B","20C","20E","21A","22D","23F",
-// ]);
+// SeatType bitmask categories used by Air India / IX
+// 1=Window, 2=Aisle, 3=Middle, 4=ExitWindow, 6=ExitWindow+, 10=ExitAisle, 12=ExitAisle+, 16=ExitMiddle, 18=ExitMiddle+
+const isExitRow = (seat) => [4, 6, 10, 12, 16, 18].includes(seat.SeatType);
 
-// const SEGMENTS = [
-//   { id: 0, from: "DEL", to: "NAG", label: "DEL → NAG", airline: "IndiGo", flight: "6E-5032" },
-//   { id: 1, from: "NAG", to: "BOM", label: "NAG → BOM", airline: "IndiGo", flight: "6E-2218" },
-// ];
+// Group flat seat list into rows: { rowNo: [seat, …] }
+function groupByRow(seats) {
+  const map = {};
+  for (const s of seats) {
+    if (s.Code === "NoSeat") continue;
+    const r = s.RowNo;
+    if (!map[r]) map[r] = [];
+    map[r].push(s);
+  }
+  return map;
+}
 
-// const PASSENGERS = [
-//   { id: "P1", name: "Shivam C", type: "adult", icon: <PersonIcon fontSize="small" /> },
-//   { id: "P2", name: "Rahul M", type: "adult", icon: <PersonIcon fontSize="small" /> },
-//   { id: "P3", name: "Doney R", type: "adult", icon: <PersonIcon fontSize="small" />  },
-// ];
+// Flatten seat_rows array from API into a single array
+function flattenSeatRows(seatRows) {
+  return seatRows.flatMap((r) => r.Seats || []);
+}
 
-// const FARE = {
-//   adultCount: 3, adultPrice: 8866,
-//   childCount: 0, childPrice: 4333,
-//   infantCount: 0, infantPrice: 2000,
-//   taxes: 2946,
-// };
+// Canonical column order
+const COL_ORDER = ["A", "B", "C", "D", "E", "F"];
 
-// const seatColor = (row, col, isBooked, isSelected, isHovered) => {
-//   if (isBooked) return { bg: "#CBD5E0", border: "#A0AEC0", cursor: "not-allowed", text: "#718096" };
-//   if (isSelected) return { bg: "#1B6B3A", border: "#145728", cursor: "pointer", text: "#fff" };
-//   if (isHovered) return { bg: "#C6F6D5", border: "#1B6B3A", cursor: "pointer", text: "#1A202C" };
-//   if (EXTRA_LEGROOM_ROWS.includes(row))
-//     return { bg: "#EBF8FF", border: "#90CDF4", cursor: "pointer", text: "#2B6CB0" };
-//   const price = SEAT_PRICE(row, col < 3 ? 0 : 3);
-//   if (price >= 801) return { bg: "#EBF4FF", border: "#BEE3F8", cursor: "pointer", text: "#2C5282" };
-//   if (price >= 301) return { bg: "#F0FFF4", border: "#9AE6B4", cursor: "pointer", text: "#276749" };
-//   return { bg: "#FAFAFA", border: "#E2E8F0", cursor: "pointer", text: "#4A5568" };
-// };
+/* ─────────────────────────────────────────────────────────────────────────────
+   SEAT COLOUR LOGIC
+───────────────────────────────────────────────────────────────────────────── */
+function seatStyle(seat, state /* 'available'|'selected'|'other'|'blocked' */) {
+  if (state === "blocked") return { bg: "#E2E6EA", border: "#C8CDD4", text: "#9AA3AE", cursor: "not-allowed" };
+  if (state === "selected") return { bg: "#16a34a", border: "#15803d", text: "#fff", cursor: "pointer" };
+  if (state === "other") return { bg: "#DBEAFE", border: "#93C5FD", text: "#2563EB", cursor: "not-allowed" };
 
-// // ─── Seat Component ───────────────────────────────────────────────────────────
-// function Seat({ row, colIndex, col, selected, onSelect }) {
-//   const key = `${row}${col}`;
-//   const booked = BOOKED_SEATS.has(key);
-//   const isSelected = selected === key;
-//   const [hovered, setHovered] = useState(false);
-//   const colors = seatColor(row, colIndex, booked, isSelected, hovered && !booked);
-//   const price = SEAT_PRICE(row, colIndex);
-//   const isXL = EXTRA_LEGROOM_ROWS.includes(row);
+  // price tiers
+  const p = seat.Price;
+  if (p === 0) return { bg: "#F8FAFC", border: "#CBD5E0", text: "#64748B", cursor: "pointer" }; // free
+  if (isExitRow(seat)) return { bg: "#FEF3C7", border: "#F59E0B", text: "#92400E", cursor: "pointer" }; // exit
+  if (p >= 1500) return { bg: "#F3E8FF", border: "#C084FC", text: "#7E22CE", cursor: "pointer" };
+  if (p >= 800) return { bg: "#DBEAFE", border: "#60A5FA", text: "#1E40AF", cursor: "pointer" };
+  if (p >= 400) return { bg: "#DCFCE7", border: "#4ADE80", text: "#166534", cursor: "pointer" };
+  return { bg: "#F8FAFC", border: "#CBD5E0", text: "#64748B", cursor: "pointer" };
+}
 
-//   return (
-//     <Tooltip
-//       title={booked ? "Already booked" : `${col}${row} · ₹${price.toLocaleString()}${isXL ? " · XL Legroom" : ""}`}
-//       arrow
-//       placement="top"
-//     >
-//       <Box
-//         onClick={() => !booked && onSelect(key)}
-//         onMouseEnter={() => setHovered(true)}
-//         onMouseLeave={() => setHovered(false)}
-//         sx={{
-//           width: 36,
-//           height: 34,
-//           borderRadius: "6px 6px 4px 4px",
-//           border: `1.5px solid ${colors.border}`,
-//           bgcolor: colors.bg,
-//           cursor: colors.cursor,
-//           display: "flex",
-//           alignItems: "center",
-//           justifyContent: "center",
-//           transition: "all 0.15s ease",
-//           transform: isSelected ? "scale(1.08)" : "scale(1)",
-//           position: "relative",
-//           flexShrink: 0,
-//         }}
-//       >
-//         {booked ? (
-//           <Box sx={{ width: 16, height: 16, position: "relative" }}>
-//             <Box sx={{ position: "absolute", inset: 0, "&::before, &::after": {
-//               content: '""', position: "absolute", width: "100%", height: "1.5px",
-//               bgcolor: "#A0AEC0", top: "50%", left: 0, borderRadius: 1,
-//             }, "&::before": { transform: "rotate(45deg)" }, "&::after": { transform: "rotate(-45deg)" } }} />
-//           </Box>
-//         ) : isSelected ? (
-//           <CheckIcon sx={{ fontSize: 16, color: "#fff" }} />
-//         ) : (
-//           <Typography variant="caption" sx={{ color: colors.text, fontWeight: 600, fontSize: "0.6rem", lineHeight: 1 }}>
-//             {isXL ? "XL" : ""}
-//           </Typography>
-//         )}
-//       </Box>
-//     </Tooltip>
-//   );
-// }
-
-// // ─── Cabin Map ────────────────────────────────────────────────────────────────
-// function CabinMap({ segmentIdx, passengerSelections, activePassenger, onSeatSelect }) {
-//   const selectedForSegment = passengerSelections[segmentIdx] || {};
-//   const allSelectedSeats = new Set(Object.values(selectedForSegment));
-
-//   return (
-//     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0 }}>
-//       {/* Nose */}
-//       <Box sx={{ width: 80, height: 40, borderRadius: "50% 50% 0 0", border: "2px solid #CBD5E0", borderBottom: "none", bgcolor: "#F7FAFC", mb: 1 }} />
-
-//       {/* Column headers */}
-//       <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 0.5, px: 1 }}>
-//         {COLS.map((col, i) => (
-//           <Box key={col} sx={{ display: "flex", alignItems: "center" }}>
-//             {i === 3 && <Box sx={{ width: 28, textAlign: "center" }} />}
-//             <Box sx={{ width: 36, textAlign: "center" }}>
-//               <Typography variant="caption" sx={{ fontWeight: 700, color: "#718096", fontSize: "0.72rem" }}>{col}</Typography>
-//             </Box>
-//           </Box>
-//         ))}
-//       </Box>
-
-//       {/* Rows */}
-//       <Box sx={{ overflowY: "auto", maxHeight: 380, pr: 0.5, "&::-webkit-scrollbar": { width: 4 }, "&::-webkit-scrollbar-thumb": { bgcolor: "#CBD5E0", borderRadius: 2 } }}>
-//         {Array.from({ length: ROWS }, (_, i) => i + 1).map((row) => (
-//           <Box key={row}>
-//             {row === EXIT_ROW && (
-//               <Box sx={{ display: "flex", alignItems: "center", gap: 1, my: 1, px: 1 }}>
-//                 <Box sx={{ flex: 1, height: "1px", bgcolor: "#FBD38D" }} />
-//                 <Typography variant="caption" sx={{ color: "#C05621", fontWeight: 700, fontSize: "0.6rem", whiteSpace: "nowrap" }}>EXIT ROW</Typography>
-//                 <Box sx={{ flex: 1, height: "1px", bgcolor: "#FBD38D" }} />
-//               </Box>
-//             )}
-//             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 0.4, px: 0.5 }}>
-//               {COLS.map((col, i) => {
-//                 const seatKey = `${row}${col}`;
-//                 const isThisPassenger = selectedForSegment[activePassenger] === seatKey;
-//                 const isOtherPassenger = allSelectedSeats.has(seatKey) && !isThisPassenger;
-
-//                 return (
-//                   <Box key={col} sx={{ display: "flex", alignItems: "center" }}>
-//                     {i === 3 && (
-//                       <Box sx={{ width: 28, textAlign: "center" }}>
-//                         <Typography variant="caption" sx={{ color: "#A0AEC0", fontWeight: 600, fontSize: "0.62rem" }}>{row}</Typography>
-//                       </Box>
-//                     )}
-//                     <Seat
-//                       row={row}
-//                       colIndex={i}
-//                       col={col}
-//                       selected={isThisPassenger ? seatKey : isOtherPassenger ? "__other__" : null}
-//                       onSelect={(key) => onSeatSelect(segmentIdx, activePassenger, key)}
-//                     />
-//                   </Box>
-//                 );
-//               })}
-//             </Box>
-//           </Box>
-//         ))}
-//       </Box>
-
-//       {/* Tail */}
-//       <Box sx={{ width: 60, height: 30, borderRadius: "0 0 50% 50%", border: "2px solid #CBD5E0", borderTop: "none", bgcolor: "#F7FAFC", mt: 1 }} />
-//     </Box>
-//   );
-// }
-
-// // ─── Main Component ───────────────────────────────────────────────────────────
-// export default function SeatSelection() {
-//   const muiTheme = useTheme();
-//   const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
-
-//   const [activeSegment, setActiveSegment] = useState(0);
-//   const [activePassenger, setActivePassenger] = useState("P1");
-//   // { segmentIdx: { passengerId: seatKey } }
-//   const [passengerSelections, setPassengerSelections] = useState({ 0: {}, 1: {} });
-//   const [snackbar, setSnackbar] = useState({ open: false, message: "" });
-
-//   const handleSeatSelect = (segIdx, passengerId, seatKey) => {
-//     setPassengerSelections((prev) => {
-//       const segData = { ...prev[segIdx] };
-//       // Deselect if same seat clicked
-//       if (segData[passengerId] === seatKey) {
-//         delete segData[passengerId];
-//       } else {
-//         // Check not taken by another passenger
-//         const takenBy = Object.entries(segData).find(([pid, sk]) => sk === seatKey && pid !== passengerId);
-//         if (takenBy) {
-//           setSnackbar({ open: true, message: `Seat ${seatKey} is already selected by ${PASSENGERS.find(p => p.id === takenBy[0])?.name}.` });
-//           return prev;
-//         }
-//         segData[passengerId] = seatKey;
-//       }
-//       return { ...prev, [segIdx]: segData };
-//     });
-//   };
-
-//   const seatCost = useMemo(() => {
-//     let total = 0;
-//     Object.entries(passengerSelections).forEach(([segIdx, segData]) => {
-//       Object.entries(segData).forEach(([pid, seatKey]) => {
-//         const row = parseInt(seatKey.slice(1));
-//         const col = COLS.indexOf(seatKey[0]);
-//         total += SEAT_PRICE(row, col);
-//       });
-//     });
-//     return total;
-//   }, [passengerSelections]);
-
-//   const netTotal = FARE.adultPrice + FARE.childPrice + FARE.infantPrice + FARE.taxes + seatCost;
-
-//   const eligiblePassengers = PASSENGERS.filter((p) => p.type !== "infant");
-
-//   const totalSeatsSelected = Object.values(passengerSelections).reduce((acc, seg) => acc + Object.keys(seg).length, 0);
-//   const maxSeats = SEGMENTS.length * eligiblePassengers.length;
-
-//   return (
-//     <ThemeProvider theme={theme}>
-//       <Box sx={{ minHeight: "100vh", bgcolor: "background.default", fontFamily: "'Inter', sans-serif" }}>
-//         {/* ── Nav ── */}
-//         <Box sx={{ bgcolor: "#fff", borderBottom: "1px solid #E2E8F0", px: { xs: 2, md: 4 }, py: 1.5, display: "flex", alignItems: "center", gap: 3 }}>
-//           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-//             <Box sx={{ bgcolor: "#1B6B3A", borderRadius: 2, p: 0.8 }}>
-//               <FlightTakeoffIcon sx={{ color: "#fff", fontSize: 20 }} />
-//             </Box>
-//             <Typography variant="h6" sx={{ color: "#1B6B3A", fontWeight: 800, letterSpacing: "-0.5px" }}>dealplex</Typography>
-//           </Box>
-//           <Stack direction="row" spacing={3} sx={{ ml: "auto", display: { xs: "none", sm: "flex" } }}>
-//             {["Flights", "Hotels", "Buses", "Trains"].map((item) => (
-//               <Typography key={item} variant="body2" sx={{ color: item === "Flights" ? "#1B6B3A" : "#4A5568", fontWeight: item === "Flights" ? 700 : 400, cursor: "pointer" }}>{item}</Typography>
-//             ))}
-//           </Stack>
-//           <Button variant="outlined" size="small" sx={{ ml: { xs: "auto", sm: 2 }, borderColor: "#1B6B3A", color: "#1B6B3A" }}>Login / Signup</Button>
-//         </Box>
-
-//         {/* ── Progress breadcrumb ── */}
-//         <Box sx={{ bgcolor: "#fff", borderBottom: "1px solid #E2E8F0", px: { xs: 2, md: 4 }, py: 1, display: "flex", alignItems: "center", gap: 1 }}>
-//           {["Flight Selection", "Traveller Details", "Seat Selection", "Payment"].map((step, i) => (
-//             <Box key={step} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-//               {i > 0 && <ArrowForwardIosIcon sx={{ fontSize: 10, color: "#CBD5E0" }} />}
-//               <Typography variant="caption" sx={{ fontWeight: i === 2 ? 700 : 400, color: i === 2 ? "#1B6B3A" : i < 2 ? "#A0AEC0" : "#CBD5E0" }}>
-//                 {step}
-//               </Typography>
-//             </Box>
-//           ))}
-//         </Box>
-
-//         {/* ── Body ── */}
-//         <Box sx={{ maxWidth: 1200, mx: "auto", px: { xs: 1.5, md: 3 }, py: 3, display: "flex", gap: 3, flexDirection: { xs: "column", md: "row" } }}>
-
-//           {/* ── Left: Seat Selection Panel ── */}
-//           <Paper sx={{ flex: 1, borderRadius: 3, overflow: "hidden" }}>
-//             {/* Header */}
-//             <Box sx={{ px: 3, pt: 2.5, pb: 2, borderBottom: "1px solid #EDF2F7", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-//               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-//                 <AirlineSeatReclineNormalIcon sx={{ color: "#1B6B3A" }} />
-//                 <Typography variant="h6" sx={{ color: "#1A202C" }}>Seat Selection</Typography>
-//               </Box>
-//               <Button size="small" endIcon={<ArrowForwardIosIcon fontSize="inherit" />} sx={{ color: "#1B6B3A" }}>Skip</Button>
-//             </Box>
-
-//             {/* Segment tabs */}
-//             <Tabs
-//               value={activeSegment}
-//               onChange={(_, v) => setActiveSegment(v)}
-//               variant="fullWidth"
-//               sx={{
-//                 borderBottom: "1px solid #EDF2F7",
-//                 "& .MuiTab-root": { textTransform: "none", fontWeight: 600, fontSize: "0.82rem", color: "#718096" },
-//                 "& .Mui-selected": { color: "#1B6B3A" },
-//                 "& .MuiTabs-indicator": { bgcolor: "#1B6B3A" },
-//               }}
-//             >
-//               {SEGMENTS.map((seg) => (
-//                 <Tab
-//                   key={seg.id}
-//                   label={
-//                     <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-//                       <FlightTakeoffIcon sx={{ fontSize: 14 }} />
-//                       <span>{seg.label}</span>
-//                     </Box>
-//                   }
-//                 />
-//               ))}
-//             </Tabs>
-
-//             <Box sx={{ px: { xs: 1.5, md: 3 }, py: 2 }}>
-//               {/* Airline info */}
-//               <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
-//                 <Avatar sx={{ bgcolor: "#1B3A6B", width: 36, height: 36, fontSize: "0.7rem", fontWeight: 700 }}>6E</Avatar>
-//                 <Box>
-//                   <Typography variant="subtitle2">{SEGMENTS[activeSegment].airline}</Typography>
-//                   <Typography variant="caption" sx={{ color: "#718096" }}>{SEGMENTS[activeSegment].flight} · {SEGMENTS[activeSegment].from} → {SEGMENTS[activeSegment].to}</Typography>
-//                 </Box>
-//               </Box>
-
-//               {/* Passenger selector */}
-//               <Typography variant="caption" sx={{ color: "#718096", fontWeight: 600, mb: 1, display: "block" }}>SELECT PASSENGER</Typography>
-//               <Stack direction="row" spacing={1} sx={{ mb: 3, flexWrap: "wrap", gap: 1 }}>
-//                 {eligiblePassengers.map((p) => {
-//                   const seatKey = passengerSelections[activeSegment]?.[p.id];
-//                   return (
-//                     <Chip
-//                       key={p.id}
-//                       icon={p.icon}
-//                       label={
-//                         <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-//                           <span>{p.name}</span>
-//                           {seatKey && (
-//                             <Typography component="span" variant="caption" sx={{ color: activePassenger === p.id ? "#fff" : "#1B6B3A", fontWeight: 700 }}>· {seatKey}</Typography>
-//                           )}
-//                         </Box>
-//                       }
-//                       onClick={() => setActivePassenger(p.id)}
-//                       variant={activePassenger === p.id ? "filled" : "outlined"}
-//                       sx={{
-//                         bgcolor: activePassenger === p.id ? "#1B6B3A" : "#fff",
-//                         color: activePassenger === p.id ? "#fff" : "#1A202C",
-//                         borderColor: activePassenger === p.id ? "#1B6B3A" : "#CBD5E0",
-//                         "& .MuiChip-icon": { color: activePassenger === p.id ? "#fff" : "#1B6B3A" },
-//                         fontWeight: 600,
-//                         transition: "all 0.2s",
-//                       }}
-//                     />
-//                   );
-//                 })}
-//               </Stack>
-
-//               {/* Map + info */}
-//               <Box sx={{ display: "flex", gap: 3, flexDirection: { xs: "column", sm: "row" } }}>
-//                 {/* Left: passenger seat list */}
-//                 <Box sx={{ minWidth: 160 }}>
-//                   <Typography variant="caption" sx={{ color: "#718096", fontWeight: 600, display: "block", mb: 1 }}>ASSIGNED SEATS</Typography>
-//                   <Stack spacing={1}>
-//                     {eligiblePassengers.map((p) => {
-//                       const seat = passengerSelections[activeSegment]?.[p.id];
-//                       return (
-//                         <Box key={p.id} sx={{ display: "flex", alignItems: "center", gap: 1.5, p: 1, borderRadius: 2, bgcolor: activePassenger === p.id ? "#F0FFF4" : "#FAFAFA", border: "1px solid", borderColor: activePassenger === p.id ? "#9AE6B4" : "#EDF2F7", cursor: "pointer" }} onClick={() => setActivePassenger(p.id)}>
-//                           <Avatar sx={{ width: 28, height: 28, bgcolor: activePassenger === p.id ? "#1B6B3A" : "#E2E8F0", fontSize: "0.65rem" }}>
-//                             {p.name.charAt(0)}
-//                           </Avatar>
-//                           <Box>
-//                             <Typography variant="caption" sx={{ fontWeight: 600, display: "block", lineHeight: 1.2 }}>{p.name}</Typography>
-//                             {seat ? (
-//                               <Typography variant="caption" sx={{ color: "#1B6B3A", fontWeight: 700 }}>Seat {seat}</Typography>
-//                             ) : (
-//                               <Typography variant="caption" sx={{ color: "#A0AEC0" }}>Not selected</Typography>
-//                             )}
-//                           </Box>
-//                         </Box>
-//                       );
-//                     })}
-//                   </Stack>
-
-//                   <Divider sx={{ my: 2 }} />
-
-//                   {/* Legend */}
-//                   <Typography variant="caption" sx={{ color: "#718096", fontWeight: 600, display: "block", mb: 1 }}>SEAT TYPE</Typography>
-//                   {[
-//                     { color: "#F0FFF4", border: "#9AE6B4", label: "₹300–800" },
-//                     { color: "#EBF4FF", border: "#BEE3F8", label: "₹801–1500" },
-//                     { color: "#EBF8FF", border: "#90CDF4", label: "XL Legroom" },
-//                     { color: "#CBD5E0", border: "#A0AEC0", label: "Booked" },
-//                     { color: "#1B6B3A", border: "#145728", label: "Selected" },
-//                   ].map((item) => (
-//                     <Box key={item.label} sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.6 }}>
-//                       <Box sx={{ width: 16, height: 14, borderRadius: "3px 3px 2px 2px", bgcolor: item.color, border: `1.5px solid ${item.border}`, flexShrink: 0 }} />
-//                       <Typography variant="caption" sx={{ color: "#4A5568" }}>{item.label}</Typography>
-//                     </Box>
-//                   ))}
-//                 </Box>
-
-//                 {/* Right: cabin map */}
-//                 <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
-//                   <CabinMap
-//                     segmentIdx={activeSegment}
-//                     passengerSelections={passengerSelections}
-//                     activePassenger={activePassenger}
-//                     onSeatSelect={handleSeatSelect}
-//                   />
-//                 </Box>
-//               </Box>
-//             </Box>
-//           </Paper>
-
-//           {/* ── Right: Fare Summary ── */}
-//           <Box sx={{ width: { xs: "100%", md: 300 }, flexShrink: 0 }}>
-//             <Paper sx={{ borderRadius: 3, overflow: "hidden", position: { md: "sticky" }, top: { md: 16 } }}>
-//               <Box sx={{ px: 2.5, py: 2, bgcolor: "#1B6B3A", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-//                 <Typography variant="h6" sx={{ color: "#fff", fontWeight: 700 }}>Fare Summary</Typography>
-//                 <Chip label={`${PASSENGERS.length} Travellers`} size="small" sx={{ bgcolor: "rgba(255,255,255,0.2)", color: "#fff", fontWeight: 600, fontSize: "0.72rem" }} />
-//               </Box>
-
-//               <Box sx={{ px: 2.5, py: 2 }}>
-//                 {/* Fare type */}
-//                 <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-//                   <Typography variant="body2" sx={{ color: "#718096" }}>Fare Type</Typography>
-//                   <Chip label="Partial Refundable" size="small" sx={{ bgcolor: "#F0FFF4", color: "#1B6B3A", fontWeight: 600, border: "1px solid #9AE6B4", fontSize: "0.7rem" }} />
-//                 </Box>
-
-//                 <Divider sx={{ mb: 2 }} />
-
-//                 {/* Breakdown */}
-//                 {[
-//                   { label: `Adult × ${FARE.adultCount}`, value: FARE.adultPrice },
-//                   { label: `Child × ${FARE.childCount}`, value: FARE.childPrice },
-//                   { label: `Infant × ${FARE.infantCount}`, value: FARE.infantPrice },
-//                   { label: "Taxes & Fees", value: FARE.taxes },
-//                 ].map((row) => (
-//                   <Box key={row.label} sx={{ display: "flex", justifyContent: "space-between", mb: 1.2 }}>
-//                     <Typography variant="body2" sx={{ color: "#4A5568" }}>{row.label}</Typography>
-//                     <Typography variant="body2" sx={{ fontWeight: 500 }}>₹{row.value.toLocaleString()}</Typography>
-//                   </Box>
-//                 ))}
-
-//                 {/* Seat charges */}
-//                 {seatCost > 0 && (
-//                   <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1.2 }}>
-//                     <Typography variant="body2" sx={{ color: "#4A5568" }}>Seat Charges</Typography>
-//                     <Typography variant="body2" sx={{ fontWeight: 500, color: "#1B6B3A" }}>+ ₹{seatCost.toLocaleString()}</Typography>
-//                   </Box>
-//                 )}
-
-//                 <Divider sx={{ my: 2 }} />
-
-//                 <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
-//                   <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Net Amount Payable</Typography>
-//                   <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "#1B6B3A" }}>₹{netTotal.toLocaleString()}</Typography>
-//                 </Box>
-
-//                 {/* Progress */}
-//                 <Box sx={{ mb: 2 }}>
-//                   <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
-//                     <Typography variant="caption" sx={{ color: "#718096" }}>Seats selected</Typography>
-//                     <Typography variant="caption" sx={{ fontWeight: 600 }}>{totalSeatsSelected} / {maxSeats}</Typography>
-//                   </Box>
-//                   <Box sx={{ height: 6, borderRadius: 3, bgcolor: "#EDF2F7", overflow: "hidden" }}>
-//                     <Box sx={{ height: "100%", borderRadius: 3, bgcolor: "#1B6B3A", width: `${(totalSeatsSelected / maxSeats) * 100}%`, transition: "width 0.3s ease" }} />
-//                   </Box>
-//                 </Box>
-
-//                 <Button
-//                   fullWidth
-//                   variant="contained"
-//                   size="large"
-//                   sx={{ bgcolor: "#1B6B3A", "&:hover": { bgcolor: "#145728" }, py: 1.4, fontSize: "0.9rem", fontWeight: 700, borderRadius: 2 }}
-//                 >
-//                   Continue to Payment
-//                 </Button>
-
-//                 <Typography variant="caption" sx={{ display: "block", textAlign: "center", mt: 1.5, color: "#A0AEC0" }}>
-//                   You can also skip seat selection
-//                 </Typography>
-//               </Box>
-//             </Paper>
-//           </Box>
-//         </Box>
-//       </Box>
-
-//       <Snackbar open={snackbar.open} autoHideDuration={3000} onClose={() => setSnackbar({ open: false, message: "" })} anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
-//         <Alert severity="warning" onClose={() => setSnackbar({ open: false, message: "" })} sx={{ borderRadius: 2 }}>{snackbar.message}</Alert>
-//       </Snackbar>
-//     </ThemeProvider>
-//   );
-// }
-
-import { useState, useMemo } from "react";
-import {
-  Box, Typography, Chip, Button, Divider, Paper,
-  Tooltip, Avatar, Stack, Tabs, Tab, Snackbar, Alert,
-  useMediaQuery, useTheme,
-} from "@mui/material";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import AirlineSeatReclineNormalIcon from "@mui/icons-material/AirlineSeatReclineNormal";
-import PersonIcon from "@mui/icons-material/Person";
-import ChildCareIcon from "@mui/icons-material/ChildCare";
-import BabyChangingStationIcon from "@mui/icons-material/BabyChangingStation";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import CheckIcon from "@mui/icons-material/Check";
-import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
-
-// ─── Theme ────────────────────────────────────────────────────────────────────
-const theme = createTheme({
-  palette: {
-    primary:    { main: "#1B6B3A", light: "#2E8B57", contrastText: "#fff" },
-    secondary:  { main: "#F5A623", contrastText: "#fff" },
-    background: { default: "#F0F4F8", paper: "#FFFFFF" },
-    text:       { primary: "#1A202C", secondary: "#4A5568" },
-  },
-  typography: {
-    fontFamily: "'Inter', 'Roboto', sans-serif",
-    h6:       { fontWeight: 600 },
-    subtitle2: { fontWeight: 600, fontSize: "0.78rem" },
-    caption:   { fontSize: "0.72rem" },
-  },
-  shape: { borderRadius: 12 },
-  components: {
-    MuiPaper:  { styleOverrides: { root: { boxShadow: "0 2px 16px rgba(0,0,0,0.07)" } } },
-    MuiButton: { styleOverrides: { root: { textTransform: "none", borderRadius: 8, fontWeight: 600 } } },
-    MuiChip:   { styleOverrides: { root: { borderRadius: 6 } } },
-  },
-});
-
-// ─── Constants ────────────────────────────────────────────────────────────────
-const ROWS                = 30;
-const COLS                = ["A", "B", "C", "D", "E", "F"];
-const EXTRA_LEGROOM_ROWS  = [1, 2, 12, 13];
-const EXIT_ROW            = 12;
-
-const SEAT_PRICE = (row, colIdx) => {
-  if (EXTRA_LEGROOM_ROWS.includes(row)) return colIdx < 3 ? 1200 : 1500;
-  if (row <= 5)  return 800;
-  if (row <= 15) return 500;
-  return 300;
-};
-
-const BOOKED_SEATS = new Set([
-  "1A","1D","2B","2E","3C","3F","4A","4B","5D","6C","7A","7F",
-  "8B","8E","9C","10D","10F","11A","12B","12E","13C","14A","14F",
-  "15B","16C","16D","17A","18F","19B","20C","20E","21A","22D","23F",
-]);
-
-const SEGMENTS = [
-  { id: 0, from: "DEL", to: "NAG", label: "DEL → NAG", airline: "IndiGo", flight: "6E-5032" },
-  { id: 1, from: "NAG", to: "BOM", label: "NAG → BOM", airline: "IndiGo", flight: "6E-2218" },
-];
-
-const PASSENGERS = [
-  { id: "P1", name: "Shivam C", type: "adult", icon: <PersonIcon fontSize="small" /> },
-  { id: "P2", name: "Rahul M",  type: "adult", icon: <PersonIcon fontSize="small" /> },
-  { id: "P3", name: "Doney R",  type: "adult", icon: <PersonIcon fontSize="small" /> },
-];
-
-const FARE = {
-  adultCount: 3, adultPrice: 8866,
-  childCount: 0, childPrice: 0,
-  infantCount: 0, infantPrice: 0,
-  taxes: 2946,
-};
-
-// ─── Seat colours ─────────────────────────────────────────────────────────────
-const seatColor = (row, colIdx, isBooked, isSelected, isHovered) => {
-  if (isBooked)   return { bg: "#CBD5E0", border: "#A0AEC0", cursor: "not-allowed", text: "#718096" };
-  if (isSelected) return { bg: "#1B6B3A", border: "#145728", cursor: "pointer",     text: "#fff"    };
-  if (isHovered)  return { bg: "#C6F6D5", border: "#1B6B3A", cursor: "pointer",     text: "#1A202C" };
-  if (EXTRA_LEGROOM_ROWS.includes(row))
-    return { bg: "#DBEAFE", border: "#93C5FD", cursor: "pointer", text: "#1D4ED8" };
-  const price = SEAT_PRICE(row, colIdx);
-  if (price >= 801) return { bg: "#EBF4FF", border: "#BEE3F8", cursor: "pointer", text: "#2C5282" };
-  if (price >= 301) return { bg: "#F0FFF4", border: "#9AE6B4", cursor: "pointer", text: "#276749" };
-  return             { bg: "#FAFAFA",  border: "#E2E8F0", cursor: "pointer", text: "#4A5568" };
-};
-
-// ─── Individual Seat ──────────────────────────────────────────────────────────
-function Seat({ row, colIndex, col, isThisPassenger, isOtherPassenger, onSelect }) {
-  const key     = `${row}${col}`;
-  const booked  = BOOKED_SEATS.has(key);
+/* ─────────────────────────────────────────────────────────────────────────────
+   SINGLE SEAT CELL
+───────────────────────────────────────────────────────────────────────────── */
+function SeatCell({ seat, state, onSelect }) {
   const [hov, setHov] = useState(false);
+  const s = seatStyle(seat, state);
+  const isBlocked = state === "blocked" || state === "other";
+  const isSelected = state === "selected";
 
-  // Treat "other passenger selected" seat as booked-look
-  const effectiveBooked   = booked || isOtherPassenger;
-  const effectiveSelected = isThisPassenger && !booked;
-  const colors = seatColor(row, colIndex, effectiveBooked, effectiveSelected, hov && !effectiveBooked);
-  const isXL   = EXTRA_LEGROOM_ROWS.includes(row);
-  const price  = SEAT_PRICE(row, colIndex);
-
-  const tooltipTitle = booked
-    ? "Already booked"
-    : isOtherPassenger
-      ? "Selected by another passenger"
-      : `${col}${row} · ₹${price.toLocaleString()}${isXL ? " · XL Legroom" : ""}`;
+  const bg = hov && !isBlocked ? (isSelected ? "#15803d" : "#bbf7d0") : s.bg;
 
   return (
-    <Tooltip title={tooltipTitle} arrow placement="top" enterDelay={300}>
-      <Box
-        onClick={() => !effectiveBooked && onSelect(key)}
-        onMouseEnter={() => setHov(true)}
-        onMouseLeave={() => setHov(false)}
-        sx={{
-          width: 32, height: 30,
-          borderRadius: "5px 5px 3px 3px",
-          border: `1.5px solid ${colors.border}`,
-          bgcolor: colors.bg,
-          cursor: colors.cursor,
+    <div
+      title={isBlocked
+        ? (seat.AvailablityType === 3 ? "Occupied" : state === "other" ? "Selected by another passenger" : "Unavailable")
+        : `${seat.Code}${seat.Price > 0 ? ` · ₹${seat.Price}` : " · Free"}${isExitRow(seat) ? " · Exit Row" : ""}`}
+      onClick={() => !isBlocked && onSelect(seat)}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        width: 30, height: 28,
+        borderRadius: "5px 5px 2px 2px",
+        border: `1.5px solid ${s.border}`,
+        background: bg,
+        cursor: s.cursor,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        transition: "all 0.12s",
+        transform: isSelected ? "scale(1.12)" : "scale(1)",
+        flexShrink: 0,
+        position: "relative",
+        boxShadow: isSelected ? "0 2px 8px rgba(22,163,74,0.35)" : "none",
+      }}
+    >
+      {isBlocked && !isSelected ? (
+        <div style={{
+          width: 12, height: 12, position: "relative",
           display: "flex", alignItems: "center", justifyContent: "center",
-          transition: "all 0.13s ease",
-          transform: effectiveSelected ? "scale(1.1)" : "scale(1)",
-          flexShrink: 0,
-          position: "relative",
-          "&:hover": { zIndex: 2 },
-        }}
-      >
-        {booked || isOtherPassenger ? (
-          // X mark
-          <Box sx={{
-            width: 14, height: 14, position: "relative",
-            "&::before, &::after": {
-              content: '""', position: "absolute",
-              width: "100%", height: "1.5px",
-              bgcolor: "#A0AEC0", top: "50%", left: 0, borderRadius: 1,
-            },
-            "&::before": { transform: "rotate(45deg)" },
-            "&::after":  { transform: "rotate(-45deg)" },
-          }} />
-        ) : effectiveSelected ? (
-          <CheckIcon sx={{ fontSize: 14, color: "#fff" }} />
-        ) : (
-          <Typography sx={{ color: colors.text, fontWeight: 700, fontSize: "0.55rem", lineHeight: 1 }}>
-            {isXL ? "XL" : ""}
-          </Typography>
-        )}
-      </Box>
-    </Tooltip>
+        }}>
+          <div style={{
+            position: "absolute", width: "100%", height: "1.5px",
+            background: "#9AA3AE", transform: "rotate(45deg)", borderRadius: 1,
+          }}/>
+          <div style={{
+            position: "absolute", width: "100%", height: "1.5px",
+            background: "#9AA3AE", transform: "rotate(-45deg)", borderRadius: 1,
+          }}/>
+        </div>
+      ) : isSelected ? (
+        <div style={{ color: "#fff" }}><IconCheck /></div>
+      ) : (
+        <span style={{ fontSize: "0.52rem", fontWeight: 700, color: s.text, lineHeight: 1, letterSpacing: "-0.2px" }}>
+          {isExitRow(seat) ? "EXIT" : seat.Price === 0 ? "FREE" : ""}
+        </span>
+      )}
+    </div>
   );
 }
 
-// ─── Plane-shaped Cabin Map ───────────────────────────────────────────────────
-function CabinMap({ segmentIdx, passengerSelections, activePassenger, onSeatSelect }) {
-  const selectedForSegment = passengerSelections[segmentIdx] || {};
-  const allSelectedSeats   = new Set(Object.values(selectedForSegment));
+/* ─────────────────────────────────────────────────────────────────────────────
+   CABIN MAP  (plane-shaped, real seat data)
+───────────────────────────────────────────────────────────────────────────── */
+function CabinMap({ seatRows, selections, activePassengerId, allPassengerIds, onSelect }) {
+  // selections: { passengerId: seatCode }
+  const selectedByActive = selections[activePassengerId]; // e.g. "3A"
+  const allSelected = new Set(Object.values(selections));
 
-  
-  const SEAT_W  = 32;
-  const GAP     = 4;
-  const AISLE   = 24;
-  const SIDE_W  = 3 * SEAT_W + 2 * GAP; // 104
-  const TOTAL_W = SIDE_W * 2 + AISLE;   // 232
-  const ROW_NUM_W = 20;
-  const PLANE_W = TOTAL_W + ROW_NUM_W + 24; // extra padding inside plane
+  const sortedRowNos = Object.keys(seatRows).map(Number).sort((a, b) => a - b);
+
+  // Detect exit rows (any seat in row has exit SeatType)
+  const exitRowSet = useMemo(() => {
+    const s = new Set();
+    for (const [rNo, seats] of Object.entries(seatRows)) {
+      if (seats.some(isExitRow)) s.add(Number(rNo));
+    }
+    return s;
+  }, [seatRows]);
+
+  // Aeroplane dimensions
+  const SW = 30, GAP = 4, AISLE = 22;
+  const LEFT_COLS = ["A", "B", "C"], RIGHT_COLS = ["D", "E", "F"];
+  const SIDE_W = SW * 3 + GAP * 2;
+  const TOTAL_W = SIDE_W * 2 + AISLE + 28; // + row number col
+  const PLANE_W = TOTAL_W + 32;
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", userSelect: "none" }}>
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", userSelect: "none" }}>
 
-      {/* ── Plane SVG shell (nose + body outline) ── */}
-      <Box sx={{ position: "relative", width: PLANE_W + 40 }}>
+      {/* ── NOSE (image) ── */}
+      <img
+        src="/aerofront.png"
+        alt="Aircraft front"
+        style={{
+          display: "block",
+          width: PLANE_W,
+          height: "auto",
+          marginBottom: -2,
+          objectFit: "contain",
+        }}
+      />
 
-        {/* Plane nose (SVG arc) */}
-        <Box sx={{ display: "flex", justifyContent: "center", mb: "-2px" }}>
-          <svg
-            width={PLANE_W + 40}
-            height={70}
-            viewBox={`0 0 ${PLANE_W + 40} 70`}
-            style={{ display: "block" }}
-          >
-            {/* Nose shape: starts as narrow point at top, expands to full width */}
-            <path
-              d={`M ${(PLANE_W + 40) / 2} 4
-                  C ${(PLANE_W + 40) / 2 - 40} 20, ${(PLANE_W + 40) / 2 - 80} 45, 8 68
-                  L ${PLANE_W + 32} 68
-                  C ${(PLANE_W + 40) / 2 + 80} 45, ${(PLANE_W + 40) / 2 + 40} 20, ${(PLANE_W + 40) / 2} 4 Z`}
-              fill="#F7FAFC"
-              stroke="#CBD5E0"
-              strokeWidth="1.5"
-            />
-            {/* Cockpit window hint */}
-            <ellipse cx={(PLANE_W + 40) / 2} cy={30} rx={18} ry={10}
-              fill="#E2E8F0" stroke="#CBD5E0" strokeWidth="1" />
-            {/* Plane icon */}
-            <text x={(PLANE_W + 40) / 2} y={34} textAnchor="middle"
-              fontSize="11" fill="#4A5568" fontFamily="Arial">✈</text>
-          </svg>
-        </Box>
+      {/* ── FUSELAGE ── */}
+      <div style={{
+        border: "1.5px solid #CBD5E0",
+        borderTop: "none",
+        borderBottom: "none",
+        borderRadius: 0,
+        background: "linear-gradient(to bottom, #F8FAFC, #F1F5F9)",
+        padding: "8px 16px 28px",
+        width: PLANE_W,
+        boxSizing: "border-box",
+        position: "relative",
+      }}>
 
-        {/* Plane body with seats */}
-        <Box sx={{
-          border: "1.5px solid #CBD5E0",
-          borderTop: "none",
-          borderRadius: "0 0 40px 40px",
-          bgcolor: "#F7FAFC",
-          px: "20px",
-          pt: 1,
-          pb: 3,
-          position: "relative",
+        {/* wing decals */}
+        {["left", "right"].map((side) => (
+          <div key={side} style={{
+            position: "absolute",
+            [side === "left" ? "left" : "right"]: -16,
+            top: "35%",
+            width: 16, height: 56,
+            background: `linear-gradient(to ${side === "left" ? "right" : "left"}, transparent, #CBD5E0)`,
+            borderRadius: side === "left" ? "8px 0 0 8px" : "0 8px 8px 0",
+          }}/>
+        ))}
+
+        {/* column header */}
+        <div style={{ display: "flex", alignItems: "center", marginBottom: 6, paddingLeft: 14 }}>
+          {LEFT_COLS.map((c, i) => (
+            <div key={c} style={{ width: SW, marginRight: i < 2 ? GAP : 0, textAlign: "center" }}>
+              <span style={{ fontSize: "0.6rem", fontWeight: 800, color: "#94A3B8", letterSpacing: 1 }}>{c}</span>
+            </div>
+          ))}
+          <div style={{ width: AISLE + 28 }}/>
+          {RIGHT_COLS.map((c, i) => (
+            <div key={c} style={{ width: SW, marginLeft: i > 0 ? GAP : 0, textAlign: "center" }}>
+              <span style={{ fontSize: "0.6rem", fontWeight: 800, color: "#94A3B8", letterSpacing: 1 }}>{c}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* scrollable seat area */}
+        <div style={{
+          maxHeight: 420, overflowY: "auto",
+          scrollbarWidth: "thin", scrollbarColor: "#CBD5E0 transparent",
         }}>
+          {sortedRowNos.map((rowNo) => {
+            const rowSeats = seatRows[rowNo];
+            const isExit = exitRowSet.has(rowNo);
 
-          {/* Wing marks */}
-          <Box sx={{
-            position: "absolute", left: -18, top: "38%",
-            width: 18, height: 60,
-            background: "linear-gradient(to right, transparent, #CBD5E0)",
-            borderRadius: "8px 0 0 8px",
-          }} />
-          <Box sx={{
-            position: "absolute", right: -18, top: "38%",
-            width: 18, height: 60,
-            background: "linear-gradient(to left, transparent, #CBD5E0)",
-            borderRadius: "0 8px 8px 0",
-          }} />
+            // Map by SeatNo (column letter)
+            const byCol = {};
+            for (const s of rowSeats) byCol[s.SeatNo] = s;
 
-          {/* Column header row: A B C | [row#] | D E F */}
-          <Box sx={{ display: "flex", alignItems: "center", mb: 0.8, pl: `${ROW_NUM_W / 2}px` }}>
-            {/* Left cols A B C */}
-            {["A","B","C"].map((col, i) => (
-              <Box key={col} sx={{ width: SEAT_W, mr: i < 2 ? `${GAP}px` : 0, textAlign: "center" }}>
-                <Typography sx={{ fontSize: "0.68rem", fontWeight: 700, color: "#718096" }}>{col}</Typography>
-              </Box>
-            ))}
-            {/* Aisle with row-number space */}
-            <Box sx={{ width: AISLE + ROW_NUM_W, textAlign: "center" }} />
-            {/* Right cols D E F */}
-            {["D","E","F"].map((col, i) => (
-              <Box key={col} sx={{ width: SEAT_W, ml: i > 0 ? `${GAP}px` : 0, textAlign: "center" }}>
-                <Typography sx={{ fontSize: "0.68rem", fontWeight: 700, color: "#718096" }}>{col}</Typography>
-              </Box>
-            ))}
-          </Box>
+            // Check if this row starts a new "exit section" marker
+            const prevRowNo = sortedRowNos[sortedRowNos.indexOf(rowNo) - 1];
+            const showExitMarker = isExit && (!prevRowNo || !exitRowSet.has(prevRowNo));
 
-          {/* Seat rows — scrollable */}
-          <Box sx={{
-            maxHeight: 400,
-            overflowY: "auto",
-            "&::-webkit-scrollbar": { width: 4 },
-            "&::-webkit-scrollbar-thumb": { bgcolor: "#CBD5E0", borderRadius: 2 },
-          }}>
-            {Array.from({ length: ROWS }, (_, i) => i + 1).map((row) => {
-              const isExit = row === EXIT_ROW;
-              const isXLRow = EXTRA_LEGROOM_ROWS.includes(row);
+            return (
+              <div key={rowNo}>
+                {showExitMarker && (
+                  <div style={{
+                    display: "flex", alignItems: "center", gap: 6,
+                    margin: "6px 0 4px", padding: "0 2px",
+                  }}>
+                    <div style={{ flex: 1, height: 1, background: "#FCD34D" }}/>
+                    <span style={{ fontSize: "0.48rem", fontWeight: 900, color: "#D97706", letterSpacing: 1.5 }}>
+                      EXIT ROW
+                    </span>
+                    <div style={{ flex: 1, height: 1, background: "#FCD34D" }}/>
+                  </div>
+                )}
 
-              return (
-                <Box key={row}>
-                  {/* Exit row marker */}
-                  {isExit && (
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, my: 0.8, px: 0.5 }}>
-                      <Box sx={{ flex: 1, height: "1px", bgcolor: "#FBD38D" }} />
-                      <Typography sx={{ fontSize: "0.55rem", color: "#C05621", fontWeight: 800, letterSpacing: 1, whiteSpace: "nowrap" }}>
-                        EXIT ROW
-                      </Typography>
-                      <Box sx={{ flex: 1, height: "1px", bgcolor: "#FBD38D" }} />
-                    </Box>
-                  )}
+                <div style={{ display: "flex", alignItems: "center", marginBottom: GAP }}>
+                  {/* left 3 seats */}
+                  {LEFT_COLS.map((col, ci) => {
+                    const seat = byCol[col];
+                    if (!seat) return <div key={col} style={{ width: SW, marginRight: ci < 2 ? GAP : 0 }}/>;
+                    const seatCode = seat.Code;
+                    const isThisSelected = selectedByActive === seatCode;
+                    const isOtherSelected = !isThisSelected && allSelected.has(seatCode);
+                    const blocked = !isAvailable(seat);
+                    const state = blocked ? "blocked" : isThisSelected ? "selected" : isOtherSelected ? "other" : "available";
+                    return (
+                      <div key={col} style={{ marginRight: ci < 2 ? GAP : 0 }}>
+                        <SeatCell seat={seat} state={state} onSelect={(s) => onSelect(s.Code)} />
+                      </div>
+                    );
+                  })}
 
-                  {/* XL legroom extra space indicator */}
-                  {isXLRow && !isExit && (
-                    <Box sx={{ height: 6, mx: 1, mb: 0.3,
-                      borderBottom: "1.5px dashed #90CDF4",
-                      display: "flex", alignItems: "flex-end", justifyContent: "center",
-                    }}>
-                      <Typography sx={{ fontSize: "0.5rem", color: "#2B6CB0", fontWeight: 600, lineHeight: 1 }}>
-                        extra legroom
-                      </Typography>
-                    </Box>
-                  )}
+                  {/* aisle + row number */}
+                  <div style={{
+                    width: AISLE + 28, display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>
+                    <span style={{ fontSize: "0.55rem", color: "#94A3B8", fontWeight: 700 }}>{rowNo}</span>
+                  </div>
 
-                  <Box sx={{ display: "flex", alignItems: "center", mb: `${GAP}px` }}>
-                    {/* Left 3 seats: A B C */}
-                    {[0,1,2].map((ci) => {
-                      const col    = COLS[ci];
-                      const seatKey = `${row}${col}`;
-                      const isThis  = selectedForSegment[activePassenger] === seatKey;
-                      const isOther = allSelectedSeats.has(seatKey) && !isThis;
-                      return (
-                        <Box key={col} sx={{ mr: ci < 2 ? `${GAP}px` : 0 }}>
-                          <Seat
-                            row={row} colIndex={ci} col={col}
-                            isThisPassenger={isThis}
-                            isOtherPassenger={isOther}
-                            onSelect={(k) => onSeatSelect(segmentIdx, activePassenger, k)}
-                          />
-                        </Box>
-                      );
-                    })}
+                  {/* right 3 seats */}
+                  {RIGHT_COLS.map((col, ci) => {
+                    const seat = byCol[col];
+                    if (!seat) return <div key={col} style={{ width: SW, marginLeft: ci > 0 ? GAP : 0 }}/>;
+                    const seatCode = seat.Code;
+                    const isThisSelected = selectedByActive === seatCode;
+                    const isOtherSelected = !isThisSelected && allSelected.has(seatCode);
+                    const blocked = !isAvailable(seat);
+                    const state = blocked ? "blocked" : isThisSelected ? "selected" : isOtherSelected ? "other" : "available";
+                    return (
+                      <div key={col} style={{ marginLeft: ci > 0 ? GAP : 0 }}>
+                        <SeatCell seat={seat} state={state} onSelect={(s) => onSelect(s.Code)} />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
 
-                    {/* Aisle + row number */}
-                    <Box sx={{
-                      width: AISLE + ROW_NUM_W,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                    }}>
-                      <Typography sx={{ fontSize: "0.6rem", color: "#A0AEC0", fontWeight: 600 }}>
-                        {row}
-                      </Typography>
-                    </Box>
-
-                    {/* Right 3 seats: D E F */}
-                    {[3,4,5].map((ci) => {
-                      const col     = COLS[ci];
-                      const seatKey = `${row}${col}`;
-                      const isThis  = selectedForSegment[activePassenger] === seatKey;
-                      const isOther = allSelectedSeats.has(seatKey) && !isThis;
-                      return (
-                        <Box key={col} sx={{ ml: ci > 3 ? `${GAP}px` : 0 }}>
-                          <Seat
-                            row={row} colIndex={ci} col={col}
-                            isThisPassenger={isThis}
-                            isOtherPassenger={isOther}
-                            onSelect={(k) => onSeatSelect(segmentIdx, activePassenger, k)}
-                          />
-                        </Box>
-                      );
-                    })}
-                  </Box>
-                </Box>
-              );
-            })}
-          </Box>
-        </Box>
-
-        {/* Plane tail */}
-        <Box sx={{ display: "flex", justifyContent: "center", mt: "-2px" }}>
-          <svg
-            width={PLANE_W + 40}
-            height={28}
-            viewBox={`0 0 ${PLANE_W + 40} 28`}
-            style={{ display: "block" }}
-          >
-            <path
-              d={`M 8 0 L ${PLANE_W + 32} 0
-                  C ${(PLANE_W + 40) / 2 + 60} 12, ${(PLANE_W + 40) / 2 + 30} 22, ${(PLANE_W + 40) / 2} 27
-                  C ${(PLANE_W + 40) / 2 - 30} 22, ${(PLANE_W + 40) / 2 - 60} 12, 8 0 Z`}
-              fill="#F7FAFC"
-              stroke="#CBD5E0"
-              strokeWidth="1.5"
-            />
-          </svg>
-        </Box>
-      </Box>
-    </Box>
+      {/* ── TAIL (image) ── */}
+      <img
+        src="/aeroback.png"
+        alt="Aircraft back"
+        style={{
+          display: "block",
+          width: PLANE_W,
+          height: "auto",
+          marginTop: -2,
+          objectFit: "contain",
+        }}
+      />
+    </div>
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
-export default function SeatSelection() {
-  const muiTheme = useTheme();
-  const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
+/* ─────────────────────────────────────────────────────────────────────────────
+   LEGEND
+───────────────────────────────────────────────────────────────────────────── */
+const LEGEND = [
+  { bg: "#DCFCE7", border: "#4ADE80", label: "₹300–799" },
+  { bg: "#DBEAFE", border: "#60A5FA", label: "₹800–1499" },
+  { bg: "#F3E8FF", border: "#C084FC", label: "₹1500+" },
+  { bg: "#FEF3C7", border: "#F59E0B", label: "Exit Row" },
+  { bg: "#F8FAFC", border: "#CBD5E0", label: "Free" },
+  { bg: "#16a34a", border: "#15803d", label: "Selected", textColor: "#fff" },
+  { bg: "#E2E6EA", border: "#C8CDD4", label: "Occupied" },
+];
 
-  const [activeSegment,       setActiveSegment]       = useState(0);
-  const [activePassenger,     setActivePassenger]     = useState("P1");
-  const [passengerSelections, setPassengerSelections] = useState({ 0: {}, 1: {} });
-  const [snackbar,            setSnackbar]            = useState({ open: false, message: "" });
+/* ─────────────────────────────────────────────────────────────────────────────
+   MAIN PAGE
+───────────────────────────────────────────────────────────────────────────── */
+export default function SeatSelectionPage() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const {
+    flight, returnFlight, searchMeta, travellers,
+    contact, billing, gst,
+    fareQuote, returnFareQuote,
+    traceId, resultIndex, returnResultIndex,
+    selectedMeals, selectedBaggage,
+  } = location.state || {};
 
-  const handleSeatSelect = (segIdx, passengerId, seatKey) => {
-    setPassengerSelections((prev) => {
-      const segData = { ...prev[segIdx] };
-      if (segData[passengerId] === seatKey) {
-        delete segData[passengerId];
+  const isRoundTrip = !!returnFlight;
+
+  const { onwardSSR, returnSSR, loading, error, fetchSSR } = useSSR();
+
+  useEffect(() => {
+    if (traceId && resultIndex) {
+      fetchSSR({
+        traceId,
+        onwardResultIndex: resultIndex,
+        returnResultIndex: returnResultIndex || returnFlight?.ResultIndex || null,
+      });
+    }
+  }, []);
+
+  /* ── Passengers ── */
+  const allPassengers = useMemo(() => {
+    const list = [];
+    (travellers?.adults || []).forEach((t, i) => list.push({ ...t, ptype: "Adult", idx: i }));
+    (travellers?.children || []).forEach((t, i) => list.push({ ...t, ptype: "Child", idx: i }));
+    return list; // infants can't select seats
+  }, [travellers]);
+
+  const [activePassIdx, setActivePassIdx] = useState(0);
+  const activePass = allPassengers[activePassIdx];
+
+  /* ── Segments ──
+     Build combined segment list from SeatsBySegment (onward + return)
+     Each has a unique key so selections don't collide. */
+  const segments = useMemo(() => {
+    const onward = (onwardSSR?.SeatsBySegment || [])
+      .filter(s => s.seat_rows?.some(r => r.Seats?.some(seat => seat.Code !== "NoSeat")))
+      .map(s => ({
+        ...s,
+        leg: "onward",
+        key: `onward-${s.segment_key}`,
+        label: `${s.origin} → ${s.destination}`,
+        flightNo: s.flight_number,
+      }));
+    const ret = isRoundTrip
+      ? (returnSSR?.SeatsBySegment || [])
+          .filter(s => s.seat_rows?.some(r => r.Seats?.some(seat => seat.Code !== "NoSeat")))
+          .map(s => ({
+            ...s,
+            leg: "return",
+            key: `return-${s.segment_key}`,
+            label: `${s.origin} → ${s.destination}`,
+            flightNo: s.flight_number,
+          }))
+      : [];
+    return [...onward, ...ret];
+  }, [onwardSSR, returnSSR, isRoundTrip]);
+
+  const [activeSegIdx, setActiveSegIdx] = useState(0);
+  const activeSeg = segments[activeSegIdx];
+
+  /* ── Seat Rows for active segment ── */
+  const seatRowsMap = useMemo(() => {
+    if (!activeSeg) return {};
+    const flat = flattenSeatRows(activeSeg.seat_rows || []);
+    return groupByRow(flat);
+  }, [activeSeg]);
+
+  /* ── Selections: { segKey: { passId: seatCode } } ── */
+  const [selections, setSelections] = useState({});
+
+  const activeSegSelections = selections[activeSeg?.key] || {};
+  const activePassSeatCode = activeSegSelections[activePass?.id] || null;
+
+  // Find price of a selected seat
+  function seatPrice(segKey, seatCode) {
+    const seg = segments.find(s => s.key === segKey);
+    if (!seg) return 0;
+    const flat = flattenSeatRows(seg.seat_rows || []);
+    const s = flat.find(s => s.Code === seatCode);
+    return s?.Price || 0;
+  }
+
+  const handleSeatSelect = (seatCode) => {
+    if (!activeSeg || !activePass) return;
+    const segKey = activeSeg.key;
+    setSelections(prev => {
+      const segData = { ...(prev[segKey] || {}) };
+      if (segData[activePass.id] === seatCode) {
+        // deselect
+        delete segData[activePass.id];
       } else {
-        const takenBy = Object.entries(segData).find(([pid, sk]) => sk === seatKey && pid !== passengerId);
-        if (takenBy) {
-          setSnackbar({ open: true, message: `Seat ${seatKey} is already selected by ${PASSENGERS.find(p => p.id === takenBy[0])?.name}.` });
-          return prev;
+        // check if taken by another passenger in same segment
+        const takenBy = Object.entries(segData).find(([pid, sc]) => sc === seatCode && pid !== activePass.id);
+        if (takenBy) return prev; // can't take occupied seat
+        segData[activePass.id] = seatCode;
+        // auto-advance to next passenger
+        if (activePassIdx < allPassengers.length - 1) {
+          setTimeout(() => setActivePassIdx(i => i + 1), 350);
         }
-        segData[passengerId] = seatKey;
       }
-      return { ...prev, [segIdx]: segData };
+      return { ...prev, [segKey]: segData };
     });
   };
 
-  const seatCost = useMemo(() => {
-    let total = 0;
-    Object.entries(passengerSelections).forEach(([, segData]) => {
-      Object.entries(segData).forEach(([, seatKey]) => {
-        const row    = parseInt(seatKey.slice(1));
-        const colIdx = COLS.indexOf(seatKey[0]);
-        total += SEAT_PRICE(row, colIdx);
-      });
+  /* ── Fare calculation ── */
+  const extraMealTotal = useMemo(() => {
+    let t = 0;
+    Object.values(selectedMeals || {}).forEach(m => Object.values(m).forEach(meal => { t += meal.Price || 0; }));
+    return t;
+  }, [selectedMeals]);
+
+  const extraBagTotal = useMemo(() => {
+    let t = 0;
+    Object.values(selectedBaggage || {}).forEach(m => Object.values(m).forEach(b => { t += b.Price || 0; }));
+    return t;
+  }, [selectedBaggage]);
+
+  const seatTotal = useMemo(() => {
+    let t = 0;
+    Object.entries(selections).forEach(([segKey, passMap]) => {
+      Object.entries(passMap).forEach(([, sc]) => { t += seatPrice(segKey, sc); });
     });
-    return total;
-  }, [passengerSelections]);
+    return t;
+  }, [selections, segments]);
 
-  const netTotal = FARE.adultPrice + FARE.childPrice + FARE.infantPrice + FARE.taxes + seatCost;
+  const adultCount = searchMeta?.passengers?.adults ?? (travellers?.adults?.length ?? 1);
+  const childCount = searchMeta?.passengers?.children ?? (travellers?.children?.length ?? 0);
+  const infantCount = searchMeta?.passengers?.infants ?? (travellers?.infants?.length ?? 0);
+  const totalPax = adultCount + childCount + infantCount;
 
-  const eligiblePassengers  = PASSENGERS.filter((p) => p.type !== "infant");
-  const totalSeatsSelected  = Object.values(passengerSelections).reduce((acc, s) => acc + Object.keys(s).length, 0);
-  const maxSeats            = SEGMENTS.length * eligiblePassengers.length;
+  const onwardPublished = fareQuote?.Results?.Fare?.PublishedFare ?? flight?.Fare?.PublishedFare ?? 0;
+  const returnPublished = returnFareQuote?.Results?.Fare?.PublishedFare ?? returnFlight?.Fare?.PublishedFare ?? 0;
+  const onwardTax = fareQuote?.Results?.Fare?.Tax ?? flight?.Fare?.Tax ?? 0;
+  const returnTax = returnFareQuote?.Results?.Fare?.Tax ?? returnFlight?.Fare?.Tax ?? 0;
 
-  const segSelected = passengerSelections[activeSegment] || {};
+  const onwardFare = onwardPublished * totalPax;
+  const returnFare = returnPublished * totalPax;
+  const onwardTaxTotal = onwardTax * totalPax;
+  const returnTaxTotal = returnTax * totalPax;
+  const grandTotal = onwardFare + returnFare + onwardTaxTotal + returnTaxTotal + extraMealTotal + extraBagTotal + seatTotal;
+
+  // Seat selection progress
+  const totalSeatsSelected = Object.values(selections).reduce((acc, seg) => acc + Object.keys(seg).length, 0);
+  const maxSeats = segments.length * allPassengers.length;
+  const progress = maxSeats > 0 ? (totalSeatsSelected / maxSeats) * 100 : 0;
+
+  const handleContinue = () => {
+    navigate("/payment", {
+      state: {
+        ...location.state,
+        seatSelections: selections,
+        seatTotal,
+      },
+    });
+  };
+
+  /* ── Loading / Error ── */
+  if (loading) return (
+    <div style={styles.center}>
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5"
+        style={{ animation: "spin 0.9s linear infinite" }}>
+        <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+      </svg>
+      <p style={{ marginTop: 14, color: "#64748B", fontSize: 14 }}>Loading seat map…</p>
+      <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
+    </div>
+  );
+
+  if (error || segments.length === 0) return (
+    <div style={styles.center}>
+      <p style={{ color: "#EF4444", fontWeight: 600 }}>Seat data unavailable for this flight.</p>
+      <button style={styles.continueBtn} onClick={handleContinue}>Continue to Payment anyway</button>
+    </div>
+  );
 
   return (
-    <ThemeProvider theme={theme}>
-      <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
+    <div style={{ fontFamily: "'Inter','Segoe UI',sans-serif", background: "#F1F5F9", minHeight: "100vh", padding: "24px 0 80px" }}>
+      <style>{`
+        *{box-sizing:border-box;margin:0;padding:0;}
+        .ss-grid{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start;max-width:1200px;margin:0 auto;padding:0 16px;}
+        .ss-grid>*{min-width:0;}
+        @media(max-width:860px){.ss-grid{grid-template-columns:1fr;}}
+        .card{background:#fff;border-radius:14px;box-shadow:0 1px 12px rgba(0,0,0,0.07);overflow:hidden;}
+        .seg-tab{border:1.5px solid #E2E8F0;border-radius:10px;background:#fff;cursor:pointer;font-family:inherit;font-size:13px;font-weight:500;padding:8px 16px;color:#374151;transition:all 0.15s;display:flex;align-items:center;gap:6px;white-space:nowrap;flex-shrink:0;}
+        .seg-tab.active{border-color:#16a34a;background:#f0fdf4;color:#16a34a;font-weight:700;}
+        .pax-chip{border:1.5px solid #E2E8F0;border-radius:999px;background:#fff;cursor:pointer;font-family:inherit;padding:7px 16px;text-align:left;transition:all 0.15s;white-space:nowrap;flex-shrink:0;}
+        .pax-chip.active{border-color:#16a34a;background:#f0fdf4;}
+        .fare-row{display:flex;justify-content:space-between;align-items:center;padding:9px 20px;font-size:13.5px;color:#374151;gap:8px;border-top:1px solid #F1F5F9;}
+        .fare-row>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+        .fare-row>span:last-child{flex-shrink:0;white-space:nowrap;}
+      `}</style>
 
-        {/* ── Breadcrumb bar ── */}
-        <Box sx={{ bgcolor: "#fff", borderBottom: "1px solid #E2E8F0", px: { xs: 2, md: 4 }, py: 1, display: "flex", alignItems: "center", gap: 1 }}>
-          {["Flight Selection", "Traveller Details", "Seat Selection", "Payment"].map((step, i) => (
-            <Box key={step} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              {i > 0 && <ArrowForwardIosIcon sx={{ fontSize: 10, color: "#CBD5E0" }} />}
-              <Typography variant="caption" sx={{
-                fontWeight: i === 2 ? 700 : 400,
-                color: i === 2 ? "#1B6B3A" : i < 2 ? "#A0AEC0" : "#CBD5E0",
-              }}>{step}</Typography>
-            </Box>
-          ))}
-        </Box>
+      {/* ── breadcrumb ── */}
+      <div style={{ background: "#fff", borderBottom: "1px solid #E2E8F0", padding: "10px 24px", display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
+        {["Flight", "Travellers", "Meals & Bags", "Seats", "Payment"].map((s, i) => (
+          <span key={s} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            {i > 0 && <span style={{ color: "#CBD5E0", fontSize: 10 }}>›</span>}
+            <span style={{ fontSize: 12.5, fontWeight: i === 3 ? 700 : 400, color: i === 3 ? "#16a34a" : i < 3 ? "#94A3B8" : "#CBD5E0" }}>{s}</span>
+          </span>
+        ))}
+      </div>
 
-        {/* ── Body ── */}
-        <Box sx={{ maxWidth: 1200, mx: "auto", px: { xs: 1.5, md: 3 }, py: 3, display: "flex", gap: 3, flexDirection: { xs: "column", md: "row" } }}>
+      <div className="ss-grid">
+        {/* ════════════ LEFT PANEL ════════════ */}
+        <div>
+          <div className="card">
 
-          {/* ════ LEFT: Seat Selection Panel ════ */}
-          <Paper sx={{ flex: 1, borderRadius: 3, overflow: "hidden" }}>
+            {/* header */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", borderBottom: "1px solid #F1F5F9" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{ color: "#16a34a" }}><IconSeat /></div>
+                <span style={{ fontWeight: 700, fontSize: 16, color: "#111827" }}>Choose Your Seats</span>
+              </div>
+              <button onClick={handleContinue} style={{ background: "none", border: "none", color: "#16a34a", fontSize: 13, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 3 }}>
+                Skip <IconChevron />
+              </button>
+            </div>
 
-            {/* Panel header */}
-            <Box sx={{ px: 3, pt: 2.5, pb: 2, borderBottom: "1px solid #EDF2F7", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <AirlineSeatReclineNormalIcon sx={{ color: "#1B6B3A" }} />
-                <Typography variant="h6" sx={{ color: "#1A202C", fontWeight: 700 }}>Seat Selection</Typography>
-              </Box>
-              <Button size="small" endIcon={<ArrowForwardIosIcon fontSize="inherit" />} sx={{ color: "#1B6B3A" }}>
-                Skip
-              </Button>
-            </Box>
-
-            {/* Segment selector — styled like image: flight badge tabs */}
-            <Box sx={{ px: 3, pt: 2, pb: 1.5, borderBottom: "1px solid #EDF2F7", display: "flex", gap: 1.5, flexWrap: "wrap" }}>
-              {SEGMENTS.map((seg) => (
-                <Box
-                  key={seg.id}
-                  onClick={() => setActiveSegment(seg.id)}
-                  sx={{
-                    display: "flex", alignItems: "center", gap: 1,
-                    px: 2, py: 0.8,
-                    borderRadius: 2,
-                    border: "1.5px solid",
-                    borderColor: activeSegment === seg.id ? "#1B6B3A" : "#E2E8F0",
-                    bgcolor: activeSegment === seg.id ? "#F0FFF4" : "#fff",
-                    cursor: "pointer",
-                    transition: "all 0.15s",
-                  }}
-                >
-                  <Box sx={{ width: 36, height: 36, borderRadius: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <img src="/bookflighticon.svg" alt="" style={{ width: 33, height: 33 }}
-                      onError={(e) => { e.target.style.display = "none"; }} />
-                    <FlightTakeoffIcon sx={{ fontSize: 14, color: "#fff", display: "none" }} />
-                  </Box>
-                  <Typography variant="subtitle2" sx={{ color: activeSegment === seg.id ? "#1B6B3A" : "#4A5568", fontWeight: 700 }}>
-                    {seg.from} – {seg.to}
-                  </Typography>
-                </Box>
+            {/* segment tabs */}
+            <div style={{ display: "flex", gap: 8, padding: "12px 20px", borderBottom: "1px solid #F1F5F9", overflowX: "auto" }}>
+              {segments.map((seg, idx) => (
+                <button key={seg.key} className={`seg-tab ${activeSegIdx === idx ? "active" : ""}`} onClick={() => setActiveSegIdx(idx)}>
+                  <div style={{ color: activeSegIdx === idx ? "#16a34a" : "#94A3B8" }}><IconFlight /></div>
+                  {isRoundTrip && (
+                    <span style={{
+                      fontSize: 9, fontWeight: 800, textTransform: "uppercase", letterSpacing: 0.5,
+                      padding: "1px 5px", borderRadius: 999,
+                      background: seg.leg === "onward" ? "#EFF6FF" : "#FDF4FF",
+                      color: seg.leg === "onward" ? "#1D4ED8" : "#A21CAF",
+                    }}>
+                      {seg.leg === "onward" ? "Onward" : "Return"}
+                    </span>
+                  )}
+                  {seg.label} <span style={{ fontSize: 11, color: "#94A3B8" }}>#{seg.flightNo}</span>
+                </button>
               ))}
-            </Box>
+            </div>
 
-            {/* Main content: left info + right plane */}
-            <Box sx={{ display: "flex", gap: 0, flexDirection: { xs: "column", sm: "row" } }}>
+            {/* main body */}
+            <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
 
-              {/* ── Left info pane ── */}
-              <Box sx={{
-                width: { xs: "100%", sm: 210 }, flexShrink: 0,
-                borderRight: { sm: "1px solid #EDF2F7" },
-                p: 2.5,
-              }}>
-                {/* Airline badge */}
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2.5 }}>
-                  <Box sx={{ width: 34, height: 34, borderRadius: 1.5, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <img src="/bookflighticon.svg" alt="airline" style={{ width: 32, height: 32 }}
-                      onError={(e) => { e.target.style.display = "none"; }} />
-                  </Box>
-                  <Box>
-                    <Typography variant="subtitle2" sx={{ color: "#1A202C" }}>
-                      {SEGMENTS[activeSegment].airline}
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: "#718096" }}>
-                      {SEGMENTS[activeSegment].flight}
-                    </Typography>
-                  </Box>
-                </Box>
+              {/* ── LEFT INFO SIDEBAR ── */}
+              <div style={{ width: 200, flexShrink: 0, borderRight: "1px solid #F1F5F9", padding: "18px 16px" }}>
 
-                {/* Passenger list with seat + price (like image) */}
-                <Stack spacing={1} sx={{ mb: 2.5 }}>
-                  {eligiblePassengers.map((p) => {
-                    const seatKey = segSelected[p.id];
-                    const row     = seatKey ? parseInt(seatKey.slice(1)) : null;
-                    const colIdx  = seatKey ? COLS.indexOf(seatKey[0]) : null;
-                    const price   = seatKey ? SEAT_PRICE(row, colIdx) : null;
-                    const isActive = activePassenger === p.id;
-
+                {/* per-passenger seat summary */}
+                <p style={{ fontSize: 10, fontWeight: 800, color: "#94A3B8", letterSpacing: 1, marginBottom: 8, textTransform: "uppercase" }}>
+                  Passengers
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 18 }}>
+                  {allPassengers.map((p, idx) => {
+                    const seatCode = (selections[activeSeg?.key] || {})[p.id];
+                    const isActive = activePassIdx === idx;
                     return (
-                      <Box
-                        key={p.id}
-                        onClick={() => setActivePassenger(p.id)}
-                        sx={{
-                          display: "flex", alignItems: "center", justifyContent: "space-between",
-                          px: 1.5, py: 1,
-                          borderRadius: 2,
-                          border: "1px solid",
-                          borderColor: isActive ? "#9AE6B4" : "#EDF2F7",
-                          bgcolor: isActive ? "#F0FFF4" : "#FAFAFA",
-                          cursor: "pointer",
-                          transition: "all 0.15s",
-                        }}
-                      >
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                          <Avatar sx={{ width: 26, height: 26, bgcolor: isActive ? "#1B6B3A" : "#E2E8F0", fontSize: "0.6rem" }}>
-                            {p.name.charAt(0)}
-                          </Avatar>
-                          <Box>
-                            <Typography sx={{ fontSize: "0.75rem", fontWeight: 600, color: "#1A202C", lineHeight: 1.2 }}>
-                              {p.name}
-                            </Typography>
-                            {seatKey && (
-                              <Typography sx={{ fontSize: "0.65rem", color: "#718096" }}>
-                                Seat {seatKey}
-                              </Typography>
+                      <div key={p.id} onClick={() => setActivePassIdx(idx)} style={{
+                        display: "flex", alignItems: "center", justifyContent: "space-between",
+                        padding: "8px 10px", borderRadius: 10, cursor: "pointer",
+                        border: `1.5px solid ${isActive ? "#4ADE80" : "#F1F5F9"}`,
+                        background: isActive ? "#F0FDF4" : "#FAFAFA",
+                        transition: "all 0.15s",
+                      }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <div style={{
+                            width: 26, height: 26, borderRadius: "50%",
+                            background: isActive ? "#16a34a" : "#E2E8F0",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            fontSize: 11, fontWeight: 700, color: isActive ? "#fff" : "#64748B",
+                          }}>
+                            {(p.firstName || p.ptype)?.[0]?.toUpperCase()}
+                          </div>
+                          <div>
+                            <div style={{ fontSize: 12.5, fontWeight: 600, color: "#111827" }}>
+                              {p.firstName ? `${p.firstName} ${p.lastName || ""}`.trim() : `${p.ptype} ${idx + 1}`}
+                            </div>
+                            {seatCode && (
+                              <div style={{ fontSize: 11, color: "#16a34a", fontWeight: 700 }}>Seat {seatCode}</div>
                             )}
-                          </Box>
-                        </Box>
-                        {price != null ? (
-                          <Typography sx={{ fontSize: "0.75rem", fontWeight: 700, color: "#1A202C" }}>
-                            ₹{price.toLocaleString()}
-                          </Typography>
-                        ) : (
-                          <Typography sx={{ fontSize: "0.65rem", color: "#A0AEC0" }}>—</Typography>
+                          </div>
+                        </div>
+                        {seatCode && (
+                          <span style={{ fontSize: 11.5, fontWeight: 700, color: "#111827" }}>
+                            ₹{seatPrice(activeSeg?.key, seatCode).toLocaleString("en-IN")}
+                          </span>
                         )}
-                      </Box>
+                      </div>
                     );
                   })}
-                </Stack>
+                </div>
 
-                {/* Seat type legend */}
-                <Typography variant="caption" sx={{ color: "#718096", fontWeight: 700, display: "block", mb: 1, letterSpacing: 0.3 }}>
-                  SEAT TYPE
-                </Typography>
-                <Stack spacing={0.7}>
-                  {[
-                    { bg: "#F0FFF4", border: "#9AE6B4", label: "₹300–800",   labelColor: "#276749" },
-                    { bg: "#EBF4FF", border: "#BEE3F8", label: "₹801–1500",  labelColor: "#2C5282" },
-                    { bg: "#DBEAFE", border: "#93C5FD", label: "XL Legroom", labelColor: "#1D4ED8" },
-                    { bg: "#CBD5E0", border: "#A0AEC0", label: "Booked",     labelColor: "#718096" },
-                    { bg: "#1B6B3A", border: "#145728", label: "Selected",   labelColor: "#1B6B3A" },
-                    { bg: "#FAFAFA", border: "#E2E8F0", label: "Free",       labelColor: "#4A5568" },
-                  ].map((item) => (
-                    <Box key={item.label} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <Box sx={{
-                        width: 18, height: 16,
-                        borderRadius: "4px 4px 3px 3px",
-                        bgcolor: item.bg,
-                        border: `1.5px solid ${item.border}`,
-                        flexShrink: 0,
-                      }} />
-                      <Typography sx={{ fontSize: "0.68rem", color: item.labelColor, fontWeight: 500 }}>
-                        {item.label}
-                      </Typography>
-                    </Box>
+                {/* legend */}
+                <p style={{ fontSize: 10, fontWeight: 800, color: "#94A3B8", letterSpacing: 1, marginBottom: 8, textTransform: "uppercase" }}>
+                  Seat Types
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+                  {LEGEND.map(l => (
+                    <div key={l.label} style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                      <div style={{
+                        width: 18, height: 16, borderRadius: "4px 4px 2px 2px",
+                        background: l.bg, border: `1.5px solid ${l.border}`, flexShrink: 0,
+                      }}/>
+                      <span style={{ fontSize: 11.5, color: "#475569" }}>{l.label}</span>
+                    </div>
                   ))}
-                </Stack>
+                </div>
+              </div>
 
-                {/* Passenger selector chips */}
-                <Divider sx={{ my: 2 }} />
-                <Typography variant="caption" sx={{ color: "#718096", fontWeight: 700, display: "block", mb: 1, letterSpacing: 0.3 }}>
-                  SELECT PASSENGER
-                </Typography>
-                <Stack spacing={0.8}>
-                  {eligiblePassengers.map((p) => {
-                    const seatKey = segSelected[p.id];
-                    const isActive = activePassenger === p.id;
-                    return (
-                      <Chip
-                        key={p.id}
-                        icon={p.icon}
-                        label={
-                          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                            <span>{p.name}</span>
-                            {seatKey && (
-                              <Typography component="span" sx={{ fontSize: "0.65rem", fontWeight: 700, color: isActive ? "#fff" : "#1B6B3A" }}>
-                                · {seatKey}
-                              </Typography>
-                            )}
-                          </Box>
-                        }
-                        onClick={() => setActivePassenger(p.id)}
-                        size="small"
-                        sx={{
-                          justifyContent: "flex-start",
-                          bgcolor: isActive ? "#1B6B3A" : "#fff",
-                          color: isActive ? "#fff" : "#1A202C",
-                          border: "1.5px solid",
-                          borderColor: isActive ? "#1B6B3A" : "#CBD5E0",
-                          "& .MuiChip-icon": { color: isActive ? "#fff" : "#1B6B3A" },
-                          fontWeight: 600,
-                          fontSize: "0.72rem",
-                          transition: "all 0.15s",
-                          height: 30,
-                        }}
-                      />
-                    );
-                  })}
-                </Stack>
-              </Box>
-
-              {/* ── Right: Plane Map ── */}
-              <Box sx={{
-                flex: 1,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "flex-start",
-                pt: 3,
-                pb: 3,
-                px: 1,
-                bgcolor: "#F7FAFC",
-                overflowX: "auto",
+              {/* ── SEAT MAP ── */}
+              <div style={{
+                flex: 1, display: "flex", justifyContent: "center", alignItems: "flex-start",
+                padding: "24px 12px", background: "#F8FAFC", overflowX: "auto",
               }}>
-                <CabinMap
-                  segmentIdx={activeSegment}
-                  passengerSelections={passengerSelections}
-                  activePassenger={activePassenger}
-                  onSeatSelect={handleSeatSelect}
-                />
-              </Box>
-            </Box>
-          </Paper>
-
-          {/* ════ RIGHT: Fare Summary ════ */}
-          <Box sx={{ width: { xs: "100%", md: 290 }, flexShrink: 0 }}>
-            <Paper sx={{ borderRadius: 3, overflow: "hidden", position: { md: "sticky" }, top: { md: 16 } }}>
-
-              {/* Header */}
-              <Box sx={{ px: 2.5, py: 2, bgcolor: "#ffffff", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <Typography variant="h6" sx={{ color: "#132235", fontWeight: 700 }}>Fare Summary</Typography>
-                <Chip
-                  label={`${PASSENGERS.length} Travellers`} size="small"
-                  sx={{ bgcolor: "rgba(255,255,255,0.18)", color: "#132235", fontWeight: 600, fontSize: "0.7rem" }}
-                />
-              </Box>
-
-              <Box sx={{ px: 2.5, py: 2 }}>
-                {/* Fare type */}
-                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-                  <Typography variant="body2" sx={{ color: "#718096" }}>Fare Type</Typography>
-                  <Chip label="Partial Refundable" size="small"
-                    sx={{ bgcolor: "#F0FFF4", color: "#1B6B3A", fontWeight: 600, border: "1px solid #9AE6B4", fontSize: "0.68rem" }} />
-                </Box>
-
-                <Divider sx={{ mb: 2 }} />
-
-                {/* Breakdown */}
-                {[
-                  { label: `Adult × ${FARE.adultCount}`,   value: FARE.adultPrice   },
-                  FARE.childCount  > 0 ? { label: `Child × ${FARE.childCount}`,   value: FARE.childPrice   } : null,
-                  FARE.infantCount > 0 ? { label: `Infant × ${FARE.infantCount}`, value: FARE.infantPrice  } : null,
-                  { label: "Taxes & Fees",                  value: FARE.taxes        },
-                ].filter(Boolean).map((r) => (
-                  <Box key={r.label} sx={{ display: "flex", justifyContent: "space-between", mb: 1.2 }}>
-                    <Typography variant="body2" sx={{ color: "#4A5568" }}>{r.label}</Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 500 }}>₹{r.value.toLocaleString()}</Typography>
-                  </Box>
-                ))}
-
-                {seatCost > 0 && (
-                  <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1.2 }}>
-                    <Typography variant="body2" sx={{ color: "#4A5568" }}>Seat Charges</Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 600, color: "#1B6B3A" }}>
-                      + ₹{seatCost.toLocaleString()}
-                    </Typography>
-                  </Box>
+                {activeSeg && Object.keys(seatRowsMap).length > 0 ? (
+                  <CabinMap
+                    seatRows={seatRowsMap}
+                    selections={activeSegSelections}
+                    activePassengerId={activePass?.id}
+                    allPassengerIds={allPassengers.map(p => p.id)}
+                    onSelect={handleSeatSelect}
+                  />
+                ) : (
+                  <div style={{ textAlign: "center", color: "#94A3B8", fontSize: 13, paddingTop: 40 }}>
+                    No seat map available for this segment.
+                  </div>
                 )}
+              </div>
+            </div>
 
-                <Divider sx={{ my: 2 }} />
+            {/* ── PASSENGER CHIPS BOTTOM BAR ── */}
+            <div style={{ borderTop: "1px solid #F1F5F9", padding: "12px 20px", background: "#FAFAFA" }}>
+              <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 2 }}>
+                {allPassengers.map((p, idx) => {
+                  const seatCode = (selections[activeSeg?.key] || {})[p.id];
+                  const isActive = activePassIdx === idx;
+                  const name = p.firstName ? `${p.firstName} ${p.lastName || ""}`.trim() : `${p.ptype} ${idx + 1}`;
+                  return (
+                    <button key={p.id} className={`pax-chip ${isActive ? "active" : ""}`} onClick={() => setActivePassIdx(idx)}>
+                      <div style={{ fontSize: 12.5, fontWeight: 600, color: isActive ? "#16a34a" : "#111827" }}>
+                        {name.length > 14 ? name.slice(0, 14) + "…" : name}
+                      </div>
+                      <div style={{ fontSize: 11, color: "#6B7280", marginTop: 1 }}>
+                        {seatCode ? `Seat ${seatCode} · ₹${seatPrice(activeSeg?.key, seatCode)}` : "Pick a seat"}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
 
-                <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2.5 }}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Net Amount Payable</Typography>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 800, color: "#1B6B3A" }}>
-                    ₹{netTotal.toLocaleString()}
-                  </Typography>
-                </Box>
+        {/* ════════════ RIGHT: FARE SUMMARY ════════════ */}
+        <div style={{ position: "sticky", top: 24 }}>
+          <div className="card">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 20px 12px", borderBottom: "1px solid #F1F5F9" }}>
+              <span style={{ fontWeight: 700, fontSize: 16, color: "#111827" }}>Fare Summary</span>
+              <span style={{ fontSize: 12.5, color: "#6B7280" }}>{totalPax} Traveller{totalPax !== 1 ? "s" : ""}</span>
+            </div>
 
-                {/* Seat selection progress */}
-                <Box sx={{ mb: 2.5 }}>
-                  <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.6 }}>
-                    <Typography variant="caption" sx={{ color: "#718096" }}>Seats selected</Typography>
-                    <Typography variant="caption" sx={{ fontWeight: 700 }}>
-                      {totalSeatsSelected} / {maxSeats}
-                    </Typography>
-                  </Box>
-                  <Box sx={{ height: 6, borderRadius: 3, bgcolor: "#EDF2F7", overflow: "hidden" }}>
-                    <Box sx={{
-                      height: "100%", borderRadius: 3, bgcolor: "#1B6B3A",
-                      width: `${maxSeats ? (totalSeatsSelected / maxSeats) * 100 : 0}%`,
-                      transition: "width 0.35s ease",
-                    }} />
-                  </Box>
-                </Box>
+            <div style={{ padding: "6px 0" }}>
+              <div className="fare-row" style={{ borderTop: "none" }}>
+                <span style={{ color: "#6B7280" }}>Fare Type</span>
+                <span style={{ color: "#16a34a", fontWeight: 600 }}>
+                  {(fareQuote?.Results?.IsRefundable ?? flight?.IsRefundable) ? "Refundable" : "Partial Refundable"}
+                </span>
+              </div>
 
-                <Button fullWidth variant="contained" size="large" sx={{
-                  bgcolor: "#1B6B3A", "&:hover": { bgcolor: "#145728" },
-                  py: 1.4, fontSize: "0.88rem", fontWeight: 700, borderRadius: 2,
-                }}>
-                  Continue to Payment
-                </Button>
+              {/* onward */}
+              <div style={{ padding: "10px 20px 4px", fontSize: 11.5, fontWeight: 800, color: "#16a34a", textTransform: "uppercase", letterSpacing: 0.5 }}>
+                {isRoundTrip ? "Onward Flight" : "Flight Fare"}
+              </div>
+              {adultCount > 0 && <div className="fare-row"><span>Adult × {adultCount}</span><span style={{ fontWeight: 600 }}>₹{(onwardPublished * adultCount).toLocaleString("en-IN")}</span></div>}
+              {childCount > 0 && <div className="fare-row"><span>Child × {childCount}</span><span style={{ fontWeight: 600 }}>₹{(onwardPublished * childCount).toLocaleString("en-IN")}</span></div>}
+              {infantCount > 0 && <div className="fare-row"><span>Infant × {infantCount}</span><span style={{ fontWeight: 600 }}>₹{(onwardPublished * infantCount).toLocaleString("en-IN")}</span></div>}
+              <div className="fare-row"><span>Taxes &amp; Fees</span><span style={{ fontWeight: 600 }}>₹{onwardTaxTotal.toLocaleString("en-IN")}</span></div>
 
-                <Typography variant="caption" sx={{ display: "block", textAlign: "center", mt: 1.5, color: "#A0AEC0" }}>
-                  You can also skip seat selection
-                </Typography>
-              </Box>
-            </Paper>
-          </Box>
-        </Box>
-      </Box>
+              {/* return */}
+              {isRoundTrip && (<>
+                <div style={{ padding: "10px 20px 4px", fontSize: 11.5, fontWeight: 800, color: "#A21CAF", textTransform: "uppercase", letterSpacing: 0.5, borderTop: "1px dashed #E2E8F0", marginTop: 4 }}>
+                  Return Flight
+                </div>
+                {adultCount > 0 && <div className="fare-row"><span>Adult × {adultCount}</span><span style={{ fontWeight: 600 }}>₹{(returnPublished * adultCount).toLocaleString("en-IN")}</span></div>}
+                {childCount > 0 && <div className="fare-row"><span>Child × {childCount}</span><span style={{ fontWeight: 600 }}>₹{(returnPublished * childCount).toLocaleString("en-IN")}</span></div>}
+                <div className="fare-row"><span>Taxes &amp; Fees</span><span style={{ fontWeight: 600 }}>₹{returnTaxTotal.toLocaleString("en-IN")}</span></div>
+              </>)}
 
-      <Snackbar
-        open={snackbar.open} autoHideDuration={3000}
-        onClose={() => setSnackbar({ open: false, message: "" })}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert severity="warning" onClose={() => setSnackbar({ open: false, message: "" })} sx={{ borderRadius: 2 }}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
-    </ThemeProvider>
+              {/* extras */}
+              {extraMealTotal > 0 && (
+                <div className="fare-row"><span style={{ color: "#16a34a" }}>Meals</span><span style={{ fontWeight: 600, color: "#16a34a" }}>+₹{extraMealTotal.toLocaleString("en-IN")}</span></div>
+              )}
+              {extraBagTotal > 0 && (
+                <div className="fare-row"><span style={{ color: "#16a34a" }}>Extra Baggage</span><span style={{ fontWeight: 600, color: "#16a34a" }}>+₹{extraBagTotal.toLocaleString("en-IN")}</span></div>
+              )}
+              {seatTotal > 0 && (
+                <div className="fare-row"><span style={{ color: "#16a34a" }}>Seat Charges</span><span style={{ fontWeight: 700, color: "#16a34a" }}>+₹{seatTotal.toLocaleString("en-IN")}</span></div>
+              )}
+            </div>
+
+            {/* total */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 20px", background: "#F9FAFB", borderTop: "2px solid #E2E8F0", gap: 8 }}>
+              <span style={{ fontWeight: 700, fontSize: 14.5, color: "#111827" }}>Net Amount Payable</span>
+              <span style={{ fontWeight: 800, fontSize: 17, color: "#111827", flexShrink: 0 }}>₹{grandTotal.toLocaleString("en-IN")}</span>
+            </div>
+
+            {/* progress */}
+            <div style={{ padding: "14px 20px 0" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                <span style={{ fontSize: 12, color: "#6B7280" }}>Seats selected</span>
+                <span style={{ fontSize: 12, fontWeight: 700 }}>{totalSeatsSelected} / {maxSeats}</span>
+              </div>
+              <div style={{ height: 6, borderRadius: 3, background: "#E2E8F0", overflow: "hidden", marginBottom: 16 }}>
+                <div style={{ height: "100%", borderRadius: 3, background: "#16a34a", width: `${progress}%`, transition: "width 0.35s ease" }}/>
+              </div>
+            </div>
+
+            <div style={{ padding: "0 20px 20px" }}>
+              <button onClick={handleContinue} style={styles.continueBtn}>
+                Continue to Payment
+              </button>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 5, marginTop: 10 }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                <span style={{ fontSize: 11.5, color: "#94A3B8" }}>Secured &amp; Encrypted Payment</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SHARED STYLES
+───────────────────────────────────────────────────────────────────────────── */
+const styles = {
+  center: {
+    fontFamily: "'Inter','Segoe UI',sans-serif",
+    minHeight: "100vh", display: "flex", flexDirection: "column",
+    alignItems: "center", justifyContent: "center", gap: 12,
+    background: "#F1F5F9",
+  },
+  continueBtn: {
+    width: "100%", padding: "13px 0", borderRadius: 10,
+    background: "linear-gradient(135deg,#16a34a,#15803d)",
+    color: "#fff", fontSize: 15, fontWeight: 700,
+    border: "none", cursor: "pointer",
+    boxShadow: "0 2px 12px rgba(22,163,74,0.28)",
+    transition: "opacity 0.15s",
+  },
+};

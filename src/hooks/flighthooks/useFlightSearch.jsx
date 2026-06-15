@@ -10,7 +10,7 @@ const CABIN_CLASS_MAP = {
   "First Class": 4,
 };
 
-const SEARCH_TIMEOUT_MS = 15000;
+const SEARCH_TIMEOUT_MS = 45000;
 
 function formatSegmentDate(date) {
   if (!date) return "";

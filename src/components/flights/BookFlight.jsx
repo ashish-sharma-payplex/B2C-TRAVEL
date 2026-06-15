@@ -1549,6 +1549,7 @@ export default function BookFlight() {
         returnFareQuote,
         traceId: searchMeta?.traceId,
         resultIndex: onwardF?.ResultIndex,
+         returnResultIndex: returnF?.ResultIndex || null,
       },
     });
   };
@@ -2127,20 +2128,26 @@ export default function BookFlight() {
                       {isRefundable ? "Refundable" : "Partial Refundable"}
                     </span>
                   </div>
+
+                  {/* ── Onward Fare Block ── */}
+                  <div
+                    style={{
+                      padding: "10px 20px 4px",
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: "#16a34a",
+                      textTransform: "uppercase",
+                      letterSpacing: 0.5,
+                    }}
+                  >
+                    {isRoundTrip ? "Onward Flight" : "Flight Fare"}
+                  </div>
                   <div className="fare-row">
                     <span>{isRoundTrip ? "Onward Fare" : "Base Fare"}</span>
                     <span style={{ fontWeight: 600 }}>
                       ₹{onwardFareTotal.toLocaleString("en-IN")}
                     </span>
                   </div>
-                  {isRoundTrip && (
-                    <div className="fare-row">
-                      <span>Return Fare</span>
-                      <span style={{ fontWeight: 600 }}>
-                        ₹{returnFareTotal.toLocaleString("en-IN")}
-                      </span>
-                    </div>
-                  )}
                   {adultCount > 0 && (
                     <div className="fare-row">
                       <span>Adult × {adultCount}</span>
@@ -2177,9 +2184,99 @@ export default function BookFlight() {
                   <div className="fare-row">
                     <span>Taxes &amp; Fees</span>
                     <span style={{ fontWeight: 600 }}>
-                      ₹{tax.toLocaleString("en-IN")}
+                      ₹{(onwardTaxAmt * totalPassengers).toLocaleString("en-IN")}
                     </span>
                   </div>
+                  <div className="fare-row" style={{ borderTop: "1px solid #e5e7eb" }}>
+                    <span style={{ fontWeight: 700, color: "#111827" }}>
+                      {isRoundTrip ? "Onward Subtotal" : "Subtotal"}
+                    </span>
+                    <span style={{ fontWeight: 700, color: "#111827" }}>
+                      ₹
+                      {(
+                        onwardFareTotal + onwardTaxAmt * totalPassengers
+                      ).toLocaleString("en-IN")}
+                    </span>
+                  </div>
+
+                  {/* ── Return Fare Block (round trip only) ── */}
+                  {isRoundTrip && (
+                    <>
+                      <div
+                        style={{
+                          padding: "12px 20px 4px",
+                          fontSize: 12,
+                          fontWeight: 700,
+                          color: "#16a34a",
+                          textTransform: "uppercase",
+                          letterSpacing: 0.5,
+                          borderTop: "1px dashed #e5e7eb",
+                          marginTop: 4,
+                        }}
+                      >
+                        Return Flight
+                      </div>
+                      <div className="fare-row">
+                        <span>Return Fare</span>
+                        <span style={{ fontWeight: 600 }}>
+                          ₹{returnFareTotal.toLocaleString("en-IN")}
+                        </span>
+                      </div>
+                      {adultCount > 0 && (
+                        <div className="fare-row">
+                          <span>Adult × {adultCount}</span>
+                          <span style={{ fontWeight: 600 }}>
+                            ₹
+                            {(
+                              Math.round(returnPublished) * adultCount
+                            ).toLocaleString("en-IN")}
+                          </span>
+                        </div>
+                      )}
+                      {childCount > 0 && (
+                        <div className="fare-row">
+                          <span>Child × {childCount}</span>
+                          <span style={{ fontWeight: 600 }}>
+                            ₹
+                            {(
+                              Math.round(returnPublished) * childCount
+                            ).toLocaleString("en-IN")}
+                          </span>
+                        </div>
+                      )}
+                      {infantCount > 0 && (
+                        <div className="fare-row">
+                          <span>Infant × {infantCount}</span>
+                          <span style={{ fontWeight: 600 }}>
+                            ₹
+                            {(
+                              Math.round(returnPublished) * infantCount
+                            ).toLocaleString("en-IN")}
+                          </span>
+                        </div>
+                      )}
+                      <div className="fare-row">
+                        <span>Taxes &amp; Fees</span>
+                        <span style={{ fontWeight: 600 }}>
+                          ₹
+                          {(returnTaxAmt * totalPassengers).toLocaleString(
+                            "en-IN",
+                          )}
+                        </span>
+                      </div>
+                      <div className="fare-row" style={{ borderTop: "1px solid #e5e7eb" }}>
+                        <span style={{ fontWeight: 700, color: "#111827" }}>
+                          Return Subtotal
+                        </span>
+                        <span style={{ fontWeight: 700, color: "#111827" }}>
+                          ₹
+                          {(
+                            returnFareTotal + returnTaxAmt * totalPassengers
+                          ).toLocaleString("en-IN")}
+                        </span>
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
 
