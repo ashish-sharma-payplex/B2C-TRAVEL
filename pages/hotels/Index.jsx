@@ -96,7 +96,11 @@ const StickyRightBar = ({ visible }) => {
         zIndex: 1300,
         bgcolor: "#ffffff",
         borderBottom: "1px solid #e8e8e8",
-        px: { xs: 2, md: 4 },
+        px: {
+          xs: 1,
+          sm: 2,  
+          md: 4,
+        },
         display: "flex",
         alignItems: "center",
         gap: 2,
@@ -672,11 +676,31 @@ const HotelsPage = ({ scrolled }) => {
 
       <Box
         sx={{
-         fontFamily: "Inter, sans-serif",
+          fontFamily: "Inter, sans-serif",
+
           position: "relative",
-          px: { xs: 2, md: 4 },
-          pb: { xs: 3, md: 5 },
-          pt: { xs: 2, md: 3 },
+
+          width: "100%",
+
+          boxSizing: "border-box",
+
+          overflowX: "hidden",
+
+          px: {
+            xs: 1.5,
+            sm: 2,
+            md: 4,
+          },
+
+          pb: {
+            xs: 3,
+            md: 5,
+          },
+
+          pt: {
+            xs: 2,
+            md: 3,
+          },
         }}
       >
         {/* BACKGROUND ONLY TOP HALF (Book a Hotel AREA) */}
@@ -695,17 +719,32 @@ const HotelsPage = ({ scrolled }) => {
         {/* CONTENT LAYER */}
         <Paper
           elevation={0}
-          sx={{
+        sx={{
             borderRadius: "16px",
-            p: { xs: "20px 16px", sm: "24px 24px", md: "28px 32px" },
-            maxWidth: 1100,
-            mx: "auto",
             width: "100%",
-            boxShadow: "0 2px 20px rgba(0,0,0,0.08)",
-            position: "relative",
-            zIndex: 1,
-            backgroundColor: "#fff",
-          }}
+            maxWidth: 1200,
+            mx: "auto",
+            boxSizing: "border-box",
+            overflow: "hidden",
+          px: {
+            xs: 2,
+            sm: 3,
+            md: 4,
+          },
+
+          py: {
+            xs: 2,
+            sm: 3,
+            md: 4,
+          },
+            
+    boxSizing: "border-box",
+    overflow: "hidden",
+    boxShadow: "0 2px 20px rgba(0,0,0,0.08)",
+    position: "relative",
+    zIndex: 1,
+    backgroundColor: "#fff",
+  }}
         >
           {/* HEADER */}
           <Box
@@ -715,7 +754,10 @@ const HotelsPage = ({ scrolled }) => {
               flexDirection: { xs: "column", sm: "row" },
               alignItems: { xs: "flex-start", sm: "flex-start" },
               gap: { xs: 1.5, sm: 0 },
-              mb: 2.8,
+              mb: {
+              xs: 2,
+              md: 2.8,
+            },
             }}
           >
             <Box>
