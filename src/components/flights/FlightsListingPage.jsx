@@ -1160,6 +1160,7 @@ const applyFilters = (
   departureTime,
   arrivalTime,
   selectedAirlines,
+   lccFilter,
 ) => {
   return flights.filter((flight) => {
     const meta = getFlightMeta(flight);
@@ -1201,7 +1202,15 @@ const applyFilters = (
       !selectedAirlines.includes(meta.airlineName)
     )
       return false;
+      if (
+      selectedAirlines.length > 0 &&
+      !selectedAirlines.includes(meta.airlineName)
+    )
+      return false;
+    if (lccFilter === "lcc" && !flight.IsLCC) return false;
+    if (lccFilter === "nonlcc" && flight.IsLCC) return false;
     return true;
+    
   });
 };
 
@@ -2312,6 +2321,7 @@ const FlightsListingPage = () => {
   const [selectedOnward, setSelectedOnward] = useState(null);
   const [selectedReturn, setSelectedReturn] = useState(null);
   const [rtSidebarOpen, setRtSidebarOpen] = useState(false);
+  const [fareTypeFilter, setFareTypeFilter] = useState("");
   const {
     data: calendarData,
     returnData: calendarReturnData,
@@ -2461,36 +2471,39 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
   const [selectedAirlines, setSelectedAirlines] = useState([]);
   const [filterOpen, setFilterOpen] = useState(false);
 
-  const clearAll = () => {
-    setPriceRange(null);
-    setDepartureTime("");
-    setArrivalTime("");
-    setSelectedStops([]);
-    setSelectedAirlines([]);
-  };
+ const clearAll = () => {
+  setPriceRange(null);
+  setDepartureTime("");
+  setArrivalTime("");
+  setSelectedStops([]);
+  setSelectedAirlines([]);
+  setFareTypeFilter("");
+};
 
   const toggleItem = (setter, arr, val) =>
     setter(arr.includes(val) ? arr.filter((x) => x !== val) : [...arr, val]);
 
   const filteredFlights = useMemo(
-    () =>
-      applyFilters(
-        oneWayFlights,
-        effectivePriceRange,
-        selectedStops,
-        departureTime,
-        arrivalTime,
-        selectedAirlines,
-      ),
-    [
+  () =>
+    applyFilters(
       oneWayFlights,
       effectivePriceRange,
       selectedStops,
       departureTime,
       arrivalTime,
       selectedAirlines,
-    ],
-  );
+      fareTypeFilter,
+    ),
+  [
+    oneWayFlights,
+    effectivePriceRange,
+    selectedStops,
+    departureTime,
+    arrivalTime,
+    selectedAirlines,
+    fareTypeFilter,
+  ],
+);
 
   const filteredOnwardFlights = useMemo(
     () =>
@@ -2617,7 +2630,53 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
           sx={{ ml: 0, display: "flex" }}
         />
       ))}
+
+
       <Divider sx={{ borderStyle: "dashed", my: 2 }} />
+<Typography sx={{ fontSize: 15, fontWeight: 600, mb: 1, fontFamily: "Inter,Sans-serif", color: "#222" }}>
+  Fare Type
+</Typography>
+<Box sx={{ display: "flex", gap: 1.2, mb: 2 }}>
+  {[
+    { key: "lcc", label: "LCC" },
+    { key: "nonlcc", label: "Non-LCC" },
+  ].map(({ key, label }) => (
+    <Paper
+      key={key}
+      onClick={() => setFareTypeFilter(fareTypeFilter === key ? "" : key)}
+      elevation={0}
+      sx={{
+        flex: 1,
+        p: 1.2,
+        textAlign: "center",
+        borderRadius: "10px",
+        cursor: "pointer",
+        fontFamily: "Inter,Sans-serif",
+        border:
+          fareTypeFilter === key
+            ? "1.5px solid #1A914B"
+            : "1px solid #E3E8EE",
+        backgroundColor: fareTypeFilter === key ? "#EAF7EF" : "#fff",
+        "&:hover": { borderColor: "#1A914B" },
+        transition: "all .15s",
+      }}
+    >
+      <Typography
+        sx={{
+          fontSize: 13,
+          fontWeight: fareTypeFilter === key ? 700 : 500,
+          color: fareTypeFilter === key ? "#1A914B" : "#555",
+        }}
+      >
+        {label}
+      </Typography>
+    </Paper>
+  ))}
+</Box>
+      <Divider sx={{ borderStyle: "dashed", my: 2 }} />
+
+
+
       <Typography
         sx={{ fontSize: 15, fontWeight: 600, mb: 1.5, fontFamily: "Inter,Sans-serif", color: "#222" }}
       >

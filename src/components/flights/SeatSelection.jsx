@@ -1,13 +1,10 @@
 // src/components/flights/SeatSelectionPage.jsx
-// Drop-in replacement — reads SeatsBySegment from the SSR hook response
-// and renders an ixigo-style cabin map with fare summary.
-
 import { useState, useMemo, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSSR } from "../../hooks/flighthooks/useSSR";
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   TINY ICON COMPONENTS  (no external icon lib needed)
+   TINY ICON COMPONENTS
 ───────────────────────────────────────────────────────────────────────────── */
 const IconSeat = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -33,14 +30,9 @@ const IconFlight = () => (
 /* ─────────────────────────────────────────────────────────────────────────────
    HELPERS
 ───────────────────────────────────────────────────────────────────────────── */
-// AvailablityType: 1 = available, 3 = occupied/blocked, 0 = no-seat row
 const isAvailable = (seat) => seat.AvailablityType === 1;
-
-// SeatType bitmask categories used by Air India / IX
-// 1=Window, 2=Aisle, 3=Middle, 4=ExitWindow, 6=ExitWindow+, 10=ExitAisle, 12=ExitAisle+, 16=ExitMiddle, 18=ExitMiddle+
 const isExitRow = (seat) => [4, 6, 10, 12, 16, 18].includes(seat.SeatType);
 
-// Group flat seat list into rows: { rowNo: [seat, …] }
 function groupByRow(seats) {
   const map = {};
   for (const s of seats) {
@@ -52,26 +44,23 @@ function groupByRow(seats) {
   return map;
 }
 
-// Flatten seat_rows array from API into a single array
 function flattenSeatRows(seatRows) {
   return seatRows.flatMap((r) => r.Seats || []);
 }
 
-// Canonical column order
 const COL_ORDER = ["A", "B", "C", "D", "E", "F"];
 
 /* ─────────────────────────────────────────────────────────────────────────────
    SEAT COLOUR LOGIC
 ───────────────────────────────────────────────────────────────────────────── */
-function seatStyle(seat, state /* 'available'|'selected'|'other'|'blocked' */) {
+function seatStyle(seat, state) {
   if (state === "blocked") return { bg: "#E2E6EA", border: "#C8CDD4", text: "#9AA3AE", cursor: "not-allowed" };
   if (state === "selected") return { bg: "#16a34a", border: "#15803d", text: "#fff", cursor: "pointer" };
   if (state === "other") return { bg: "#DBEAFE", border: "#93C5FD", text: "#2563EB", cursor: "not-allowed" };
 
-  // price tiers
   const p = seat.Price;
-  if (p === 0) return { bg: "#F8FAFC", border: "#CBD5E0", text: "#64748B", cursor: "pointer" }; // free
-  if (isExitRow(seat)) return { bg: "#FEF3C7", border: "#F59E0B", text: "#92400E", cursor: "pointer" }; // exit
+  if (p === 0) return { bg: "#F8FAFC", border: "#CBD5E0", text: "#64748B", cursor: "pointer" };
+  if (isExitRow(seat)) return { bg: "#FEF3C7", border: "#F59E0B", text: "#92400E", cursor: "pointer" };
   if (p >= 1500) return { bg: "#F3E8FF", border: "#C084FC", text: "#7E22CE", cursor: "pointer" };
   if (p >= 800) return { bg: "#DBEAFE", border: "#60A5FA", text: "#1E40AF", cursor: "pointer" };
   if (p >= 400) return { bg: "#DCFCE7", border: "#4ADE80", text: "#166534", cursor: "pointer" };
@@ -112,18 +101,9 @@ function SeatCell({ seat, state, onSelect }) {
       }}
     >
       {isBlocked && !isSelected ? (
-        <div style={{
-          width: 12, height: 12, position: "relative",
-          display: "flex", alignItems: "center", justifyContent: "center",
-        }}>
-          <div style={{
-            position: "absolute", width: "100%", height: "1.5px",
-            background: "#9AA3AE", transform: "rotate(45deg)", borderRadius: 1,
-          }}/>
-          <div style={{
-            position: "absolute", width: "100%", height: "1.5px",
-            background: "#9AA3AE", transform: "rotate(-45deg)", borderRadius: 1,
-          }}/>
+        <div style={{ width: 12, height: 12, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ position: "absolute", width: "100%", height: "1.5px", background: "#9AA3AE", transform: "rotate(45deg)", borderRadius: 1 }}/>
+          <div style={{ position: "absolute", width: "100%", height: "1.5px", background: "#9AA3AE", transform: "rotate(-45deg)", borderRadius: 1 }}/>
         </div>
       ) : isSelected ? (
         <div style={{ color: "#fff" }}><IconCheck /></div>
@@ -137,16 +117,14 @@ function SeatCell({ seat, state, onSelect }) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   CABIN MAP  (plane-shaped, real seat data)
+   CABIN MAP
 ───────────────────────────────────────────────────────────────────────────── */
 function CabinMap({ seatRows, selections, activePassengerId, allPassengerIds, onSelect }) {
-  // selections: { passengerId: seatCode }
-  const selectedByActive = selections[activePassengerId]; // e.g. "3A"
+  const selectedByActive = selections[activePassengerId];
   const allSelected = new Set(Object.values(selections));
 
   const sortedRowNos = Object.keys(seatRows).map(Number).sort((a, b) => a - b);
 
-  // Detect exit rows (any seat in row has exit SeatType)
   const exitRowSet = useMemo(() => {
     const s = new Set();
     for (const [rNo, seats] of Object.entries(seatRows)) {
@@ -155,55 +133,30 @@ function CabinMap({ seatRows, selections, activePassengerId, allPassengerIds, on
     return s;
   }, [seatRows]);
 
-  // Aeroplane dimensions
   const SW = 30, GAP = 4, AISLE = 22;
   const LEFT_COLS = ["A", "B", "C"], RIGHT_COLS = ["D", "E", "F"];
   const SIDE_W = SW * 3 + GAP * 2;
-  const TOTAL_W = SIDE_W * 2 + AISLE + 28; // + row number col
+  const TOTAL_W = SIDE_W * 2 + AISLE + 28;
   const PLANE_W = TOTAL_W + 32;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", userSelect: "none" }}>
+      <img src="/aerofront.png" alt="Aircraft front" style={{ display: "block", width: PLANE_W, height: "auto", marginBottom: -2, objectFit: "contain" }} />
 
-      {/* ── NOSE (image) ── */}
-      <img
-        src="/aerofront.png"
-        alt="Aircraft front"
-        style={{
-          display: "block",
-          width: PLANE_W,
-          height: "auto",
-          marginBottom: -2,
-          objectFit: "contain",
-        }}
-      />
-
-      {/* ── FUSELAGE ── */}
       <div style={{
-        border: "1.5px solid #CBD5E0",
-        borderTop: "none",
-        borderBottom: "none",
-        borderRadius: 0,
-        background: "linear-gradient(to bottom, #F8FAFC, #F1F5F9)",
-        padding: "8px 16px 28px",
-        width: PLANE_W,
-        boxSizing: "border-box",
-        position: "relative",
+        border: "1.5px solid #CBD5E0", borderTop: "none", borderBottom: "none",
+        borderRadius: 0, background: "linear-gradient(to bottom, #F8FAFC, #F1F5F9)",
+        padding: "8px 16px 28px", width: PLANE_W, boxSizing: "border-box", position: "relative",
       }}>
-
-        {/* wing decals */}
         {["left", "right"].map((side) => (
           <div key={side} style={{
-            position: "absolute",
-            [side === "left" ? "left" : "right"]: -16,
-            top: "35%",
-            width: 16, height: 56,
+            position: "absolute", [side === "left" ? "left" : "right"]: -16,
+            top: "35%", width: 16, height: 56,
             background: `linear-gradient(to ${side === "left" ? "right" : "left"}, transparent, #CBD5E0)`,
             borderRadius: side === "left" ? "8px 0 0 8px" : "0 8px 8px 0",
           }}/>
         ))}
 
-        {/* column header */}
         <div style={{ display: "flex", alignItems: "center", marginBottom: 6, paddingLeft: 14 }}>
           {LEFT_COLS.map((c, i) => (
             <div key={c} style={{ width: SW, marginRight: i < 2 ? GAP : 0, textAlign: "center" }}>
@@ -218,40 +171,26 @@ function CabinMap({ seatRows, selections, activePassengerId, allPassengerIds, on
           ))}
         </div>
 
-        {/* scrollable seat area */}
-        <div style={{
-          maxHeight: 420, overflowY: "auto",
-          scrollbarWidth: "thin", scrollbarColor: "#CBD5E0 transparent",
-        }}>
+        <div style={{ maxHeight: 420, overflowY: "auto", scrollbarWidth: "thin", scrollbarColor: "#CBD5E0 transparent" }}>
           {sortedRowNos.map((rowNo) => {
             const rowSeats = seatRows[rowNo];
             const isExit = exitRowSet.has(rowNo);
-
-            // Map by SeatNo (column letter)
             const byCol = {};
             for (const s of rowSeats) byCol[s.SeatNo] = s;
-
-            // Check if this row starts a new "exit section" marker
             const prevRowNo = sortedRowNos[sortedRowNos.indexOf(rowNo) - 1];
             const showExitMarker = isExit && (!prevRowNo || !exitRowSet.has(prevRowNo));
 
             return (
               <div key={rowNo}>
                 {showExitMarker && (
-                  <div style={{
-                    display: "flex", alignItems: "center", gap: 6,
-                    margin: "6px 0 4px", padding: "0 2px",
-                  }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, margin: "6px 0 4px", padding: "0 2px" }}>
                     <div style={{ flex: 1, height: 1, background: "#FCD34D" }}/>
-                    <span style={{ fontSize: "0.48rem", fontWeight: 900, color: "#D97706", letterSpacing: 1.5 }}>
-                      EXIT ROW
-                    </span>
+                    <span style={{ fontSize: "0.48rem", fontWeight: 900, color: "#D97706", letterSpacing: 1.5 }}>EXIT ROW</span>
                     <div style={{ flex: 1, height: 1, background: "#FCD34D" }}/>
                   </div>
                 )}
 
                 <div style={{ display: "flex", alignItems: "center", marginBottom: GAP }}>
-                  {/* left 3 seats */}
                   {LEFT_COLS.map((col, ci) => {
                     const seat = byCol[col];
                     if (!seat) return <div key={col} style={{ width: SW, marginRight: ci < 2 ? GAP : 0 }}/>;
@@ -267,14 +206,10 @@ function CabinMap({ seatRows, selections, activePassengerId, allPassengerIds, on
                     );
                   })}
 
-                  {/* aisle + row number */}
-                  <div style={{
-                    width: AISLE + 28, display: "flex", alignItems: "center", justifyContent: "center",
-                  }}>
+                  <div style={{ width: AISLE + 28, display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <span style={{ fontSize: "0.55rem", color: "#94A3B8", fontWeight: 700 }}>{rowNo}</span>
                   </div>
 
-                  {/* right 3 seats */}
                   {RIGHT_COLS.map((col, ci) => {
                     const seat = byCol[col];
                     if (!seat) return <div key={col} style={{ width: SW, marginLeft: ci > 0 ? GAP : 0 }}/>;
@@ -296,18 +231,7 @@ function CabinMap({ seatRows, selections, activePassengerId, allPassengerIds, on
         </div>
       </div>
 
-      {/* ── TAIL (image) ── */}
-      <img
-        src="/aeroback.png"
-        alt="Aircraft back"
-        style={{
-          display: "block",
-          width: PLANE_W,
-          height: "auto",
-          marginTop: -2,
-          objectFit: "contain",
-        }}
-      />
+      <img src="/aeroback.png" alt="Aircraft back" style={{ display: "block", width: PLANE_W, height: "auto", marginTop: -2, objectFit: "contain" }} />
     </div>
   );
 }
@@ -331,12 +255,23 @@ const LEGEND = [
 export default function SeatSelectionPage() {
   const location = useLocation();
   const navigate = useNavigate();
+
   const {
-    flight, returnFlight, searchMeta, travellers,
-    contact, billing, gst,
-    fareQuote, returnFareQuote,
-    traceId, resultIndex, returnResultIndex,
-    selectedMeals, selectedBaggage,
+    flight,
+    returnFlight,
+    searchMeta,
+    travellers,
+    contact,
+    billing,
+    gst,
+    fareQuote,
+    returnFareQuote,
+    traceId,
+    resultIndex,
+    returnResultIndex,
+    selectedMeals,
+    selectedBaggage,
+    isLCC,
   } = location.state || {};
 
   const isRoundTrip = !!returnFlight;
@@ -358,21 +293,18 @@ export default function SeatSelectionPage() {
     const list = [];
     (travellers?.adults || []).forEach((t, i) => list.push({ ...t, ptype: "Adult", idx: i }));
     (travellers?.children || []).forEach((t, i) => list.push({ ...t, ptype: "Child", idx: i }));
-    return list; // infants can't select seats
+    return list;
   }, [travellers]);
 
   const [activePassIdx, setActivePassIdx] = useState(0);
   const activePass = allPassengers[activePassIdx];
 
-  /* ── Segments ──
-     Build combined segment list from SeatsBySegment (onward + return)
-     Each has a unique key so selections don't collide. */
+  /* ── Segments ── */
   const segments = useMemo(() => {
     const onward = (onwardSSR?.SeatsBySegment || [])
       .filter(s => s.seat_rows?.some(r => r.Seats?.some(seat => seat.Code !== "NoSeat")))
       .map(s => ({
-        ...s,
-        leg: "onward",
+        ...s, leg: "onward",
         key: `onward-${s.segment_key}`,
         label: `${s.origin} → ${s.destination}`,
         flightNo: s.flight_number,
@@ -381,8 +313,7 @@ export default function SeatSelectionPage() {
       ? (returnSSR?.SeatsBySegment || [])
           .filter(s => s.seat_rows?.some(r => r.Seats?.some(seat => seat.Code !== "NoSeat")))
           .map(s => ({
-            ...s,
-            leg: "return",
+            ...s, leg: "return",
             key: `return-${s.segment_key}`,
             label: `${s.origin} → ${s.destination}`,
             flightNo: s.flight_number,
@@ -401,13 +332,11 @@ export default function SeatSelectionPage() {
     return groupByRow(flat);
   }, [activeSeg]);
 
-  /* ── Selections: { segKey: { passId: seatCode } } ── */
+  /* ── Selections ── */
   const [selections, setSelections] = useState({});
-
   const activeSegSelections = selections[activeSeg?.key] || {};
   const activePassSeatCode = activeSegSelections[activePass?.id] || null;
 
-  // Find price of a selected seat
   function seatPrice(segKey, seatCode) {
     const seg = segments.find(s => s.key === segKey);
     if (!seg) return 0;
@@ -422,14 +351,11 @@ export default function SeatSelectionPage() {
     setSelections(prev => {
       const segData = { ...(prev[segKey] || {}) };
       if (segData[activePass.id] === seatCode) {
-        // deselect
         delete segData[activePass.id];
       } else {
-        // check if taken by another passenger in same segment
         const takenBy = Object.entries(segData).find(([pid, sc]) => sc === seatCode && pid !== activePass.id);
-        if (takenBy) return prev; // can't take occupied seat
+        if (takenBy) return prev;
         segData[activePass.id] = seatCode;
-        // auto-advance to next passenger
         if (activePassIdx < allPassengers.length - 1) {
           setTimeout(() => setActivePassIdx(i => i + 1), 350);
         }
@@ -475,19 +401,22 @@ export default function SeatSelectionPage() {
   const returnTaxTotal = returnTax * totalPax;
   const grandTotal = onwardFare + returnFare + onwardTaxTotal + returnTaxTotal + extraMealTotal + extraBagTotal + seatTotal;
 
-  // Seat selection progress
   const totalSeatsSelected = Object.values(selections).reduce((acc, seg) => acc + Object.keys(seg).length, 0);
   const maxSeats = segments.length * allPassengers.length;
   const progress = maxSeats > 0 ? (totalSeatsSelected / maxSeats) * 100 : 0;
 
+  // ── handleContinue — IsLCC ke hisab se navigate karo ─────────────────────
   const handleContinue = () => {
-    navigate("/payment", {
-      state: {
-        ...location.state,
-        seatSelections: selections,
-        seatTotal,
-      },
-    });
+    // isLCC check: state se lo, ya flight object se lo
+    const flightIsLCC = isLCC ?? location.state?.flight?.IsLCC ?? false;
+
+    const nextState = {
+      ...location.state,
+      seatSelections: flightIsLCC ? {} : selections,
+      isLCC: flightIsLCC,
+    };
+
+    navigate("/flight-payment", { state: nextState });
   };
 
   /* ── Loading / Error ── */
@@ -502,10 +431,28 @@ export default function SeatSelectionPage() {
     </div>
   );
 
+  // ── Agar seat data nahi hai — skip option do ──────────────────────────────
   if (error || segments.length === 0) return (
     <div style={styles.center}>
-      <p style={{ color: "#EF4444", fontWeight: 600 }}>Seat data unavailable for this flight.</p>
-      <button style={styles.continueBtn} onClick={handleContinue}>Continue to Payment anyway</button>
+      <div style={{
+        background: "#fff",
+        borderRadius: 16,
+        padding: "32px 40px",
+        boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+        textAlign: "center",
+        maxWidth: 400,
+      }}>
+        <div style={{ fontSize: 40, marginBottom: 12 }}>💺</div>
+        <p style={{ color: "#374151", fontWeight: 600, fontSize: 16, marginBottom: 8 }}>
+          Seat map not available
+        </p>
+        <p style={{ color: "#9ca3af", fontSize: 13, marginBottom: 24 }}>
+          Seat selection is not available for this flight. You can proceed to payment.
+        </p>
+        <button style={styles.continueBtn} onClick={handleContinue}>
+          Continue to Payment
+        </button>
+      </div>
     </div>
   );
 
@@ -577,8 +524,6 @@ export default function SeatSelectionPage() {
 
               {/* ── LEFT INFO SIDEBAR ── */}
               <div style={{ width: 200, flexShrink: 0, borderRight: "1px solid #F1F5F9", padding: "18px 16px" }}>
-
-                {/* per-passenger seat summary */}
                 <p style={{ fontSize: 10, fontWeight: 800, color: "#94A3B8", letterSpacing: 1, marginBottom: 8, textTransform: "uppercase" }}>
                   Passengers
                 </p>
@@ -622,17 +567,13 @@ export default function SeatSelectionPage() {
                   })}
                 </div>
 
-                {/* legend */}
                 <p style={{ fontSize: 10, fontWeight: 800, color: "#94A3B8", letterSpacing: 1, marginBottom: 8, textTransform: "uppercase" }}>
                   Seat Types
                 </p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
                   {LEGEND.map(l => (
                     <div key={l.label} style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                      <div style={{
-                        width: 18, height: 16, borderRadius: "4px 4px 2px 2px",
-                        background: l.bg, border: `1.5px solid ${l.border}`, flexShrink: 0,
-                      }}/>
+                      <div style={{ width: 18, height: 16, borderRadius: "4px 4px 2px 2px", background: l.bg, border: `1.5px solid ${l.border}`, flexShrink: 0 }}/>
                       <span style={{ fontSize: 11.5, color: "#475569" }}>{l.label}</span>
                     </div>
                   ))}
@@ -699,7 +640,6 @@ export default function SeatSelectionPage() {
                 </span>
               </div>
 
-              {/* onward */}
               <div style={{ padding: "10px 20px 4px", fontSize: 11.5, fontWeight: 800, color: "#16a34a", textTransform: "uppercase", letterSpacing: 0.5 }}>
                 {isRoundTrip ? "Onward Flight" : "Flight Fare"}
               </div>
@@ -708,7 +648,6 @@ export default function SeatSelectionPage() {
               {infantCount > 0 && <div className="fare-row"><span>Infant × {infantCount}</span><span style={{ fontWeight: 600 }}>₹{(onwardPublished * infantCount).toLocaleString("en-IN")}</span></div>}
               <div className="fare-row"><span>Taxes &amp; Fees</span><span style={{ fontWeight: 600 }}>₹{onwardTaxTotal.toLocaleString("en-IN")}</span></div>
 
-              {/* return */}
               {isRoundTrip && (<>
                 <div style={{ padding: "10px 20px 4px", fontSize: 11.5, fontWeight: 800, color: "#A21CAF", textTransform: "uppercase", letterSpacing: 0.5, borderTop: "1px dashed #E2E8F0", marginTop: 4 }}>
                   Return Flight
@@ -718,7 +657,6 @@ export default function SeatSelectionPage() {
                 <div className="fare-row"><span>Taxes &amp; Fees</span><span style={{ fontWeight: 600 }}>₹{returnTaxTotal.toLocaleString("en-IN")}</span></div>
               </>)}
 
-              {/* extras */}
               {extraMealTotal > 0 && (
                 <div className="fare-row"><span style={{ color: "#16a34a" }}>Meals</span><span style={{ fontWeight: 600, color: "#16a34a" }}>+₹{extraMealTotal.toLocaleString("en-IN")}</span></div>
               )}

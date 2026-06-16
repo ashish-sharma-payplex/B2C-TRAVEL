@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useFareRule } from "../../hooks/flighthooks/useFareRule";
-import {useFareQuote} from "../../hooks/flighthooks/useFareQuote";
+import { useFareQuote } from "../../hooks/flighthooks/useFareQuote";
 
 
 // ─── SVG Icons ────────────────────────────────────────────────────────────────
@@ -147,24 +147,24 @@ const noLeadingSpaces = (val) => val.replace(/^\s+/, "");
 const formatTime = (date) =>
   date
     ? new Date(date).toLocaleTimeString("en-IN", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      })
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    })
     : "--";
 
 const formatDate = (date) =>
   date
     ? new Date(date).toLocaleDateString("en-IN", {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-      })
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+    })
     : "";
 
 const newTraveller = (type) => ({
   id: Date.now() + Math.random(),
-  title: type === "adults" ? "Mr." : "Mstr",
+  title: type === "adults" ? "Mr" : "Mstr",
   firstName: "",
   lastName: "",
   email: "",
@@ -204,15 +204,22 @@ const errStyle = {
   display: "block",
 };
 
+// ─── UPDATED validateTraveller — email & mobile now required for adults ───────
 const validateTraveller = (type, data) => {
   const errs = {};
   if (!data.firstName.trim()) errs.firstName = "First name is required";
   if (!data.lastName.trim()) errs.lastName = "Last name is required";
   if (type === "adults") {
-    if (data.email && !EMAIL_REGEX.test(data.email.trim()))
+    if (!data.email || !data.email.trim()) {
+      errs.email = "Email is required";
+    } else if (!EMAIL_REGEX.test(data.email.trim())) {
       errs.email = "Enter a valid email address";
-    if (data.mobile && !MOBILE_REGEX.test(data.mobile))
+    }
+    if (!data.mobile) {
+      errs.mobile = "Mobile number is required";
+    } else if (!MOBILE_REGEX.test(data.mobile)) {
       errs.mobile = "Mobile number must be exactly 10 digits";
+    }
   }
   if (type === "children" || type === "infants") {
     if (!data.dob) errs.dob = "Date of birth is required";
@@ -267,7 +274,7 @@ function TravellerCard({
   errors,
   showErrors,
 }) {
-  const titles = type === "adults" ? ["Mr.", "Mrs.", "Ms."] : ["Mstr", "Miss"];
+  const titles = type === "adults" ? ["Mr", "Mrs", "Ms"] : ["Mstr", "Miss"];
   const labelMap = { adults: "Adult", children: "Child", infants: "Infant" };
 
   const handleText = (field, val) => {
@@ -291,7 +298,6 @@ function TravellerCard({
         borderRadius: 12,
         padding: 20,
         marginTop: 12,
-        background: "#fafafa",
         boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
       }}
     >
@@ -355,6 +361,7 @@ function TravellerCard({
         ))}
       </div>
 
+      {/* Name fields */}
       <div
         style={{
           display: "grid",
@@ -386,6 +393,7 @@ function TravellerCard({
         </div>
       </div>
 
+      {/* Adults — email & mobile now REQUIRED */}
       {type === "adults" && (
         <>
           <div
@@ -398,10 +406,10 @@ function TravellerCard({
             className="two-col"
           >
             <div style={{ position: "relative" }}>
-              <label style={labelStyle}>Email (Optional)</label>
+              <label style={labelStyle}>Email *</label>
               <input
                 className={`input-field${showErrors && errors?.email ? " input-err" : ""}`}
-                placeholder="Email (Optional)"
+                placeholder="Email Address"
                 type="email"
                 value={data.email}
                 onChange={(e) => handleText("email", e.target.value)}
@@ -409,7 +417,7 @@ function TravellerCard({
               {fieldErr("email")}
             </div>
             <div style={{ position: "relative" }}>
-              <label style={labelStyle}>Mobile Number (Optional)</label>
+              <label style={labelStyle}>Mobile Number *</label>
               <div style={{ display: "flex" }}>
                 <select
                   className="input-field"
@@ -550,15 +558,6 @@ function TravellerGroup({
           showErrors={showErrors}
         />
       ))}
-
-      <button
-        className="add-btn"
-        onClick={() => onAdd(type)}
-        style={{ marginTop: 12 }}
-      >
-        <PlusIcon /> Add {label.split(" ")[0]}
-      </button>
-      <div style={{ height: 1, background: "#f0f0f0", margin: "16px 0 0" }} />
     </div>
   );
 }
@@ -586,19 +585,19 @@ function BaggageTab({ segs }) {
     segs.length > 0
       ? segs
       : [
-          {
-            Origin: { Airport: { AirportCode: "BOM" } },
-            Destination: { Airport: { AirportCode: "DED" } },
-            Baggage: "15 kg",
-            CabinBaggage: "7 kg",
-          },
-          {
-            Origin: { Airport: { AirportCode: "DED" } },
-            Destination: { Airport: { AirportCode: "DEL" } },
-            Baggage: "15 kg",
-            CabinBaggage: "7 kg",
-          },
-        ];
+        {
+          Origin: { Airport: { AirportCode: "BOM" } },
+          Destination: { Airport: { AirportCode: "DED" } },
+          Baggage: "15 kg",
+          CabinBaggage: "7 kg",
+        },
+        {
+          Origin: { Airport: { AirportCode: "DED" } },
+          Destination: { Airport: { AirportCode: "DEL" } },
+          Baggage: "15 kg",
+          CabinBaggage: "7 kg",
+        },
+      ];
 
   return (
     <div style={{ padding: "16px 20px" }}>
@@ -1442,18 +1441,23 @@ export default function BookFlight() {
     });
   };
 
+  // ── Contact State ──
   const [contact, setContact] = useState({
     countryCode: "+91",
     mobile: "",
     email: "",
   });
   const [contactErrors, setContactErrors] = useState({});
+
+  // ── Billing State ──
   const [billing, setBilling] = useState({
     address: "",
     city: "",
     state: "",
     nationality: "India",
   });
+  const [billingErrors, setBillingErrors] = useState({});
+
   const [gst, setGst] = useState({
     company: "",
     number: "",
@@ -1467,13 +1471,13 @@ export default function BookFlight() {
     const digitsOnly = val.replace(/\D/g, "").slice(0, 10);
     setContact((p) => ({ ...p, mobile: digitsOnly }));
     if (showErrors) {
-      setContactErrors((p) => ({
-        ...p,
-        mobile:
-          digitsOnly && !MOBILE_REGEX.test(digitsOnly)
-            ? "Mobile must be exactly 10 digits"
-            : "",
-      }));
+      if (!digitsOnly) {
+        setContactErrors((p) => ({ ...p, mobile: "Mobile number is required" }));
+      } else if (!MOBILE_REGEX.test(digitsOnly)) {
+        setContactErrors((p) => ({ ...p, mobile: "Mobile must be exactly 10 digits" }));
+      } else {
+        setContactErrors((p) => ({ ...p, mobile: "" }));
+      }
     }
   };
 
@@ -1481,13 +1485,13 @@ export default function BookFlight() {
     const cleaned = noLeadingSpaces(val);
     setContact((p) => ({ ...p, email: cleaned }));
     if (showErrors) {
-      setContactErrors((p) => ({
-        ...p,
-        email:
-          cleaned && !EMAIL_REGEX.test(cleaned)
-            ? "Enter a valid email address"
-            : "",
-      }));
+      if (!cleaned) {
+        setContactErrors((p) => ({ ...p, email: "Email is required" }));
+      } else if (!EMAIL_REGEX.test(cleaned)) {
+        setContactErrors((p) => ({ ...p, email: "Enter a valid email address" }));
+      } else {
+        setContactErrors((p) => ({ ...p, email: "" }));
+      }
     }
   };
 
@@ -1513,29 +1517,51 @@ export default function BookFlight() {
   const isRefundable =
     onwardFareQuote?.Results?.IsRefundable ?? onwardF?.IsRefundable;
 
-  // Inside component
   const navigate = useNavigate();
 
+  // ── handleProceed — full validation including billing ──
   const handleProceed = () => {
     setShowErrors(true);
+
+    // Traveller validation
     const travErrs = runValidation(travellers);
     setValidationErrors(travErrs);
 
+    // Contact validation — both required
     const cErrs = {};
-    if (contact.mobile && !MOBILE_REGEX.test(contact.mobile))
+    if (!contact.mobile) {
+      cErrs.mobile = "Mobile number is required";
+    } else if (!MOBILE_REGEX.test(contact.mobile)) {
       cErrs.mobile = "Mobile must be exactly 10 digits";
-    if (contact.email && !EMAIL_REGEX.test(contact.email))
+    }
+    if (!contact.email) {
+      cErrs.email = "Email is required";
+    } else if (!EMAIL_REGEX.test(contact.email)) {
       cErrs.email = "Enter a valid email address";
+    }
     setContactErrors(cErrs);
 
-    if (Object.keys(travErrs).length > 0 || Object.keys(cErrs).length > 0) {
-      const firstErr = document.querySelector(".input-err");
-      if (firstErr)
-        firstErr.scrollIntoView({ behavior: "smooth", block: "center" });
+    // Billing validation — address, city, state required
+    const bErrs = {};
+    if (!billing.address.trim()) bErrs.address = "Address is required";
+    if (!billing.city.trim()) bErrs.city = "City is required";
+    if (!billing.state.trim()) bErrs.state = "State is required";
+    setBillingErrors(bErrs);
+
+    const hasErrors =
+      Object.keys(travErrs).length > 0 ||
+      Object.keys(cErrs).length > 0 ||
+      Object.keys(bErrs).length > 0;
+
+    if (hasErrors) {
+      setTimeout(() => {
+        const firstErr = document.querySelector(".input-err");
+        if (firstErr)
+          firstErr.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 50);
       return;
     }
 
-    // Navigate to SSR page
     navigate("/ssr", {
       state: {
         flight: onwardF,
@@ -1549,7 +1575,8 @@ export default function BookFlight() {
         returnFareQuote,
         traceId: searchMeta?.traceId,
         resultIndex: onwardF?.ResultIndex,
-         returnResultIndex: returnF?.ResultIndex || null,
+        returnResultIndex: returnF?.ResultIndex || null,
+        isLCC: onwardF?.IsLCC || false,
       },
     });
   };
@@ -1596,9 +1623,6 @@ export default function BookFlight() {
         .rule-table th:last-child { text-align: right; }
         .rule-table td { padding: 11px 16px; color: #374151; border-top: 1px solid #f0f0f0; }
         .rule-table td:last-child:not([colspan]) { text-align: right; font-weight: 600; color: #111827; }
-        .add-strip { display: flex; gap: 10px; flex-wrap: wrap; padding: 14px 20px; background: #f9fafb; border-top: 1px solid #f0f0f0; }
-        .add-strip-btn { display: inline-flex; align-items: center; gap: 6px; border: 1.5px solid #16a34a; border-radius: 8px; background: #fff; color: #16a34a; font-size: 13px; font-weight: 600; padding: 8px 16px; cursor: pointer; font-family: inherit; transition: background 0.15s; }
-        .add-strip-btn:hover { background: #f0fdf4; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @media (max-width: 580px) { .two-col { grid-template-columns: 1fr !important; } }
       `}</style>
@@ -1683,9 +1707,7 @@ export default function BookFlight() {
                   />
                 )}
                 {travellers.children.length > 0 && (
-                  <div
-                    style={{ marginTop: travellers.adults.length > 0 ? 16 : 0 }}
-                  >
+                  <div style={{ marginTop: travellers.adults.length > 0 ? 16 : 0 }}>
                     <TravellerGroup
                       type="children"
                       label="Child"
@@ -1703,10 +1725,7 @@ export default function BookFlight() {
                   <div
                     style={{
                       marginTop:
-                        travellers.adults.length > 0 ||
-                        travellers.children.length > 0
-                          ? 16
-                          : 0,
+                        travellers.adults.length > 0 || travellers.children.length > 0 ? 16 : 0,
                     }}
                   >
                     <TravellerGroup
@@ -1722,52 +1741,6 @@ export default function BookFlight() {
                     />
                   </div>
                 )}
-                {travellers.adults.length === 0 &&
-                  travellers.children.length === 0 &&
-                  travellers.infants.length === 0 && (
-                    <TravellerGroup
-                      type="adults"
-                      label="Adult"
-                      ageLabel="(12+ yrs)"
-                      list={travellers.adults}
-                      onChange={handleChange}
-                      onAdd={handleAdd}
-                      onRemove={handleRemove}
-                      allErrors={validationErrors}
-                      showErrors={showErrors}
-                    />
-                  )}
-              </div>
-              <div className="add-strip">
-                <span
-                  style={{
-                    fontSize: 13,
-                    color: "#6b7280",
-                    fontWeight: 500,
-                    alignSelf: "center",
-                    marginRight: 4,
-                  }}
-                >
-                  Add passenger:
-                </span>
-                <button
-                  className="add-strip-btn"
-                  onClick={() => handleAdd("adults")}
-                >
-                  <PlusIcon /> Adult
-                </button>
-                <button
-                  className="add-strip-btn"
-                  onClick={() => handleAdd("children")}
-                >
-                  <PlusIcon /> Child
-                </button>
-                <button
-                  className="add-strip-btn"
-                  onClick={() => handleAdd("infants")}
-                >
-                  <PlusIcon /> Infant
-                </button>
               </div>
             </div>
 
@@ -1787,7 +1760,7 @@ export default function BookFlight() {
                   }}
                 >
                   <div style={{ position: "relative" }}>
-                    <label style={labelStyle}>Mobile Number</label>
+                    <label style={labelStyle}>Mobile Number *</label>
                     <div style={{ display: "flex" }}>
                       <select
                         className="input-field"
@@ -1795,15 +1768,11 @@ export default function BookFlight() {
                           width: 84,
                           borderRadius: "8px 0 0 8px",
                           borderRight: "none",
-                          background: "#f9fafb",
                           paddingRight: 8,
                         }}
                         value={contact.countryCode}
                         onChange={(e) =>
-                          setContact((p) => ({
-                            ...p,
-                            countryCode: e.target.value,
-                          }))
+                          setContact((p) => ({ ...p, countryCode: e.target.value }))
                         }
                       >
                         <option>+91</option>
@@ -1827,7 +1796,7 @@ export default function BookFlight() {
                     )}
                   </div>
                   <div style={{ position: "relative" }}>
-                    <label style={labelStyle}>Email Address</label>
+                    <label style={labelStyle}>Email Address *</label>
                     <input
                       className={`input-field${showErrors && contactErrors.email ? " input-err" : ""}`}
                       placeholder="Email Address"
@@ -1847,13 +1816,13 @@ export default function BookFlight() {
             <div className="card">
               <div className="section-hdr">
                 <h3>Billing Information</h3>
-                <p>Your ticket &amp; Flight details will be shared here</p>
+                <p>Required for booking confirmation</p>
               </div>
               <div style={{ padding: 20 }}>
                 <div style={{ marginBottom: 14, position: "relative" }}>
-                  <label style={labelStyle}>Address</label>
+                  <label style={labelStyle}>Address *</label>
                   <input
-                    className="input-field"
+                    className={`input-field${showErrors && billingErrors.address ? " input-err" : ""}`}
                     placeholder="Address"
                     value={billing.address}
                     onChange={(e) =>
@@ -1863,6 +1832,9 @@ export default function BookFlight() {
                       }))
                     }
                   />
+                  {showErrors && billingErrors.address && (
+                    <span style={errStyle}>⚠ {billingErrors.address}</span>
+                  )}
                 </div>
                 <div
                   className="two-col"
@@ -1874,9 +1846,9 @@ export default function BookFlight() {
                   }}
                 >
                   <div style={{ position: "relative" }}>
-                    <label style={labelStyle}>City</label>
+                    <label style={labelStyle}>City *</label>
                     <input
-                      className="input-field"
+                      className={`input-field${showErrors && billingErrors.city ? " input-err" : ""}`}
                       placeholder="City"
                       value={billing.city}
                       onChange={(e) =>
@@ -1886,11 +1858,14 @@ export default function BookFlight() {
                         }))
                       }
                     />
+                    {showErrors && billingErrors.city && (
+                      <span style={errStyle}>⚠ {billingErrors.city}</span>
+                    )}
                   </div>
                   <div style={{ position: "relative" }}>
-                    <label style={labelStyle}>State</label>
+                    <label style={labelStyle}>State *</label>
                     <input
-                      className="input-field"
+                      className={`input-field${showErrors && billingErrors.state ? " input-err" : ""}`}
                       placeholder="State"
                       value={billing.state}
                       onChange={(e) =>
@@ -1900,21 +1875,18 @@ export default function BookFlight() {
                         }))
                       }
                     />
+                    {showErrors && billingErrors.state && (
+                      <span style={errStyle}>⚠ {billingErrors.state}</span>
+                    )}
                   </div>
                 </div>
-                <div
-                  style={{ maxWidth: "calc(50% - 7px)", position: "relative" }}
-                >
+                <div style={{ maxWidth: "calc(50% - 7px)", position: "relative" }}>
                   <label style={labelStyle}>Nationality</label>
                   <input
                     className="input-field"
                     value="India"
                     readOnly
-                    style={{
-                      background: "#f9fafb",
-                      cursor: "default",
-                      color: "#374151",
-                    }}
+                    style={{ background: "#f9fafb", cursor: "default", color: "#374151" }}
                   />
                 </div>
               </div>
@@ -1924,9 +1896,7 @@ export default function BookFlight() {
             <div className="card">
               <div className="section-hdr">
                 <h3>GST Details</h3>
-                <p>
-                  Use GST number to avail GST Benefits &amp; additional savings
-                </p>
+                <p>Use GST number to avail GST Benefits &amp; additional savings</p>
               </div>
               <div style={{ padding: 20 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -1956,10 +1926,7 @@ export default function BookFlight() {
                           placeholder="Company Name"
                           value={gst.company}
                           onChange={(e) =>
-                            setGst((p) => ({
-                              ...p,
-                              company: noLeadingSpaces(e.target.value),
-                            }))
+                            setGst((p) => ({ ...p, company: noLeadingSpaces(e.target.value) }))
                           }
                         />
                       </div>
@@ -1970,10 +1937,7 @@ export default function BookFlight() {
                           placeholder="GST Number"
                           value={gst.number}
                           onChange={(e) =>
-                            setGst((p) => ({
-                              ...p,
-                              number: noLeadingSpaces(e.target.value),
-                            }))
+                            setGst((p) => ({ ...p, number: noLeadingSpaces(e.target.value) }))
                           }
                         />
                       </div>
@@ -1985,10 +1949,7 @@ export default function BookFlight() {
                         placeholder="Address"
                         value={gst.address}
                         onChange={(e) =>
-                          setGst((p) => ({
-                            ...p,
-                            address: noLeadingSpaces(e.target.value),
-                          }))
+                          setGst((p) => ({ ...p, address: noLeadingSpaces(e.target.value) }))
                         }
                       />
                     </div>
@@ -2008,10 +1969,7 @@ export default function BookFlight() {
                           placeholder="City"
                           value={gst.city}
                           onChange={(e) =>
-                            setGst((p) => ({
-                              ...p,
-                              city: noLeadingSpaces(e.target.value),
-                            }))
+                            setGst((p) => ({ ...p, city: noLeadingSpaces(e.target.value) }))
                           }
                         />
                       </div>
@@ -2022,30 +1980,18 @@ export default function BookFlight() {
                           placeholder="State"
                           value={gst.state}
                           onChange={(e) =>
-                            setGst((p) => ({
-                              ...p,
-                              state: noLeadingSpaces(e.target.value),
-                            }))
+                            setGst((p) => ({ ...p, state: noLeadingSpaces(e.target.value) }))
                           }
                         />
                       </div>
                     </div>
-                    <div
-                      style={{
-                        maxWidth: "calc(50% - 7px)",
-                        position: "relative",
-                      }}
-                    >
+                    <div style={{ maxWidth: "calc(50% - 7px)", position: "relative" }}>
                       <label style={labelStyle}>Nationality</label>
                       <input
                         className="input-field"
                         value="India"
                         readOnly
-                        style={{
-                          background: "#f9fafb",
-                          cursor: "default",
-                          color: "#374151",
-                        }}
+                        style={{ background: "#f9fafb", cursor: "default", color: "#374151" }}
                       />
                     </div>
                   </div>
@@ -2066,34 +2012,13 @@ export default function BookFlight() {
                   borderBottom: "1px solid #f3f4f6",
                 }}
               >
-                <span
-                  style={{ fontWeight: 700, fontSize: 16, color: "#111827" }}
-                >
+                <span style={{ fontWeight: 700, fontSize: 16, color: "#111827" }}>
                   Fare Summary
                 </span>
                 <span style={{ fontSize: 13, color: "#6b7280" }}>
                   {totalPassengers} Traveller{totalPassengers !== 1 ? "s" : ""}
                 </span>
               </div>
-
-              {/* Price Changed Warning */}
-              {/* {isPriceChanged && (
-                <div
-                  style={{
-                    margin: "12px 16px 0",
-                    padding: "10px 14px",
-                    background: "#fff7ed",
-                    border: "1px solid #fed7aa",
-                    borderRadius: 8,
-                    fontSize: 12,
-                    color: "#c2410c",
-                    fontWeight: 500,
-                  }}
-                >
-                  ⚠ Fare has been updated. Please review the new price before
-                  proceeding.
-                </div>
-              )} */}
 
               {fareQuoteLoading ? (
                 <div style={{ padding: "28px 20px", textAlign: "center" }}>
@@ -2129,7 +2054,6 @@ export default function BookFlight() {
                     </span>
                   </div>
 
-                  {/* ── Onward Fare Block ── */}
                   <div
                     style={{
                       padding: "10px 20px 4px",
@@ -2152,10 +2076,7 @@ export default function BookFlight() {
                     <div className="fare-row">
                       <span>Adult × {adultCount}</span>
                       <span style={{ fontWeight: 600 }}>
-                        ₹
-                        {(
-                          Math.round(onwardPublished) * adultCount
-                        ).toLocaleString("en-IN")}
+                        ₹{(Math.round(onwardPublished) * adultCount).toLocaleString("en-IN")}
                       </span>
                     </div>
                   )}
@@ -2163,10 +2084,7 @@ export default function BookFlight() {
                     <div className="fare-row">
                       <span>Child × {childCount}</span>
                       <span style={{ fontWeight: 600 }}>
-                        ₹
-                        {(
-                          Math.round(onwardPublished) * childCount
-                        ).toLocaleString("en-IN")}
+                        ₹{(Math.round(onwardPublished) * childCount).toLocaleString("en-IN")}
                       </span>
                     </div>
                   )}
@@ -2174,10 +2092,7 @@ export default function BookFlight() {
                     <div className="fare-row">
                       <span>Infant × {infantCount}</span>
                       <span style={{ fontWeight: 600 }}>
-                        ₹
-                        {(
-                          Math.round(onwardPublished) * infantCount
-                        ).toLocaleString("en-IN")}
+                        ₹{(Math.round(onwardPublished) * infantCount).toLocaleString("en-IN")}
                       </span>
                     </div>
                   )}
@@ -2192,14 +2107,10 @@ export default function BookFlight() {
                       {isRoundTrip ? "Onward Subtotal" : "Subtotal"}
                     </span>
                     <span style={{ fontWeight: 700, color: "#111827" }}>
-                      ₹
-                      {(
-                        onwardFareTotal + onwardTaxAmt * totalPassengers
-                      ).toLocaleString("en-IN")}
+                      ₹{(onwardFareTotal + onwardTaxAmt * totalPassengers).toLocaleString("en-IN")}
                     </span>
                   </div>
 
-                  {/* ── Return Fare Block (round trip only) ── */}
                   {isRoundTrip && (
                     <>
                       <div
@@ -2226,10 +2137,7 @@ export default function BookFlight() {
                         <div className="fare-row">
                           <span>Adult × {adultCount}</span>
                           <span style={{ fontWeight: 600 }}>
-                            ₹
-                            {(
-                              Math.round(returnPublished) * adultCount
-                            ).toLocaleString("en-IN")}
+                            ₹{(Math.round(returnPublished) * adultCount).toLocaleString("en-IN")}
                           </span>
                         </div>
                       )}
@@ -2237,42 +2145,20 @@ export default function BookFlight() {
                         <div className="fare-row">
                           <span>Child × {childCount}</span>
                           <span style={{ fontWeight: 600 }}>
-                            ₹
-                            {(
-                              Math.round(returnPublished) * childCount
-                            ).toLocaleString("en-IN")}
-                          </span>
-                        </div>
-                      )}
-                      {infantCount > 0 && (
-                        <div className="fare-row">
-                          <span>Infant × {infantCount}</span>
-                          <span style={{ fontWeight: 600 }}>
-                            ₹
-                            {(
-                              Math.round(returnPublished) * infantCount
-                            ).toLocaleString("en-IN")}
+                            ₹{(Math.round(returnPublished) * childCount).toLocaleString("en-IN")}
                           </span>
                         </div>
                       )}
                       <div className="fare-row">
                         <span>Taxes &amp; Fees</span>
                         <span style={{ fontWeight: 600 }}>
-                          ₹
-                          {(returnTaxAmt * totalPassengers).toLocaleString(
-                            "en-IN",
-                          )}
+                          ₹{(returnTaxAmt * totalPassengers).toLocaleString("en-IN")}
                         </span>
                       </div>
                       <div className="fare-row" style={{ borderTop: "1px solid #e5e7eb" }}>
+                        <span style={{ fontWeight: 700, color: "#111827" }}>Return Subtotal</span>
                         <span style={{ fontWeight: 700, color: "#111827" }}>
-                          Return Subtotal
-                        </span>
-                        <span style={{ fontWeight: 700, color: "#111827" }}>
-                          ₹
-                          {(
-                            returnFareTotal + returnTaxAmt * totalPassengers
-                          ).toLocaleString("en-IN")}
+                          ₹{(returnFareTotal + returnTaxAmt * totalPassengers).toLocaleString("en-IN")}
                         </span>
                       </div>
                     </>
@@ -2290,17 +2176,11 @@ export default function BookFlight() {
                   borderTop: "2px solid #e5e7eb",
                 }}
               >
-                <span
-                  style={{ fontWeight: 700, fontSize: 15, color: "#111827" }}
-                >
+                <span style={{ fontWeight: 700, fontSize: 15, color: "#111827" }}>
                   Net Amount Payable
                 </span>
-                <span
-                  style={{ fontWeight: 800, fontSize: 17, color: "#111827" }}
-                >
-                  {fareQuoteLoading
-                    ? "—"
-                    : `₹${totalFare.toLocaleString("en-IN")}`}
+                <span style={{ fontWeight: 800, fontSize: 17, color: "#111827" }}>
+                  {fareQuoteLoading ? "—" : `₹${totalFare.toLocaleString("en-IN")}`}
                 </span>
               </div>
 
@@ -2320,14 +2200,11 @@ export default function BookFlight() {
                     fontWeight: 700,
                     border: "none",
                     cursor: fareQuoteLoading ? "not-allowed" : "pointer",
-                    boxShadow: fareQuoteLoading
-                      ? "none"
-                      : "0 2px 12px rgba(22,163,74,0.3)",
+                    boxShadow: fareQuoteLoading ? "none" : "0 2px 12px rgba(22,163,74,0.3)",
                     transition: "opacity 0.15s",
                   }}
                   onMouseOver={(e) => {
-                    if (!fareQuoteLoading)
-                      e.currentTarget.style.opacity = "0.9";
+                    if (!fareQuoteLoading) e.currentTarget.style.opacity = "0.9";
                   }}
                   onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
                 >
@@ -2342,14 +2219,7 @@ export default function BookFlight() {
                     marginTop: 10,
                   }}
                 >
-                  <svg
-                    width="13"
-                    height="13"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#9ca3af"
-                    strokeWidth="2"
-                  >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2">
                     <rect x="3" y="11" width="18" height="11" rx="2" />
                     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                   </svg>
@@ -2359,22 +2229,25 @@ export default function BookFlight() {
                 </div>
               </div>
 
-              {showErrors && Object.keys(validationErrors).length > 0 && (
-                <div
-                  style={{
-                    margin: "0 16px 16px",
-                    padding: "10px 14px",
-                    background: "#fff5f5",
-                    border: "1px solid #fca5a5",
-                    borderRadius: 8,
-                    fontSize: 12,
-                    color: "#dc2626",
-                    fontWeight: 500,
-                  }}
-                >
-                  ⚠ Please fill all required fields correctly before proceeding.
-                </div>
-              )}
+              {showErrors &&
+                (Object.keys(validationErrors).length > 0 ||
+                  Object.keys(contactErrors).length > 0 ||
+                  Object.keys(billingErrors).length > 0) && (
+                  <div
+                    style={{
+                      margin: "0 16px 16px",
+                      padding: "10px 14px",
+                      background: "#fff5f5",
+                      border: "1px solid #fca5a5",
+                      borderRadius: 8,
+                      fontSize: 12,
+                      color: "#dc2626",
+                      fontWeight: 500,
+                    }}
+                  >
+                    ⚠ Please fill all required fields correctly before proceeding.
+                  </div>
+                )}
             </div>
           </div>
         </div>
