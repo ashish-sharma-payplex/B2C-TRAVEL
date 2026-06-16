@@ -40,7 +40,7 @@ const AIRLINE_LOGO_MAP = {
   sg: "/navbaricons/spicejet.png",
   "air india": "/navbaricons/airindia.png",
   ai: "/navbaricons/airindia.png",
-  "air india express": "/navbaricons/airindia.png",
+  "air india express": "/navbaricons/airindiaexpress.png",
   ix: "/navbaricons/airindia.png",
   "air asia": "/navbaricons/airasia.png",
   i5: "/navbaricons/airasia.png",
@@ -1091,12 +1091,14 @@ const RoundTripDetailSidebar = ({ open, onClose, onwardFlight, returnFlight, sea
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
+
 const timeSlots = [
-  { label: "Before 6 AM", icon: <NightsStay sx={{ fontSize: 18 }} /> },
-  { label: "6AM - 12PM", icon: <WbSunny sx={{ fontSize: 18 }} /> },
-  { label: "12PM - 6PM", icon: <Brightness5 sx={{ fontSize: 18 }} /> },
-  { label: "6PM - 12AM", icon: <Brightness3 sx={{ fontSize: 18 }} /> },
+  { label: "Before 6 AM", icon: "/morning.svg" },
+  { label: "6AM - 12PM", icon: "/afternoon.svg" },
+  { label: "12PM - 6PM", icon: "/evening.svg" },
+  { label: "6PM - 12AM", icon: "/night.svg" },
 ];
+
 
 const checkboxStyle = {
   color: "#B5BAC2",
@@ -2690,100 +2692,121 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
           mb: 2,
         }}
       >
-        {timeSlots.map(({ label, icon }) => (
-          <Paper
-            key={label}
-            onClick={() =>
-              setDepartureTime(departureTime === label ? "" : label)
-            }
-            elevation={0}
-            sx={{
-              p: 1.2,
-              textAlign: "center",
-              borderRadius: "10px",
-              cursor: "pointer",
-              fontFamily: "Inter,Sans-serif",
-              border:
-                departureTime === label
-                  ? "1.5px solid #1A914B"
-                  : "1px solid #E3E8EE",
-              backgroundColor: departureTime === label ? "#EAF7EF" : "#fff",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              fontFamily: "Inter,Sans-serif",
-              gap: 0.3,
-              "&:hover": { borderColor: "#1A914B" },
-              transition: "all .15s",
-            }}
-          >
-            <Box sx={{ color: departureTime === label ? "#1A914B" : "#888" }}>
-              {icon}
-            </Box>
-            <Typography
-              sx={{
-                fontSize: 11,
-                fontWeight: 500,
-                color: departureTime === label ? "#1A914B" : "#555",
-                lineHeight: 1.3,
-              }}
-            >
-              {label}
-            </Typography>
-          </Paper>
-        ))}
+ 
+
+  {timeSlots.map(({ label, icon }) => (
+  <Paper
+    key={label}
+    onClick={() =>
+      setDepartureTime(departureTime === label ? "" : label)
+    }
+    elevation={0}
+    sx={{
+      p: 1.2,
+      textAlign: "center",
+      borderRadius: "10px",
+      cursor: "pointer",
+      fontFamily: "Inter,Sans-serif",
+      border:
+        departureTime === label
+          ? "1.5px solid #1A914B"
+          : "1px solid #E3E8EE",
+      backgroundColor: departureTime === label ? "#EAF7EF" : "#fff",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      gap: 0.3,
+      "&:hover": { borderColor: "#1A914B" },
+      transition: "all .15s",
+    }}
+  >
+    <Box sx={{ color: departureTime === label ? "#1A914B" : "#888" }}>
+      <img
+        src={icon}
+        alt={label}
+        style={{
+          width: 20,
+          height: 20,
+          filter: departureTime === label
+            ? "invert(40%) sepia(90%) saturate(400%) hue-rotate(100deg)"
+            : "invert(60%)",
+        }}
+      />
+    </Box>
+    <Typography
+      sx={{
+        fontSize: 11,
+        fontWeight: 500,
+        color: departureTime === label ? "#1A914B" : "#555",
+        lineHeight: 1.3,
+      }}
+    >
+      {label}
+    </Typography>
+  </Paper>
+))}
+</Box>
+<Typography
+  sx={{ fontSize: 15, fontWeight: 600, mb: 1.5, fontFamily: "Inter,Sans-serif", color: "#222" }}
+>
+  Arrival at {searchMeta.toCity?.code || "Destination"}
+</Typography>
+<Box
+  sx={{
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: 1.2,
+    mb: 2,
+  }}
+>
+  {timeSlots.map(({ label, icon }) => (
+    <Paper
+      key={label}
+      onClick={() => setArrivalTime(arrivalTime === label ? "" : label)}
+      elevation={0}
+      sx={{
+        p: 1.2,
+        textAlign: "center",
+        borderRadius: "10px",
+        cursor: "pointer",
+        border:
+          arrivalTime === label
+            ? "1.5px solid #1A914B"
+            : "1px solid #E3E8EE",
+        backgroundColor: arrivalTime === label ? "#EAF7EF" : "#fff",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 0.3,
+        "&:hover": { borderColor: "#1A914B" },
+        transition: "all .15s",
+      }}
+    >
+      <Box sx={{ color: arrivalTime === label ? "#1A914B" : "#888" }}>
+        <img
+          src={icon}
+          alt={label}
+          style={{
+            width: 20,
+            height: 20,
+            filter: arrivalTime === label
+              ? "invert(40%) sepia(90%) saturate(400%) hue-rotate(100deg)"
+              : "invert(60%)",
+          }}
+        />
       </Box>
       <Typography
-        sx={{ fontSize: 15, fontWeight: 600, mb: 1.5, fontFamily: "Inter,Sans-serif", color: "#222" }}
-      >
-        Arrival at {searchMeta.toCity?.code || "Destination"}
-      </Typography>
-      <Box
         sx={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 1.2,
-          mb: 2,
+          fontSize: 11,
+          fontWeight: 500,
+          color: arrivalTime === label ? "#1A914B" : "#555",
+          lineHeight: 1.3,
         }}
       >
-        {timeSlots.map(({ label, icon }) => (
-          <Paper
-            key={label}
-            onClick={() => setArrivalTime(arrivalTime === label ? "" : label)}
-            elevation={0}
-            sx={{
-              p: 1.2,
-              textAlign: "center",
-              borderRadius: "10px",
-              cursor: "pointer",
-              border:
-                arrivalTime === label
-                  ? "1.5px solid #1A914B"
-                  : "1px solid #E3E8EE",
-              backgroundColor: arrivalTime === label ? "#EAF7EF" : "#fff",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 0.3,
-              "&:hover": { borderColor: "#1A914B" },
-              transition: "all .15s",
-            }}
-          >
-            <Box sx={{ color: arrivalTime === label ? "#1A914B" : "#888" }}>
-              {icon}
-            </Box>
-            <Typography
-              sx={{
-                fontSize: 11,
-                fontWeight: 500,
-                color: arrivalTime === label ? "#1A914B" : "#555",
-                lineHeight: 1.3,
-              }}
-            >
-              {label}
-            </Typography>
-          </Paper>
-        ))}
+        {label}
+      </Typography>
+    </Paper>
+  ))}
       </Box>
       <Divider sx={{ borderStyle: "dashed", my: 2 }} />
       <Typography sx={{ fontSize: 15, fontWeight: 600, mb: 1, fontFamily: "Inter,Sans-serif", color: "#222" }}>
@@ -3233,7 +3256,11 @@ console.log("searchResult structure:", location.state?.searchResult?.data);
                   sx={{
                     display: { xs: "none", sm: "grid" },
                     gridTemplateColumns: "1.8fr 1.2fr 1.4fr 1.2fr 1.4fr",
-                    px: 2.5,
+                    px: {
+                      xs: 1,
+                      sm: 2,
+                      md: 2.5,
+                    },
                     py: 1.2,
                     mb: 0.5,
                   }}
