@@ -337,6 +337,7 @@ export default function BusPaymentQRModal({
   paymentStatus,
   traceId,
   resultIndex,
+    onCancelPayment,
 }) {
   injectModalStyles();
 
@@ -367,17 +368,42 @@ export default function BusPaymentQRModal({
     window.location.href = upiUrl;
   };
 
-  const handleCancel = async () => {
-    const result = await Swal.fire({
-      title: "Cancel Payment?",
-      text: "Are you sure you want to cancel this payment?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes, Cancel",
-      cancelButtonText: "No, Go Back",
-      confirmButtonColor: "#ef4444",
-      cancelButtonColor: "#16a34a",
-      reverseButtons: true,
+ const handleCancel = async () => {
+  const result = await Swal.fire({
+    title: "Cancel Payment?",
+    text: "Are you sure you want to cancel this payment?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Yes, Cancel",
+    cancelButtonText: "No, Go Back",
+    confirmButtonColor: "#ef4444",
+    cancelButtonColor: "#16a34a",
+    reverseButtons: true,
+    customClass: { container: "bpq-swal-container" },
+    didOpen: () => {
+      const container = document.querySelector(".bpq-swal-container");
+      if (container) container.style.zIndex = "99999";
+    },
+  });
+
+  if (!result.isConfirmed) return;
+
+  try {
+    // Agar bahar se onCancelPayment prop diya hai to woh use karo
+    // Warna default bus cancel use karo
+    if (onCancelPayment) {
+      await onCancelPayment();
+    } else {
+      await cancelPayment({ traceId, resultIndex });
+    }
+
+    Swal.fire({
+      icon: "success",
+      title: "Payment Cancelled",
+      text: "Your payment has been cancelled successfully.",
+      confirmButtonColor: "#16a34a",
+      timer: 2500,
+      timerProgressBar: true,
       customClass: { container: "bpq-swal-container" },
       didOpen: () => {
         const container = document.querySelector(".bpq-swal-container");
@@ -385,42 +411,26 @@ export default function BusPaymentQRModal({
       },
     });
 
-    if (!result.isConfirmed) return;
-
-    try {
-      console.log("🔴 CANCEL props:", { traceId, resultIndex }); // props se aa raha hai
-      await cancelPayment({ traceId, resultIndex });
-
-
-      Swal.fire({
-        icon: "success",
-        title: "Payment Cancelled",
-        text: "Your payment has been cancelled successfully.",
-        confirmButtonColor: "#16a34a",
-        timer: 2500,
-        timerProgressBar: true,
-        customClass: { container: "bpq-swal-container" },
-        didOpen: () => {
-          const container = document.querySelector(".bpq-swal-container");
-          if (container) container.style.zIndex = "99999";
-        },
-      });
-
-      onClose?.();
-    } catch {
-      Swal.fire({
-        icon: "error",
-        title: "Cancellation Failed",
-        text: "Something went wrong. Please try again.",
-        confirmButtonColor: "#16a34a",
-        customClass: { container: "bpq-swal-container" },
-        didOpen: () => {
-          const container = document.querySelector(".bpq-swal-container");
-          if (container) container.style.zIndex = "99999";
-        },
-      });
-    }
-  };
+    onClose?.();
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: "Cancellation Failed",
+      html: `
+        <div style="font-size:14px;color:#374151;text-align:left">
+          <span style="color:#6b7280;font-size:12px">Reason</span><br/>
+          <strong>${err.message || "Something went wrong. Please try again."}</strong>
+        </div>
+      `,
+      confirmButtonColor: "#16a34a",
+      customClass: { container: "bpq-swal-container" },
+      didOpen: () => {
+        const container = document.querySelector(".bpq-swal-container");
+        if (container) container.style.zIndex = "99999";
+      },
+    });
+  }
+};
 
   if (!visible) return null;
 

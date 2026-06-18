@@ -407,17 +407,17 @@ export default function SeatSelectionPage() {
 
   // ── handleContinue — IsLCC ke hisab se navigate karo ─────────────────────
   const handleContinue = () => {
-    // isLCC check: state se lo, ya flight object se lo
-    const flightIsLCC = isLCC ?? location.state?.flight?.IsLCC ?? false;
+  const flightIsLCC = isLCC ?? location.state?.flight?.IsLCC ?? false;
 
-    const nextState = {
-      ...location.state,
-      seatSelections: flightIsLCC ? {} : selections,
-      isLCC: flightIsLCC,
-    };
-
-    navigate("/flight-payment", { state: nextState });
+  const nextState = {
+    ...location.state,
+    seatSelections: flightIsLCC ? {} : selections,
+    isLCC: flightIsLCC,
+    skipBooking: false, // normal flow
   };
+
+  navigate("/flight-payment", { state: nextState });
+};
 
   /* ── Loading / Error ── */
   if (loading) return (
@@ -433,28 +433,56 @@ export default function SeatSelectionPage() {
 
   // ── Agar seat data nahi hai — skip option do ──────────────────────────────
   if (error || segments.length === 0) return (
-    <div style={styles.center}>
-      <div style={{
-        background: "#fff",
-        borderRadius: 16,
-        padding: "32px 40px",
-        boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
-        textAlign: "center",
-        maxWidth: 400,
-      }}>
-        <div style={{ fontSize: 40, marginBottom: 12 }}>💺</div>
-        <p style={{ color: "#374151", fontWeight: 600, fontSize: 16, marginBottom: 8 }}>
-          Seat map not available
-        </p>
-        <p style={{ color: "#9ca3af", fontSize: 13, marginBottom: 24 }}>
-          Seat selection is not available for this flight. You can proceed to payment.
-        </p>
-        <button style={styles.continueBtn} onClick={handleContinue}>
-          Continue to Payment
-        </button>
-      </div>
+  <div style={styles.center}>
+    <div style={{
+      background: "#fff",
+      borderRadius: 16,
+      padding: "32px 40px",
+      boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+      textAlign: "center",
+      maxWidth: 400,
+    }}>
+      <div style={{ fontSize: 40, marginBottom: 12 }}>💺</div>
+      <p style={{ color: "#374151", fontWeight: 600, fontSize: 16, marginBottom: 8 }}>
+        Seat map not available
+      </p>
+      <p style={{ color: "#9ca3af", fontSize: 13, marginBottom: 24 }}>
+        Seat selection is not available for this flight. You can proceed to payment.
+      </p>
+      <button
+        style={styles.continueBtn}
+        onClick={() => {
+          const flightIsLCC = isLCC ?? location.state?.flight?.IsLCC ?? false;
+          navigate("/flight-payment", {
+            state: {
+              ...location.state,
+              seatSelections: {},
+              isLCC: flightIsLCC,
+              skipBooking: false, // normal flow — payment page apna kaam karega
+            },
+          });
+        }}
+      >
+        Continue to Payment
+      </button>
+
+      {/* ← Yahi naya button hai — seedha flights pe */}
+      <button
+        style={{
+          ...styles.continueBtn,
+          marginTop: 10,
+          background: "none",
+          color: "#6b7280",
+          border: "1.5px solid #e5e7eb",
+          boxShadow: "none",
+        }}
+        onClick={() => navigate("/flights", { replace: true })}
+      >
+        Back to Home
+      </button>
     </div>
-  );
+  </div>
+);
 
   return (
     <div style={{ fontFamily: "'Inter','Segoe UI',sans-serif", background: "#F1F5F9", minHeight: "100vh", padding: "24px 0 80px" }}>

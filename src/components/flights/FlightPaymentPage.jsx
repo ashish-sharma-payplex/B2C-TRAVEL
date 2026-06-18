@@ -6,20 +6,36 @@ import { useFlightBook } from "../../hooks/flighthooks/useFlightBook";
 import { useFlightPaymentInitiate } from "../../hooks/flighthooks/useFlightPaymentInitiate";
 import { useFlightPaymentStatus } from "../../hooks/flighthooks/useFlightPaymentStatus";
 import { useFlightTicket } from "../../hooks/flighthooks/useFlightTicket";
-
+import Swal from "sweetalert2";
+import { useFlightPaymentCancel } from "../../hooks/flighthooks/useFlightPaymentCancel";
 
 const TITLE_MAP = {
-  "Mr.": "Mr", "Mr": "Mr",
-  "Mrs.": "Mrs", "Mrs": "Mrs",
-  "Ms.": "Ms", "Ms": "Ms",
-  "Miss": "Miss",
-  "Mstr": "Mstr", "Master": "Master",
-  "Dr.": "DR", "Dr": "DR", "DR": "DR",
-  "Prof.": "PROF", "Prof": "PROF", "PROF": "PROF",
-  "CHD": "CHD", "MST": "MST", "Inf": "Inf",
+  "Mr.": "Mr",
+  Mr: "Mr",
+  "Mrs.": "Ms",
+  Mrs: "Ms",
+  "Ms.": "Ms",
+  Ms: "Ms",
+  Miss: "Ms",
+  Mstr: "Mr",
+  Master: "Mr",
+  "Dr.": "Dr",
+  Dr: "Dr",
+  DR: "Dr",
+  "Prof.": "Mr",
+  Prof: "Mr",
+  PROF: "Mr",
+  CHD: "Mr",
+  MST: "Mr",
+  Inf: "Mr",
 };
-const normalizeTitle = (title, fallback) => TITLE_MAP[title] || fallback;
 
+const normalizeTitle = (title, fallback = "Mr") => {
+  const mapped = TITLE_MAP[title];
+  if (mapped) return mapped;
+  const fb = TITLE_MAP[fallback] || fallback;
+  return fb.slice(0, 2);
+};
 function ProcessingScreen({ text }) {
   return (
     <div
@@ -87,10 +103,18 @@ export default function FlightPaymentPage() {
   const [hasStarted, setHasStarted] = useState(false);
 
   const { bookFlight, loading: bookingLoading } = useFlightBook();
-  const { initiatePayment, loading: initiateLoading } = useFlightPaymentInitiate();
-  const { status, isPolling, startPolling, stopPolling } = useFlightPaymentStatus();
+  const { initiatePayment, loading: initiateLoading } =
+    useFlightPaymentInitiate();
+  const { status, isPolling, startPolling, stopPolling } =
+    useFlightPaymentStatus();
   const { generateTicket, loading: ticketLoading } = useFlightTicket();
+  const { cancelPayment: cancelFlightPayment } = useFlightPaymentCancel();
 
+  const handleFlightCancel = async () => {
+    await cancelFlightPayment(traceId);
+    stopPolling(); // ← polling band karo
+    navigate("/flights", { replace: true }); // ← redirect
+  };
   // ── Build Fare object from fareQuote ──────────────────────────────────────
   const buildFareObject = (fareResult) => {
     const f = fareResult?.Results?.Fare;
@@ -109,50 +133,57 @@ export default function FlightPaymentPage() {
 
   // ── Build booking payload — ONLY ever called for non-LCC ────────────────
   const buildBookingPayload = () => {
-    const adultCount = searchMeta?.passengers?.adults || 1;
-    const childCount = searchMeta?.passengers?.children || 0;
-    const infantCount = searchMeta?.passengers?.infants || 0;
+  const adultCount = searchMeta?.passengers?.adults || 1;
+  const childCount = searchMeta?.passengers?.children || 0;
+  const fareObj = buildFareObject(fareQuote);
 
-    const fareObj = buildFareObject(fareQuote);
+  const allTravellers = [
+    ...(travellers?.adults || []),
+    ...(travellers?.children || []),
+    ...(travellers?.infants || []),
+  ];
 
-    const allTravellers = [
-      ...(travellers?.adults || []),
-      ...(travellers?.children || []),
-      ...(travellers?.infants || []),
-    ];
-
-    const passengers = allTravellers.map((trav, idx) => {
-      const paxType =
-        idx < adultCount ? 1 : idx < adultCount + childCount ? 2 : 3;
-
-      return {
-        Title: normalizeTitle(trav.title, idx < adultCount ? "Mr" : "Mstr"),
-        FirstName: trav.firstName,
-        LastName: trav.lastName,
-        PaxType: paxType,
-        Gender: trav.gender || 1,
-        AddressLine1: billing?.address || "N/A",
-        City: billing?.city || "N/A",
-        CountryCode: "IN",
-        CountryName: "India",
-        ContactNo: contact?.mobile || "",
-        Email: contact?.email || "",
-        IsLeadPax: idx === 0,
-        Nationality: "Indian",
-        ...(trav.dob && { DateOfBirth: trav.dob }),
-        ...(fareObj && { Fare: fareObj }),
-      };
-    });
+  const passengers = allTravellers.map((trav, idx) => {
+    const paxType =
+      idx < adultCount ? 1 : idx < adultCount + childCount ? 2 : 3;
 
     return {
-      TraceId: traceId,
-      ResultIndex: resultIndex,
-      IsLCC: false,
-      Origin: searchMeta?.fromCity?.code,
-      Destination: searchMeta?.toCity?.code,
-      Passengers: passengers,
+      Title: normalizeTitle(trav.title, trav.gender === 2 ? "Ms" : "Mr"),
+      FirstName: trav.firstName,
+      LastName: trav.lastName,
+      PaxType: paxType,
+      Gender: trav.gender || 1,
+      AddressLine1: billing?.address || "N/A",
+      City: billing?.city || "N/A",
+      CountryCode: "IN",
+      CountryName: "India",
+      ContactNo: contact?.mobile || "",
+      Email: contact?.email || "",
+      IsLeadPax: idx === 0,
+      Nationality: "Indian",
+      ...(trav.dob && { DateOfBirth: trav.dob }),
+      ...(fareObj && { Fare: fareObj }),
+      ...(trav.passportNumber && trav.passportExpiry && {
+        PassportNo: trav.passportNumber.trim(),
+        PassportExpiry: trav.passportExpiry,
+      }),
+      ...(paxType === 1 && trav.panNumber?.trim() && {
+        PanNo: trav.panNumber.trim(),
+      }),
     };
+  });
+
+  // ✅ Yeh return function ke andar tha hi nahi pehle — isliye error tha
+  return {
+    TraceId: traceId,
+    ResultIndex: resultIndex,
+    ...(returnResultIndex && { ReturnResultIndex: returnResultIndex }),
+    IsLCC: false,
+    Origin: searchMeta?.fromCity?.code,
+    Destination: searchMeta?.toCity?.code,
+    Passengers: passengers,
   };
+};
 
   // ── Build ticket payload — used by BOTH LCC and non-LCC ────────────────
   // NOTE: IsLCC is included here as a hint to the backend in case the
@@ -160,74 +191,151 @@ export default function FlightPaymentPage() {
   // separate Book call happens in that case). Verify the exact field name
   // your ticket API expects.
   const buildTicketPayload = () => {
-    const adultCount = searchMeta?.passengers?.adults || 1;
-    const childCount = searchMeta?.passengers?.children || 0;
-    const fareObj = buildFareObject(fareQuote);
+  const adultCount = searchMeta?.passengers?.adults || 1;
+  const childCount = searchMeta?.passengers?.children || 0;
+  const fareObj = buildFareObject(fareQuote);
 
-    const allTravellers = [
-      ...(travellers?.adults || []),
-      ...(travellers?.children || []),
-      ...(travellers?.infants || []),
-    ];
+  const allTravellers = [
+    ...(travellers?.adults || []),
+    ...(travellers?.children || []),
+    ...(travellers?.infants || []),
+  ];
 
-    const passengers = allTravellers.map((trav, idx) => {
-      const paxType =
-        idx < adultCount ? 1 : idx < adultCount + childCount ? 2 : 3;
+  const passengers = allTravellers.map((trav, idx) => {
+    const paxType =
+      idx < adultCount ? 1 : idx < adultCount + childCount ? 2 : 3;
 
-      const seatDynamic = [];
-      if (seatSelections && Object.keys(seatSelections).length > 0) {
-        Object.entries(seatSelections).forEach(([segKey, passMap]) => {
-          const seatCode = passMap[trav?.id];
-          if (seatCode) {
-            seatDynamic.push({
-              AirlineCode: "",
-              FlightNumber: "",
-              CraftType: "",
-              Origin: "",
-              Destination: "",
-              AvailablityType: 1,
-              Description: "",
-              Code: seatCode,
-              RowNo: seatCode.slice(0, -1),
-              SeatNo: seatCode.slice(-1),
-              SeatType: 0,
-              SeatWayType: 0,
-              Compartment: 0,
-              Deck: 0,
-              Currency: "INR",
-              Price: 0,
-            });
-          }
-        });
+    // ── Seat Dynamic ──────────────────────────────────────────
+    const seatDynamic = [];
+    if (seatSelections && Object.keys(seatSelections).length > 0) {
+      Object.entries(seatSelections).forEach(([segKey, passMap]) => {
+        const seatCode = passMap[trav?.id];
+        if (seatCode) {
+          seatDynamic.push({
+            AirlineCode: "",
+            FlightNumber: "",
+            CraftType: "",
+            Origin: "",
+            Destination: "",
+            AvailablityType: 1,
+            Description: "",
+            Code: seatCode,
+            RowNo: seatCode.slice(0, -1),
+            SeatNo: seatCode.slice(-1),
+            SeatType: 0,
+            SeatWayType: 0,
+            Compartment: 0,
+            Deck: 0,
+            Currency: "INR",
+            Price: 0,
+          });
+        }
+      });
+    }
+
+    // ── Meal Dynamic ──────────────────────────────────────────
+    let mealDynamic = null;
+    if (selectedMeals && Object.keys(selectedMeals).length > 0) {
+      for (const [segKey, passMap] of Object.entries(selectedMeals)) {
+        const meal = passMap[trav?.id];
+        if (meal) {
+          mealDynamic = {
+            AirlineCode: meal.AirlineCode || "",
+            FlightNumber: meal.FlightNumber || "",
+            Origin: meal.Origin || "",
+            Destination: meal.Destination || "",
+            Code: meal.Code || "",
+            Description: meal.AirlineDescription || meal.Description || "",
+            AirlineDescription: meal.AirlineDescription || "",
+            Currency: "INR",
+            Price: meal.Price || 0,
+            Quantity: 1,
+          };
+          break;
+        }
       }
+    }
 
-      return {
-        Title: normalizeTitle(trav.title, idx < adultCount ? "Mr" : "Mstr"),
-        FirstName: trav.firstName,
-        LastName: trav.lastName,
-        PaxType: paxType,
-        Gender: trav.gender || 1,
-        AddressLine1: billing?.address || "N/A",
-        City: billing?.city || "N/A",
-        CountryCode: "IN",
-        CountryName: "India",
-        ContactNo: contact?.mobile || "",
-        Email: contact?.email || "",
-        IsLeadPax: idx === 0,
-        Nationality: "Indian",
-        ...(trav.dob && { DateOfBirth: trav.dob }),
-        ...(fareObj && { Fare: fareObj }),
-        ...(seatDynamic.length > 0 && { SeatDynamic: seatDynamic }),
-      };
-    });
+    // ── Baggage Dynamic ───────────────────────────────────────
+    let baggageDynamic = null;
+    if (selectedBaggage && Object.keys(selectedBaggage).length > 0) {
+      for (const [segKey, passMap] of Object.entries(selectedBaggage)) {
+        const bag = passMap[trav?.id];
+        if (bag) {
+          baggageDynamic = {
+            AirlineCode: bag.AirlineCode || "",
+            FlightNumber: bag.FlightNumber || "",
+            Origin: bag.Origin || "",
+            Destination: bag.Destination || "",
+            Code: bag.Code || "",
+            Description: bag.Text || bag.Description || "",
+            Currency: "INR",
+            Price: bag.Price || 0,
+            Weight: bag.Weight || 0,
+            Quantity: 1,
+          };
+          break;
+        }
+      }
+    }
+
+    // ── Passport / PAN (conditional) ──────────────────────────
+    const passportFields =
+      trav.passportNumber && trav.passportExpiry
+        ? {
+            PassportNo: trav.passportNumber.trim(),
+            PassportExpiry: trav.passportExpiry, // "YYYY-MM-DD"
+          }
+        : {};
+
+    const panField =
+      paxType === 1 && trav.panNumber && trav.panNumber.trim()
+        ? { PanNo: trav.panNumber.trim() }
+        : {};
 
     return {
-      TraceId: traceId,
-      ResultIndex: resultIndex,
-      IsLCC: isLCC || false,
-      Passengers: passengers,
+      Title: normalizeTitle(trav.title, trav.gender === 2 ? "Ms" : "Mr"),
+      FirstName: trav.firstName,
+      LastName: trav.lastName,
+      PaxType: paxType,
+      Gender: trav.gender || 1,
+      AddressLine1: billing?.address || "N/A",
+      City: billing?.city || "N/A",
+      CountryCode: "IN",
+      CountryName: "India",
+      ContactNo: contact?.mobile || "",
+      Email: contact?.email || "",
+      IsLeadPax: idx === 0,
+      Nationality: "Indian",
+      ...(trav.dob && { DateOfBirth: trav.dob }),
+      ...(fareObj && { Fare: fareObj }),
+      ...(seatDynamic.length > 0 && { SeatDynamic: seatDynamic }),
+      ...(mealDynamic && { MealDynamic: mealDynamic }),
+      ...(baggageDynamic && { BaggageDynamic: baggageDynamic }),
+      // ✅ Passport & PAN — only included when present
+      ...passportFields,
+      ...panField,
     };
+  });
+
+  const payload = {
+    TraceId: traceId,
+    ResultIndex: resultIndex,
+    ...(returnResultIndex && { ReturnResultIndex: returnResultIndex }),
+    IsLCC: isLCC || false,
+    Passengers: passengers,
   };
+
+  console.log("=== TICKET PAYLOAD ===");
+  payload.Passengers.forEach((p, i) => {
+    console.log(
+      `Passenger ${i}: Title="${p.Title}" | Name="${p.FirstName} ${p.lastName}" | PaxType=${p.PaxType} | PassportNo="${p.PassportNo || "—"}" | PanNo="${p.PanNo || "—"}"`,
+    );
+  });
+  console.log("Full Payload:", JSON.stringify(payload, null, 2));
+
+  return payload;
+};
 
   // ── Step: Initiate payment (QR) — shared by both LCC & non-LCC ────────────
   const initiatePaymentStep = async () => {
@@ -271,34 +379,57 @@ export default function FlightPaymentPage() {
 
     setHasStarted(true);
 
-   const startFlow = async () => {
-  try {
-    if (!isLCC) {
-      const payload = buildBookingPayload();
-      console.log("Booking payload:", JSON.stringify(payload, null, 2));
-
-      let result;
+    const startFlow = async () => {
       try {
-        result = await bookFlight(payload);
-      } catch (bookErr) {
-        // Book API fail — error dikhao, aage mat jao
-        setFlowError(bookErr.message || "Booking failed. Please try again.");
-        return; // ← yahi key line hai — payment initiate nahi hoga
+        if (!isLCC) {
+          const payload = buildBookingPayload();
+          console.log("Booking payload:", JSON.stringify(payload, null, 2));
+
+          try {
+            const result = await bookFlight(payload);
+            setBookingData(result);
+          } catch (bookErr) {
+            // Bus wale style mein Swal dikhao
+            await Swal.fire({
+              icon: "error",
+              title: "Booking Failed",
+              html: `
+            <div style="font-size:14px;color:#374151;line-height:1.8;text-align:left">
+              <div style="margin-bottom:6px">
+                <span style="color:#6b7280;font-size:12px">Reason</span><br/>
+                <strong>${bookErr.message || "Something went wrong. Please try again."}</strong>
+              </div>
+              ${
+                bookErr.code
+                  ? `
+              <div>
+                <span style="color:#6b7280;font-size:12px">Error Code</span><br/>
+                <strong style="font-family:monospace">${bookErr.code}</strong>
+              </div>`
+                  : ""
+              }
+            </div>
+          `,
+              confirmButtonColor: "#16a34a",
+              confirmButtonText: "Go Back",
+              allowOutsideClick: false,
+            }).then(() => {
+              navigate(-1); // user ko back bhejo
+            });
+            return; // aage payment initiate nahi hoga
+          }
+        } else {
+          console.log("LCC flight — skipping Book API");
+        }
+
+        await initiatePaymentStep();
+      } catch (err) {
+        console.error("Payment initiate error:", err);
+        setFlowError(
+          "We couldn't start your payment. Please go back and try again.",
+        );
       }
-
-      setBookingData(result);
-    } else {
-      console.log("LCC flight — skipping Book API");
-    }
-
-    // Sirf tab aao yahan agar book success hua (ya LCC hai)
-    await initiatePaymentStep();
-
-  } catch (err) {
-    console.error("Payment initiate error:", err);
-    setFlowError("We couldn't start your payment. Please go back and try again.");
-  }
-};
+    };
 
     startFlow();
   }, [traceId, resultIndex, travellers, contact, billing]);
@@ -327,7 +458,9 @@ export default function FlightPaymentPage() {
       await initiatePaymentStep();
     } catch (err) {
       console.error("Retry initiate error:", err);
-      setFlowError("We couldn't restart your payment. Please go back and try again.");
+      setFlowError(
+        "We couldn't restart your payment. Please go back and try again.",
+      );
     }
   };
 
@@ -348,7 +481,9 @@ export default function FlightPaymentPage() {
           textAlign: "center",
         }}
       >
-        <p style={{ fontSize: 16, fontWeight: 600, color: "#dc2626", margin: 0 }}>
+        <p
+          style={{ fontSize: 16, fontWeight: 600, color: "#dc2626", margin: 0 }}
+        >
           {flowError}
         </p>
         <button
@@ -374,7 +509,11 @@ export default function FlightPaymentPage() {
   if (!showPaymentModal && (bookingLoading || initiateLoading)) {
     return (
       <ProcessingScreen
-        text={bookingLoading ? "Confirming your booking..." : "Preparing your payment..."}
+        text={
+          bookingLoading
+            ? "Confirming your booking..."
+            : "Preparing your payment..."
+        }
       />
     );
   }
@@ -394,6 +533,7 @@ export default function FlightPaymentPage() {
       paymentStatus={paymentStatus}
       traceId={traceId}
       resultIndex={resultIndex}
+      onCancelPayment={handleFlightCancel}
     />
   );
 }
