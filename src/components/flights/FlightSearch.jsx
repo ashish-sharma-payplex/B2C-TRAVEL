@@ -71,12 +71,12 @@ const CATEGORIES = [
     path: "/buses",
     emoji: "🚌",
   },
-  {
-    label: "Trains",
-    img: "/navbaricons/trainslogo.svg",
-    path: "/trains",
-    emoji: "🚆",
-  },
+  // {
+  //   label: "Trains",
+  //   img: "/navbaricons/trainslogo.svg",
+  //   path: "/trains",
+  //   emoji: "🚆",
+  // },
 ];
 
 const CABIN_CLASSES = ["Economy", "Premium Economy", "Business", "First Class"];

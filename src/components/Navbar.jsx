@@ -24,7 +24,7 @@ const CATEGORIES = [
   { label: "Flights", img: "/navbaricons/flightslogo.svg", path: "/flights", emoji: "✈️" },
   { label: "Hotels",  img: "/navbaricons/hotelslogo.svg",  path: "/hotels",  emoji: "🏨" },
   { label: "Buses",   img: "/navbaricons/buseslogo.svg",   path: "/buses",   emoji: "🚌" },
-  { label: "Trains",  img: "/navbaricons/trainslogo.svg",  path: "/trains",  emoji: "🚆" },
+  // { label: "Trains",  img: "/navbaricons/trainslogo.svg",  path: "/trains",  emoji: "🚆" },
 ];
 
 const Navbar = ({ scrolled }) => {
@@ -38,6 +38,15 @@ const Navbar = ({ scrolled }) => {
  const hideCategories =
   location.pathname.startsWith("/hotels/results") ||
   location.pathname.startsWith("/hotels/details");
+
+  const handleRightItemClick = (label) => {
+    if (label === "My Trips") {
+      navigate("/my-trips");
+    }
+    // Add handlers for other items as needed
+    // else if (label === "Offers") { navigate("/offers"); }
+    // else if (label === "Support") { navigate("/support"); }
+  };
 
   return (
     <>
@@ -116,6 +125,7 @@ const Navbar = ({ scrolled }) => {
               {RIGHT_ITEMS.map((item) => (
                 <Box
                   key={item.label}
+                  onClick={() => handleRightItemClick(item.label)}
                   sx={{
                     display: "flex", alignItems: "center", gap: 0.6,
                     px: 1.5, py: 0.8, cursor: "pointer", borderRadius: "8px",
@@ -206,7 +216,13 @@ const Navbar = ({ scrolled }) => {
           <List dense>
             {RIGHT_ITEMS.map((item) => (
               <ListItem key={item.label} disablePadding>
-                <ListItemButton sx={{ gap: 1.5 }}>
+                <ListItemButton 
+                  onClick={() => {
+                    handleRightItemClick(item.label);
+                    setDrawer(false);
+                  }}
+                  sx={{ gap: 1.5 }}
+                >
                   <Box sx={{ color: "#555" }}>{item.icon}</Box>
                   <ListItemText
                     primary={item.label}

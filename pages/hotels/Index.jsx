@@ -55,12 +55,12 @@ const CATEGORIES = [
     path: "/buses",
     emoji: "🚌",
   },
-  {
-    label: "Trains",
-    img: "/navbaricons/trainslogo.svg",
-    path: "/trains",
-    emoji: "🚆",
-  },
+  // {
+  //   label: "Trains",
+  //   img: "/navbaricons/trainslogo.svg",
+  //   path: "/trains",
+  //   emoji: "🚆",
+  // },
 ];
 
 function formatDate(date) {

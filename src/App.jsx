@@ -23,6 +23,7 @@ import SSRPage from "./components/flights/SSRPage";
 import SeatSelectionPage from "./components/flights/SeatSelection";
 import FlightPaymentPage from "./components/flights/FlightPaymentPage";
 import FlightTicketPage from "./components/flights/FlightTicketPage";
+import MyTrips from "../pages/my-trips";
 
 
 function ScrollHandler({ setScrolled }) {
@@ -104,14 +105,15 @@ function App() {
           <Route path="/flights" element={<FlightsPage />} />
           <Route path="/flights/listing" element={<FlightsListingPage />} />
           <Route path="/buses" element={<BusesPage />} />
-          <Route path="/buses/results" element={<BusResultsPage />} /> 
-          <Route path="/buses/passenger-details" element={<BusPassengerPage />} /> 
+          <Route path="/buses/results" element={<BusResultsPage />} />
+          <Route path="/buses/passenger-details" element={<BusPassengerPage />} />
           <Route path="/trains" element={<TrainsPage />} />
           <Route path="/book-flight" element={<BookFlight />} />
           <Route path="/ssr" element={<SSRPage />} />
           <Route path="/seat-selection" element={<SeatSelectionPage />} />
           <Route path="/flight-payment" element={<FlightPaymentPage />} />
-<Route path="/flight-ticket" element={<FlightTicketPage />} />
+          <Route path="/flight-ticket" element={<FlightTicketPage />} />
+          <Route path="/my-trips" element={<MyTrips />} />
         </Routes>
       </div>
     </BrowserRouter>
