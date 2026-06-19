@@ -34,4 +34,6 @@ export const FLIGHT_ENDPOINTS = {
   FARE_RULE: "/api/flightv2/fare-rule/",
   FARE_QUOTE: "/api/flightv2/fare-quote/",
   SSR: "/api/flightv2/ssr/",
+
+  BOOKING_DETAILS: "/api/flightv2/booking-details/",
 };

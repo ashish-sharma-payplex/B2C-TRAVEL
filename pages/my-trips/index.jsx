@@ -1,4 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
+import {
+  getMyTrips,
+  getBookingDetails,
+} from "../../src/api/myTripsApi";
+
 import {
   Box,
   Paper,
@@ -12,6 +18,10 @@ import {
   Card,
   CardContent,
   Divider,
+  Dialog,
+  DialogContent,
+  IconButton,
+  Grid,
 } from "@mui/material";
 import FlightIcon from "@mui/icons-material/Flight";
 import TrainIcon from "@mui/icons-material/Train";
@@ -19,7 +29,79 @@ import HotelIcon from "@mui/icons-material/Hotel";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 
+
 const GREEN = "#16a34a";
+
+const TicketSection = ({
+  title,
+  children,
+}) => {
+
+  return (
+
+    <Paper
+
+      elevation={0}
+
+sx={{
+
+p:2.5,
+
+border:"1px solid #e5e7eb",
+
+borderRadius:3,
+
+height:"170px",
+
+display:"flex",
+
+flexDirection:"column",
+
+justifyContent:"flex-start",
+
+boxSizing:"border-box",
+
+transition:"0.2s ease",
+
+"&:hover":{
+
+boxShadow:
+
+"0 4px 10px rgba(0,0,0,0.08)"
+
+}
+
+}}
+
+    >
+
+      <Typography
+
+        sx={{
+
+          fontWeight:700,
+
+          fontSize:16,
+
+          color:"#166534",
+
+          mb:2
+
+        }}
+
+      >
+
+        {title}
+
+      </Typography>
+
+      {children}
+
+    </Paper>
+
+  );
+
+};
 
 // Static data for different categories
 const STATIC_DATA = {
@@ -131,13 +213,164 @@ const CATEGORIES = [
 const STATUS_FILTERS = ["Upcoming", "Past", "Cancelled", "Failed"];
 
 const MyTrips = () => {
+
+
   const [selectedCategory, setSelectedCategory] = useState("Flights");
+
   const [selectedStatus, setSelectedStatus] = useState("Upcoming");
 
-  // Get filtered data based on category and status
-  const filteredData = STATIC_DATA[selectedCategory]?.filter(
-    (item) => item.status === selectedStatus
-  ) || [];
+  const [flightBookings, setFlightBookings] = useState([]);
+
+  const [selectedBooking, setSelectedBooking] = useState(null);
+
+  const [openDetails, setOpenDetails] = useState(false);
+
+  const [detailsLoading, setDetailsLoading] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+
+
+
+      const fetchFlightBookings = async () => {
+
+      try {
+
+        setLoading(true);
+
+        const response = await getMyTrips();
+
+        console.log("API Response :", response);
+
+        if (response.results?.length > 0) {
+
+          const firstBooking = response.results[0];
+
+          const details = await getBookingDetails(
+            firstBooking.booking_id
+          );
+
+          console.log("Booking Details :", details);
+
+        }
+
+        setFlightBookings(response.results || []);
+
+      } catch (error) {
+
+        console.log("Flight Booking Error :", error);
+
+      } finally {
+
+        setLoading(false);
+
+      }
+
+    };
+
+      useEffect(() => {
+
+        fetchFlightBookings();
+
+      }, []);
+
+
+
+      const statusMap = {
+      Upcoming: "BOOKED",
+      Past: "TICKETED",
+      Cancelled: "CANCELLED",
+      Failed: "FAILED",
+    };
+
+
+
+  const filteredData =
+  selectedCategory === "Flights"
+
+    ? flightBookings.filter(
+        (item) => item.status === statusMap[selectedStatus]
+      )
+
+    : STATIC_DATA[selectedCategory]?.filter(
+        (item) => item.status === selectedStatus
+      ) || [];
+
+
+
+  console.log("Flight Bookings :", flightBookings);
+
+  const handleViewDetails = async (bookingId) => {
+
+  try {
+
+    setDetailsLoading(true);
+
+    const response = await getBookingDetails(bookingId);
+
+    console.log(
+      "Booking Details :",
+      response
+    );
+
+    setSelectedBooking(response.data);
+
+    setOpenDetails(true);
+
+  } catch (error) {
+
+    console.log(error);
+
+  } finally {
+
+    setDetailsLoading(false);
+
+  }
+
+};
+
+
+
+
+const handleOpenDetails = async (booking) => {
+
+  try {
+
+    setDetailsLoading(true);
+
+    const response = await getBookingDetails(
+      booking.booking_id
+    );
+
+    console.log(
+      "Booking Details :",
+      response
+    );
+
+    setSelectedBooking(
+      response.data
+    );
+
+    setOpenDetails(true);
+
+  } catch (error) {
+
+    console.log(error);
+
+  } finally {
+
+    setDetailsLoading(false);
+
+  }
+
+};
+
+const handleCloseDetails = () => {
+
+  setOpenDetails(false);
+
+  setSelectedBooking(null);
+
+};
 
   const renderBookingCard = (booking) => {
     return (
@@ -156,7 +389,8 @@ const MyTrips = () => {
         <CardContent>
           <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1.5 }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#1a1a1a" }}>
-              {booking.bookingId}
+              {/* {booking.bookingId} */}
+              {booking.booking_id}
             </Typography>
             <Typography
               sx={{
@@ -165,29 +399,35 @@ const MyTrips = () => {
                 borderRadius: "6px",
                 fontSize: 12,
                 fontWeight: 600,
+
                 bgcolor:
-                  booking.status === "Upcoming"
-                    ? "#dbeafe"
-                    : booking.status === "Past"
-                    ? "#ddd6fe"
-                    : booking.status === "Cancelled"
-                    ? "#fee2e2"
-                    : "#fef3c7",
-                color:
-                  booking.status === "Upcoming"
-                    ? "#0369a1"
-                    : booking.status === "Past"
-                    ? "#6d28d9"
-                    : booking.status === "Cancelled"
-                    ? "#dc2626"
-                    : "#d97706",
+                    booking.status === "BOOKED"
+                      ? "#fef3c7"
+                      : booking.status === "TICKETED"
+                      ? "#dbeafe"
+                      : booking.status === "CANCELLED"
+                      ? "#fee2e2"
+                      : "#f3f4f6",
+
+                  color:
+                    booking.status === "BOOKED"
+                      ? "#d97706"
+                      : booking.status === "TICKETED"
+                      ? "#0369a1"
+                      : booking.status === "CANCELLED"
+                      ? "#dc2626"
+                      : "#374151",
+
+
+
+
               }}
             >
               {booking.status}
             </Typography>
           </Box>
 
-          {selectedCategory === "Flights" && (
+          {/* {selectedCategory === "Flights" && (
             <>
               <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
                 <Box>
@@ -223,7 +463,183 @@ const MyTrips = () => {
                 </Box>
               </Box>
             </>
-          )}
+          )} */}
+
+          {selectedCategory === "Flights" && (
+
+<Box
+  sx={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 2,
+  }}
+>
+
+{/* Left */}
+
+<Box sx={{ flex: 3 }}>
+
+  <Typography
+    sx={{
+      fontSize: 18,
+      fontWeight: 700,
+      color: "#166534",
+      mb: 1,
+    }}
+  >
+    ✈️ Booking #{booking.booking_id}
+  </Typography>
+
+  <Box
+    sx={{
+      display: "flex",
+      flexWrap: "wrap",
+      gap: 4,
+    }}
+  >
+
+    <Box>
+
+      <Typography
+        sx={{
+          fontSize: 12,
+          color: "#666",
+        }}
+      >
+        PNR
+      </Typography>
+
+      <Typography
+        sx={{
+          fontWeight: 700,
+        }}
+      >
+        {booking.pnr}
+      </Typography>
+
+    </Box>
+
+    <Box>
+
+      <Typography
+        sx={{
+          fontSize: 12,
+          color: "#666",
+        }}
+      >
+        Created
+      </Typography>
+
+      <Typography
+        sx={{
+          fontWeight: 600,
+        }}
+      >
+        {new Date(
+          booking.created_at
+        ).toLocaleDateString()}
+      </Typography>
+
+    </Box>
+
+  </Box>
+
+  <Typography
+    sx={{
+      mt: 1,
+      fontSize: 13,
+      color: "#666",
+      wordBreak: "break-all",
+    }}
+  >
+
+    Order : {booking.order_id}
+
+  </Typography>
+
+</Box>
+
+
+{/* Right */}
+
+<Box
+  sx={{
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-end",
+    gap: 2,
+  }}
+>
+
+{/* <Typography
+
+  sx={{
+
+    px: 2,
+
+    py: 0.7,
+
+    borderRadius: 5,
+
+    fontWeight: 700,
+
+    fontSize: 12,
+
+    bgcolor:
+      booking.status === "TICKETED"
+        ? "#dcfce7"
+        : "#fef3c7",
+
+    color:
+      booking.status === "TICKETED"
+        ? "#166534"
+        : "#b45309",
+
+  }}
+
+>
+
+{booking.status}
+
+</Typography> */}
+
+<Button
+
+variant="contained"
+
+size="small"
+
+onClick={() => handleOpenDetails(booking)}
+
+sx={{
+
+textTransform:"none",
+
+bgcolor:"#16a34a",
+
+"&:hover":{
+
+bgcolor:"#15803d"
+
+}
+
+}}
+
+>
+
+{detailsLoading
+ ? "Loading..."
+ : "View Details"}
+
+</Button>
+
+</Box>
+
+</Box>
+
+)}
 
           {selectedCategory === "Trains" && (
             <>
@@ -341,7 +757,7 @@ const MyTrips = () => {
           <Divider sx={{ my: 1 }} />
 
           <Box sx={{ display: "flex", gap: 1 }}>
-            <Button
+            {/* <Button
               size="small"
               variant="outlined"
               sx={{
@@ -354,7 +770,7 @@ const MyTrips = () => {
               }}
             >
               View Details
-            </Button>
+            </Button> */}
             {booking.status === "Upcoming" && (
               <Button
                 size="small"
@@ -378,6 +794,7 @@ const MyTrips = () => {
   };
 
   return (
+    <>
     <Box sx={{ minHeight: "100vh", bgcolor: "#f5f5f5", py: 3 }}>
       {/* Container wrapper - centered */}
       <Box sx={{ maxWidth: 1400, mx: "auto", px: { xs: 2, md: 4 } }}>
@@ -568,6 +985,429 @@ const MyTrips = () => {
         </Box>
       </Box>
     </Box>
+
+<Dialog
+
+open={openDetails}
+
+onClose={handleCloseDetails}
+
+fullWidth
+
+maxWidth="lg"
+
+PaperProps={{
+
+sx:{
+
+borderRadius:6,
+
+overflow:"hidden",
+
+width:"100%",
+
+maxWidth:"950px",
+
+maxHeight:"85vh",
+
+boxShadow:
+
+"0 20px 50px rgba(0,0,0,0.15)"
+
+}
+
+}}
+
+>
+
+<DialogContent sx={{ p: 0 }}>
+
+{selectedBooking && (
+
+(() => {
+
+const itinerary =
+selectedBooking.raw?.FlightItinerary;
+
+const segment =
+itinerary?.Segments?.[0];
+
+const passenger =
+itinerary?.Passenger?.[0];
+
+const fare =
+itinerary?.Fare;
+
+const invoice =
+itinerary?.Invoice?.[0];
+
+const ticket =
+passenger?.Ticket;
+
+return (
+
+<Box>
+
+<Box
+
+sx={{
+
+bgcolor:"#16a34a",
+
+color:"#fff",
+
+p:3
+
+}}
+
+>
+
+<Typography
+
+sx={{
+
+fontSize:24,
+
+fontWeight:700
+
+}}
+
+>
+
+✈️ Flight Ticket
+
+</Typography>
+
+<Typography>
+
+PNR : {selectedBooking.pnr}
+
+</Typography>
+
+</Box>
+
+
+<Box
+
+sx={{
+
+p:4,
+
+bgcolor:"#fafafa"
+
+}}
+
+>
+
+<Grid
+
+container
+
+spacing={3}
+
+alignItems="stretch"
+
+>
+
+
+<Grid item xs={12} md={6}>
+
+<TicketSection title="Flight Details">
+
+<Typography>
+
+Booking :
+
+{selectedBooking.booking_id}
+
+</Typography>
+
+<Typography>
+
+Route :
+
+{selectedBooking.origin}
+
+{" → "}
+
+{selectedBooking.destination}
+
+</Typography>
+
+</TicketSection>
+
+</Grid>
+
+
+<Grid item xs={12} md={6}>
+
+<TicketSection title="Passenger Details">
+
+<Typography>
+
+{passenger?.Title}
+
+{" "}
+
+{passenger?.FirstName}
+
+{" "}
+
+{passenger?.LastName}
+
+</Typography>
+
+<Typography>
+
+{passenger?.Email}
+
+</Typography>
+
+<Typography>
+
+{passenger?.ContactNo}
+
+</Typography>
+
+</TicketSection>
+
+</Grid>
+
+
+<Grid item xs={12} md={6}>
+
+<TicketSection title="Departure">
+
+<Typography>
+
+{
+
+segment?.Origin
+
+?.Airport
+
+?.CityName
+
+}
+
+</Typography>
+
+<Typography>
+
+{
+
+new Date(
+
+segment?.Origin
+
+?.DepTime
+
+).toLocaleString()
+
+}
+
+</Typography>
+
+</TicketSection>
+
+</Grid>
+
+
+<Grid item xs={12} md={6}>
+
+<TicketSection title="Arrival">
+
+<Typography>
+
+{
+
+segment?.Destination
+
+?.Airport
+
+?.CityName
+
+}
+
+</Typography>
+
+<Typography>
+
+{
+
+new Date(
+
+segment?.Destination
+
+?.ArrTime
+
+).toLocaleString()
+
+}
+
+</Typography>
+
+</TicketSection>
+
+</Grid>
+
+
+<Grid item xs={12} md={6}>
+
+<TicketSection title="Airline">
+
+<Typography>
+
+{
+
+segment?.Airline
+
+?.AirlineName
+
+}
+
+</Typography>
+
+<Typography>
+
+Flight :
+
+{
+
+segment?.Airline
+
+?.FlightNumber
+
+}
+
+</Typography>
+
+</TicketSection>
+
+</Grid>
+
+
+<Grid item xs={12} md={6}>
+
+<TicketSection title="Baggage">
+
+<Typography>
+
+Check In :
+
+{segment?.Baggage}
+
+</Typography>
+
+<Typography>
+
+Cabin :
+
+{segment?.CabinBaggage}
+
+</Typography>
+
+</TicketSection>
+
+</Grid>
+
+
+<Grid item xs={12} md={6}>
+
+<TicketSection title="Fare">
+
+<Typography>
+
+Base :
+
+₹{fare?.BaseFare}
+
+</Typography>
+
+<Typography>
+
+Tax :
+
+₹{fare?.Tax}
+
+</Typography>
+
+<Typography>
+
+Total :
+
+₹{fare?.PublishedFare}
+
+</Typography>
+
+</TicketSection>
+
+</Grid>
+
+
+<Grid item xs={12} md={6}>
+
+<TicketSection title="Invoice">
+
+<Typography>
+
+{invoice?.InvoiceNo}
+
+</Typography>
+
+<Typography>
+
+₹{invoice?.InvoiceAmount}
+
+</Typography>
+
+</TicketSection>
+
+</Grid>
+
+
+<Grid item xs={12}>
+
+<TicketSection title="Ticket Details">
+
+<Typography>
+
+Ticket :
+
+{ticket?.TicketNumber}
+
+</Typography>
+
+<Typography>
+
+Status :
+
+{ticket?.Status}
+
+</Typography>
+
+</TicketSection>
+
+</Grid>
+
+
+</Grid>
+
+</Box>
+
+</Box>
+
+);
+
+})()
+
+)}
+
+</DialogContent>
+
+</Dialog>
+</>
+
   );
 };
 
