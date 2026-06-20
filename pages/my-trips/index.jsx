@@ -28,7 +28,7 @@ import TrainIcon from "@mui/icons-material/Train";
 import HotelIcon from "@mui/icons-material/Hotel";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-
+import BusBooking from "../my-trips booking details/BusBooking";
 
 const GREEN = "#16a34a";
 
@@ -45,25 +45,25 @@ const TicketSection = ({
 
       sx={{
 
-        p: 2.5,
+p:2.5,
 
-        border: "1px solid #e5e7eb",
+border:"1px solid #e5e7eb",
 
-        borderRadius: 3,
+borderRadius:3,
 
-        height: "170px",
+height:"170px",
 
-        display: "flex",
+display:"flex",
 
-        flexDirection: "column",
+flexDirection:"column",
 
-        justifyContent: "flex-start",
+justifyContent:"flex-start",
 
-        boxSizing: "border-box",
+boxSizing:"border-box",
 
-        transition: "0.2s ease",
+transition:"0.2s ease",
 
-        "&:hover": {
+"&:hover":{
 
           boxShadow:
 
@@ -79,13 +79,13 @@ const TicketSection = ({
 
         sx={{
 
-          fontWeight: 700,
+          fontWeight:700,
 
-          fontSize: 16,
+          fontSize:16,
 
-          color: "#166534",
+          color:"#166534",
 
-          mb: 2
+          mb:2
 
         }}
 
@@ -205,7 +205,7 @@ const STATIC_DATA = {
 
 const CATEGORIES = [
   { label: "Flights", icon: <FlightIcon /> },
-  { label: "Trains", icon: <TrainIcon /> },
+  { label: "Bus", icon: <TrainIcon /> },
   { label: "Hotels", icon: <HotelIcon /> },
   { label: "Cabs", icon: <DirectionsCarIcon /> },
 ];
@@ -615,13 +615,13 @@ const MyTrips = () => {
 
                   sx={{
 
-                    textTransform: "none",
+textTransform:"none",
 
-                    bgcolor: "#16a34a",
+bgcolor:"#16a34a",
 
-                    "&:hover": {
+"&:hover":{
 
-                      bgcolor: "#15803d"
+bgcolor:"#15803d"
 
                     }
 
@@ -931,7 +931,141 @@ const MyTrips = () => {
               }}
             >
               {/* Booking Cards */}
-              {filteredData.length > 0 ? (
+
+            {selectedCategory === "Bus" ? (
+
+  <BusBooking />
+
+) : (
+
+  filteredData.length > 0 ? (
+
+    <Box>
+
+      {filteredData.map((booking) =>
+
+        renderBookingCard(booking)
+
+      )}
+
+    </Box>
+
+  ) : (
+
+    <Box
+
+      sx={{
+
+        display: "flex",
+
+        flexDirection: "column",
+
+        alignItems: "center",
+
+        justifyContent: "center",
+
+        minHeight: "500px",
+
+      }}
+
+    >
+
+      <Box
+
+        sx={{
+
+          mb: 3,
+
+          fontSize: 80,
+
+          opacity: 0.3,
+
+        }}
+
+      >
+
+        📅
+
+      </Box>
+
+      <Typography
+
+        sx={{
+
+          fontSize: 24,
+
+          fontWeight: 700,
+
+          color: "#1a1a1a",
+
+          mb: 1,
+
+        }}
+
+      >
+
+        No {selectedStatus} Bookings
+
+      </Typography>
+
+      <Typography
+
+        sx={{
+
+          color: "#666",
+
+          fontSize: 14,
+
+        }}
+
+      >
+
+        Looks like you don't have any{" "}
+
+        {selectedStatus.toLowerCase()}{" "}
+
+        {selectedCategory.toLowerCase()} bookings yet.
+
+      </Typography>
+
+      <Button
+
+        variant="contained"
+
+        sx={{
+
+          mt: 3,
+
+          bgcolor: GREEN,
+
+          textTransform: "none",
+
+          fontWeight: 600,
+
+          "&:hover": {
+
+            bgcolor: "#15803d",
+
+          },
+
+        }}
+
+      >
+
+        Book your next trip
+
+      </Button>
+
+    </Box>
+
+  )
+
+)}
+
+
+            {selectedCategory !== "Bus" && (
+
+            filteredData.length > 0 ? (
                 <Box>
                   {filteredData.map((booking) => renderBookingCard(booking))}
                 </Box>
@@ -980,7 +1114,9 @@ const MyTrips = () => {
                     Book your next trip
                   </Button>
                 </Box>
+            )
               )}
+          
             </Paper>
           </Box>
         </Box>
@@ -998,17 +1134,17 @@ const MyTrips = () => {
 
         PaperProps={{
 
-          sx: {
+sx:{
 
-            borderRadius: 6,
+borderRadius:6,
 
-            overflow: "hidden",
+overflow:"hidden",
 
-            width: "100%",
+width:"100%",
 
-            maxWidth: "950px",
+maxWidth:"950px",
 
-            maxHeight: "85vh",
+maxHeight:"85vh",
 
             boxShadow:
 
@@ -1052,11 +1188,11 @@ const MyTrips = () => {
 
                     sx={{
 
-                      bgcolor: "#16a34a",
+bgcolor:"#16a34a",
 
-                      color: "#fff",
+color:"#fff",
 
-                      p: 3
+p:3
 
                     }}
 
@@ -1066,9 +1202,9 @@ const MyTrips = () => {
 
                       sx={{
 
-                        fontSize: 24,
+fontSize:24,
 
-                        fontWeight: 700
+fontWeight:700
 
                       }}
 
@@ -1091,9 +1227,9 @@ const MyTrips = () => {
 
                     sx={{
 
-                      p: 4,
+p:4,
 
-                      bgcolor: "#fafafa"
+bgcolor:"#fafafa"
 
                     }}
 
