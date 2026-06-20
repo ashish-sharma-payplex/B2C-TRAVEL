@@ -1281,10 +1281,10 @@ export default function FlightSearch({
   initialFrom = null,
   initialTo = null,
   initialDate = null,
-  initialReturnDate = null,  
+  initialReturnDate = null,
   initialTripType = "oneway",
-   initialPassengers = null, 
-  initialCabinClass = null, 
+  initialPassengers = null,
+  initialCabinClass = null,
   onSearch = null,
 }) {
   const theme = useTheme();
@@ -1305,15 +1305,15 @@ export default function FlightSearch({
 
   const [fromDropOpen, setFromDropOpen] = useState(false);
   const [toDropOpen, setToDropOpen] = useState(false);
-const [tripType, setTripType] = useState(initialTripType || "oneway");
-const [returnDate, setReturnDate] = useState(() => {
-  if (initialReturnDate) {
-    const d = new Date(initialReturnDate);
-    d.setHours(0, 0, 0, 0);
-    return d;
-  }
-  return null;
-});
+  const [tripType, setTripType] = useState(initialTripType || "oneway");
+  const [returnDate, setReturnDate] = useState(() => {
+    if (initialReturnDate) {
+      const d = new Date(initialReturnDate);
+      d.setHours(0, 0, 0, 0);
+      return d;
+    }
+    return null;
+  });
   const fromFieldRef = useRef(null);
   const toFieldRef = useRef(null);
 
@@ -1329,7 +1329,6 @@ const [returnDate, setReturnDate] = useState(() => {
     d.setHours(0, 0, 0, 0);
     return d;
   });
- 
 
   const [depPickerOpen, setDepPickerOpen] = useState(false);
   const [retPickerOpen, setRetPickerOpen] = useState(false);
@@ -1340,23 +1339,21 @@ const [returnDate, setReturnDate] = useState(() => {
   const paxRef = useRef(null);
 
   const [passengers, setPassengers] = useState(
-  initialPassengers || { adults: 1, children: 0, infants: 0 }
-);
-const [cabinClass, setCabinClass] = useState(initialCabinClass || "Economy");
-
-
+    initialPassengers || { adults: 1, children: 0, infants: 0 },
+  );
+  const [cabinClass, setCabinClass] = useState(initialCabinClass || "Economy");
 
   useEffect(() => {
-  if (initialTripType) setTripType(initialTripType);
-}, [initialTripType]);
+    if (initialTripType) setTripType(initialTripType);
+  }, [initialTripType]);
 
-useEffect(() => {
-  if (initialReturnDate) {
-    const d = new Date(initialReturnDate);
-    d.setHours(0, 0, 0, 0);
-    setReturnDate(d);
-  }
-}, [initialReturnDate]);
+  useEffect(() => {
+    if (initialReturnDate) {
+      const d = new Date(initialReturnDate);
+      d.setHours(0, 0, 0, 0);
+      setReturnDate(d);
+    }
+  }, [initialReturnDate]);
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener("scroll", handleScroll);
@@ -1497,7 +1494,17 @@ useEffect(() => {
                 mb: { xs: 1.5, sm: 2 },
               }}
             >
-              <Box>
+              <Box
+                sx={{
+                  textAlign: { xs: "center", sm: "left" },
+                  width: "100%",
+                  px: { xs: 2, sm: 0 },
+                  py: { xs: 1, sm: 0 },
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: { xs: "center", sm: "flex-start" },
+                }}
+              >
                 <Typography
                   variant="h5"
                   fontWeight={700}
@@ -1542,6 +1549,8 @@ useEffect(() => {
                 display: "flex",
                 gap: { xs: 2, sm: 3 },
                 mb: { xs: 2, sm: 2.5 },
+                justifyContent: { xs: "center", sm: "flex-start" },
+                width: "100%",
               }}
             >
               {[
@@ -1588,7 +1597,7 @@ useEffect(() => {
                 display: "flex",
                 flexDirection: { xs: "column", md: "row" },
                 alignItems: { xs: "stretch", md: "center" },
-                gap: { xs: 2, md: 1 },
+                gap: { xs: 1.5, md: 0.5 },
               }}
             >
               {/* FROM + SWAP + TO */}
@@ -1822,8 +1831,9 @@ useEffect(() => {
                   display: "flex",
                   flex: { md: "0 0 auto" },
                   alignItems: "center",
-                  gap: 2,
+                  gap: { xs: 1.5, md: 0.5 },
                   flexDirection: { xs: "column", sm: "row" },
+                  width: { xs: "100%", md: "auto" },
                 }}
               >
                 {/* Departure date */}
@@ -1870,75 +1880,74 @@ useEffect(() => {
                 </FieldBox> */}
 
                 <Box
-  component="fieldset"
-  ref={depDateRef}
-  onClick={() => {
-    closeAll();
-    setDepPickerOpen((o) => !o);
-  }}
-  sx={{
-    width: { xs: "100%", sm: 150, md: 150 },
-    border: "1px solid #c8c8c8",
-    borderRadius: "12px",
-    m: 0,
-    pl: "12px",
-    pr: "14px",
-    height: 58,
-    minHeight: 58,
-    boxSizing: "border-box",
-    display: "flex",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    lineHeight: 1,
-    cursor: "pointer",
-    overflow: "hidden",
-    "&:hover": {
-      borderColor: "#2e7d32",
-    },
-    transition: "border-color 0.15s",
-  }}
->
-  <legend
-    style={{
-      fontSize: "0.72rem",
-      color: "#6b6b6b",
-      padding: "0 3px",
-      lineHeight: 1,
-      marginLeft: "0px",
-      fontFamily: "'Inter', sans-serif",
-    }}
-  >
-    Departure
-  </legend>
-  <Box
-    sx={{
-      display: "flex",
-      alignItems: "center",
-      gap: 1,
-      width: "100%",
-      minWidth: 0,
-      overflow: "hidden",
-    }}
-  >
-    <CalendarIcon />
-    <Typography
-      sx={{
-        fontSize: "0.95rem",
-        fontWeight: 600,
-        color: "#111827",
-        flex: 1,
-        minWidth: 0,
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        whiteSpace: "nowrap",
-        userSelect: "none",
-        fontFamily: "'Inter', sans-serif",
-      }}
-    >
-      {formatDisplayDate(departureDate)}
-    </Typography>
-  </Box>
-</Box>
+                  component="fieldset"
+                  ref={depDateRef}
+                  onClick={() => {
+                    closeAll();
+                    setDepPickerOpen((o) => !o);
+                  }}
+                  sx={{
+                    width: { xs: "100%", sm: 150, md: 140 },
+                    minWidth: { md: 130 },
+                    border: "1px solid #c8c8c8",
+                    borderRadius: "12px",
+                    m: 0,
+                    pl: "12px",
+                    pr: "10px",
+                    height: 58,
+                    minHeight: 58,
+                    boxSizing: "border-box",
+                    display: "flex",
+                    alignItems: "center",
+                    backgroundColor: "#fff",
+                    lineHeight: 1,
+                    cursor: "pointer",
+                    overflow: "hidden",
+                    "&:hover": { borderColor: "#2e7d32" },
+                    transition: "border-color 0.15s",
+                  }}
+                >
+                  <legend
+                    style={{
+                      fontSize: "0.72rem",
+                      color: "#6b6b6b",
+                      padding: "0 3px",
+                      lineHeight: 1,
+                      marginLeft: "0px",
+                      fontFamily: "'Inter', sans-serif",
+                    }}
+                  >
+                    Departure
+                  </legend>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      width: "100%",
+                      minWidth: 0,
+                      overflow: "hidden",
+                    }}
+                  >
+                    <CalendarIcon />
+                    <Typography
+                      sx={{
+                        fontSize: "0.95rem",
+                        fontWeight: 600,
+                        color: "#111827",
+                        flex: 1,
+                        minWidth: 0,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        userSelect: "none",
+                        fontFamily: "'Inter', sans-serif",
+                      }}
+                    >
+                      {formatDisplayDate(departureDate)}
+                    </Typography>
+                  </Box>
+                </Box>
 
                 {/* Return date */}
                 {/* <FieldBox
@@ -2004,81 +2013,80 @@ useEffect(() => {
                 </FieldBox> */}
 
                 <Box
-  component="fieldset"
-  ref={retDateRef}
-  onClick={() => {
-    if (tripType === "oneway") {
-      handleRoundTripToggle("roundtrip");
-      closeAll();
-      setRetPickerOpen(true);
-      return;
-    }
-    closeAll();
-    setRetPickerOpen((o) => !o);
-  }}
-  sx={{
-    width: { xs: "100%", sm: 150, md: 150 },
-    border: "1px solid #c8c8c8",
-    borderRadius: "12px",
-    m: 0,
-    pl: "12px",
-    pr: "14px",
-    height: 58,
-    minHeight: 58,
-    boxSizing: "border-box",
-    display: "flex",
-    alignItems: "center",
-    backgroundColor: tripType === "oneway" ? "#fafafa" : "#fff",
-    lineHeight: 1,
-    cursor: "pointer",
-    overflow: "hidden",
-    "&:hover": {
-      borderColor: "#2e7d32",
-    },
-    transition: "border-color 0.15s",
-  }}
->
-  <legend
-    style={{
-      fontSize: "0.72rem",
-      color: "#6b6b6b",
-      padding: "0 3px",
-      lineHeight: 1,
-      marginLeft: "0px",
-      fontFamily: "'Inter', sans-serif",
-    }}
-  >
-    Return
-  </legend>
-  <Box
-    sx={{
-      display: "flex",
-      alignItems: "center",
-      gap: 1,
-      width: "100%",
-      minWidth: 0,
-      overflow: "hidden",
-    }}
-  >
-    <CalendarIcon />
-    <Typography
-      sx={{
-        fontSize: "0.95rem",
-        fontWeight: 600,
-        color: returnDate ? "#111827" : "#9ca3af",
-        flex: 1,
-        minWidth: 0,
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        whiteSpace: "nowrap",
-        userSelect: "none",
-        fontFamily: "'Inter', sans-serif",
-      }}
-    >
-      {returnDate ? formatDisplayDate(returnDate) : "Add date"}
-    </Typography>
-  </Box>
-</Box>
+                  component="fieldset"
+                  ref={retDateRef}
+                  onClick={() => {
+                    if (tripType === "oneway") {
+                      handleRoundTripToggle("roundtrip");
+                      closeAll();
+                      setRetPickerOpen(true);
+                      return;
+                    }
+                    closeAll();
+                    setRetPickerOpen((o) => !o);
+                  }}
+                  sx={{
+                    width: { xs: "100%", sm: 150, md: 140 },
+                    minWidth: { md: 130 },
+                    border: "1px solid #c8c8c8",
+                    borderRadius: "12px",
+                    m: 0,
+                    pl: "12px",
+                    pr: "10px",
+                    height: 58,
+                    minHeight: 58,
+                    boxSizing: "border-box",
+                    display: "flex",
+                    alignItems: "center",
+                    backgroundColor: tripType === "oneway" ? "#fafafa" : "#fff",
+                    lineHeight: 1,
+                    cursor: "pointer",
+                    overflow: "hidden",
+                    "&:hover": { borderColor: "#2e7d32" },
+                    transition: "border-color 0.15s",
+                  }}
+                >
+                  <legend
+                    style={{
+                      fontSize: "0.72rem",
+                      color: "#6b6b6b",
+                      padding: "0 3px",
+                      lineHeight: 1,
+                      marginLeft: "0px",
+                      fontFamily: "'Inter', sans-serif",
+                    }}
+                  >
+                    Return
+                  </legend>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      width: "100%",
+                      minWidth: 0,
+                      overflow: "hidden",
+                    }}
+                  >
+                    <CalendarIcon />
+                    <Typography
+                      sx={{
+                        fontSize: "0.95rem",
+                        fontWeight: 600,
+                        color: returnDate ? "#111827" : "#9ca3af",
+                        flex: 1,
+                        minWidth: 0,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        userSelect: "none",
+                        fontFamily: "'Inter', sans-serif",
+                      }}
+                    >
+                      {returnDate ? formatDisplayDate(returnDate) : "Add date"}
+                    </Typography>
+                  </Box>
+                </Box>
 
                 {/* Travellers & Class */}
                 {/* <FieldBox
@@ -2101,10 +2109,10 @@ useEffect(() => {
                       gap: 1,
                       width: "100%",
                     }} */}
-                  {/* > */}
-                    {/* <PassengerIcon /> */}
-                    {/* <Box sx={{ minWidth: 0, flex: 1 }}> */}
-                      {/* <Typography
+                {/* > */}
+                {/* <PassengerIcon /> */}
+                {/* <Box sx={{ minWidth: 0, flex: 1 }}> */}
+                {/* <Typography
                         sx={{
                           fontSize: "0.78rem",
                           color: "#9ca3af",
@@ -2115,7 +2123,7 @@ useEffect(() => {
                       >
                         Travellers & Class
                       </Typography> */}
-                      {/* <Typography
+                {/* <Typography
                         sx={{
                           fontSize: "0.88rem",
                           fontWeight: 600,
@@ -2129,81 +2137,80 @@ useEffect(() => {
                       >
                         {passengerLabel()}
                       </Typography> */}
-                    {/* </Box> */}
-                    {/* <ChevronDownIcon /> */}
-                  {/* </Box> */}
+                {/* </Box> */}
+                {/* <ChevronDownIcon /> */}
+                {/* </Box> */}
                 {/* </FieldBox> */}
-              <Box
-                component="fieldset"
-                ref={paxRef}
-                onClick={() => {
-                  closeAll();
-                  setPaxDropOpen((o) => !o);
-                }}
-                sx={{
-                  width: { xs: "100%", sm: 175, md: 180 },
-                  border: "1px solid #c8c8c8",
-                  borderRadius: "12px",
-                  m: 0,
-                  pl: "12px",
-                  pr: "14px",
-                  height: 58,
-                  minHeight: 58,
-                  boxSizing: "border-box",
-                  display: "flex",
-                  alignItems: "center",
-                  backgroundColor: "#fff",
-                  lineHeight: 1,
-                  cursor: "pointer",
-                  overflow: "hidden",
-                  "&:hover": {
-                    borderColor: "#2e7d32",
-                  },
-                  transition: "border-color 0.15s",
-                }}
-              >
-                <legend
-                  style={{
-                    fontSize: "0.72rem",
-                    color: "#6b6b6b",
-                    padding: "0 3px",
-                    lineHeight: 1,
-                    marginLeft: "0px",
-                    fontFamily: "'Inter', sans-serif",
-                  }}
-                >
-                  Travellers & Class
-                </legend>
                 <Box
+                  component="fieldset"
+                  ref={paxRef}
+                  onClick={() => {
+                    closeAll();
+                    setPaxDropOpen((o) => !o);
+                  }}
                   sx={{
+                    width: { xs: "100%", sm: 175, md: 165 },
+                    minWidth: { md: 150 },
+                    border: "1px solid #c8c8c8",
+                    borderRadius: "12px",
+                    m: 0,
+                    pl: "12px",
+                    pr: "10px",
+                    height: 58,
+                    minHeight: 58,
+                    boxSizing: "border-box",
                     display: "flex",
                     alignItems: "center",
-                    gap: 1,
-                    width: "100%",
-                    minWidth: 0,
+                    backgroundColor: "#fff",
+                    lineHeight: 1,
+                    cursor: "pointer",
                     overflow: "hidden",
+                    "&:hover": { borderColor: "#2e7d32" },
+                    transition: "border-color 0.15s",
                   }}
                 >
-                  <PassengerIcon />
-                  <Typography
-                    sx={{
-                      fontSize: "0.88rem",
-                      fontWeight: 600,
-                      color: "#1a1a1a",
-                      flex: 1,
-                      minWidth: 0,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                      userSelect: "none",
+                  <legend
+                    style={{
+                      fontSize: "0.72rem",
+                      color: "#6b6b6b",
+                      padding: "0 3px",
+                      lineHeight: 1,
+                      marginLeft: "0px",
                       fontFamily: "'Inter', sans-serif",
                     }}
                   >
-                    {passengerLabel()}
-                  </Typography>
-                  <ChevronDownIcon />
+                    Travellers & Class
+                  </legend>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      width: "100%",
+                      minWidth: 0,
+                      overflow: "hidden",
+                    }}
+                  >
+                    <PassengerIcon />
+                    <Typography
+                      sx={{
+                        fontSize: "0.88rem",
+                        fontWeight: 600,
+                        color: "#1a1a1a",
+                        flex: 1,
+                        minWidth: 0,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        userSelect: "none",
+                        fontFamily: "'Inter', sans-serif",
+                      }}
+                    >
+                      {passengerLabel()}
+                    </Typography>
+                    <ChevronDownIcon />
+                  </Box>
                 </Box>
-              </Box>
               </Box>
 
               {/* Search Button */}
@@ -2223,16 +2230,17 @@ useEffect(() => {
                   fontWeight: 700,
                   fontSize: { xs: "1rem", sm: "1.05rem" },
                   borderRadius: 2.5,
-                  px: { xs: 3, sm: 4 },
+                  px: { xs: 3, md: 3 },
                   py: { xs: 1.5, sm: "13px" },
-                  minWidth: { xs: "100%", md: 120 },
-                  height: { sm: 50 },
+                  minWidth: { xs: "100%", md: 100 },
+                  height: { xs: 50, md: 58 },
                   flexShrink: 0,
                   letterSpacing: 0.3,
                   "&:hover": { backgroundColor: "#1b5e20" },
                   transition: "background 0.2s",
                   textTransform: "none",
                   fontFamily: "'Inter', sans-serif",
+                  alignSelf: { xs: "stretch", md: "center" },
                 }}
               >
                 {searchLoading ? "Searching..." : "Search"}

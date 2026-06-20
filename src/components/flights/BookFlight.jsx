@@ -8,13 +8,32 @@ const flightlogo = "/bookflighticon.svg";
 const planlogo = "/planeicon.svg";
 
 const ChevronDown = ({ size = 16, style = {} }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}>
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    style={style}
+  >
     <polyline points="6 9 12 15 18 9" />
   </svg>
 );
 
 const TrashIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <polyline points="3 6 5 6 21 6" />
     <path d="M19 6l-1 14H6L5 6" />
     <path d="M10 11v6M14 11v6" />
@@ -23,14 +42,32 @@ const TrashIcon = () => (
 );
 
 const UserIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
     <circle cx="12" cy="7" r="4" />
   </svg>
 );
 
 const LuggageIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="15"
+    height="15"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <rect x="6" y="7" width="12" height="14" rx="2" />
     <path d="M9 7V5a2 2 0 0 1 4 0v2" />
     <line x1="12" y1="12" x2="12" y2="16" />
@@ -38,7 +75,16 @@ const LuggageIcon = () => (
 );
 
 const CabinBagIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="15"
+    height="15"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <rect x="2" y="7" width="20" height="13" rx="2" />
     <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
     <line x1="12" y1="12" x2="12" y2="16" />
@@ -54,7 +100,10 @@ const FARE_RULES_FALLBACK = [
     column: "Airlines Fees\nper passenger",
     rows: [
       { desc: "Cancel Before 24 hours of departure time.", fee: "₹ 3,999" },
-      { desc: "Cancel within 24 hours & before 4 hours of departure time.", fee: "₹ 4,999" },
+      {
+        desc: "Cancel within 24 hours & before 4 hours of departure time.",
+        fee: "₹ 4,999",
+      },
     ],
   },
   {
@@ -63,7 +112,10 @@ const FARE_RULES_FALLBACK = [
     column: "Airlines Fees\nper passenger",
     rows: [
       { desc: "Reschedule before 24 hours of departure time.", fee: "₹ 2,999" },
-      { desc: "Reschedule within 24 hours & before 4 hours of departure time.", fee: "₹ 2,999" },
+      {
+        desc: "Reschedule within 24 hours & before 4 hours of departure time.",
+        fee: "₹ 2,999",
+      },
     ],
   },
 ];
@@ -76,10 +128,22 @@ const noLeadingSpaces = (val) => val.replace(/^\s+/, "");
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const formatTime = (date) =>
-  date ? new Date(date).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: false }) : "--";
+  date
+    ? new Date(date).toLocaleTimeString("en-IN", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      })
+    : "--";
 
 const formatDate = (date) =>
-  date ? new Date(date).toLocaleDateString("en-IN", { weekday: "short", month: "short", day: "numeric" }) : "";
+  date
+    ? new Date(date).toLocaleDateString("en-IN", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+      })
+    : "";
 
 const newTraveller = (type) => ({
   id: Date.now() + Math.random(),
@@ -162,16 +226,30 @@ function GSTToggle({ checked, onChange }) {
       onClick={onChange}
       aria-pressed={checked}
       style={{
-        width: 40, height: 22, borderRadius: 999, flexShrink: 0,
-        background: checked ? "#16a34a" : "#d1d5db", border: "none",
-        cursor: "pointer", position: "relative", transition: "background 0.2s",
+        width: 40,
+        height: 22,
+        borderRadius: 999,
+        flexShrink: 0,
+        background: checked ? "#16a34a" : "#d1d5db",
+        border: "none",
+        cursor: "pointer",
+        position: "relative",
+        transition: "background 0.2s",
       }}
     >
-      <span style={{
-        position: "absolute", top: 3, left: checked ? 20 : 3,
-        width: 16, height: 16, borderRadius: "50%", background: "#fff",
-        transition: "left 0.2s", boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
-      }} />
+      <span
+        style={{
+          position: "absolute",
+          top: 3,
+          left: checked ? 20 : 3,
+          width: 16,
+          height: 16,
+          borderRadius: "50%",
+          background: "#fff",
+          transition: "left 0.2s",
+          boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+        }}
+      />
     </button>
   );
 }
@@ -212,14 +290,32 @@ function TravellerCard({
       }}
     >
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 14,
+        }}
+      >
         <span style={{ fontWeight: 600, fontSize: 13, color: "#6b7280" }}>
           {labelMap[type]} {index + 1}
         </span>
         {total > 1 && (
           <button
             onClick={onRemove}
-            style={{ background: "none", border: "none", cursor: "pointer", color: "#ef4444", display: "flex", alignItems: "center", gap: 4, fontSize: 13, padding: "2px 6px", borderRadius: 6 }}
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              color: "#ef4444",
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+              fontSize: 13,
+              padding: "2px 6px",
+              borderRadius: 6,
+            }}
           >
             <TrashIcon /> Remove
           </button>
@@ -227,9 +323,21 @@ function TravellerCard({
       </div>
 
       {/* Title radios */}
-      <div style={{ display: "flex", gap: 20, marginBottom: 16, flexWrap: "wrap" }}>
+      <div
+        style={{ display: "flex", gap: 20, marginBottom: 16, flexWrap: "wrap" }}
+      >
         {titles.map((t) => (
-          <label key={t} style={{ display: "flex", alignItems: "center", gap: 6, cursor: "pointer", fontSize: 14, color: "#374151" }}>
+          <label
+            key={t}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              cursor: "pointer",
+              fontSize: 14,
+              color: "#374151",
+            }}
+          >
             <input
               type="radio"
               name={`${type}-${data.id}-title`}
@@ -244,7 +352,15 @@ function TravellerCard({
       </div>
 
       {/* Name fields */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }} className="two-col">
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: 14,
+          marginBottom: 14,
+        }}
+        className="two-col"
+      >
         <div style={{ position: "relative" }}>
           <label style={labelStyle}>First Name & Middle Name *</label>
           <input
@@ -268,7 +384,15 @@ function TravellerCard({
       </div>
 
       {/* DOB — sab ke liye (adults, children, infants) */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }} className="two-col">
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: 14,
+          marginBottom: 14,
+        }}
+        className="two-col"
+      >
         <div style={{ position: "relative" }}>
           <label style={labelStyle}>Date of Birth *</label>
           <input
@@ -285,21 +409,35 @@ function TravellerCard({
             className="input-field"
             value="India"
             readOnly
-            style={{ background: "#f9fafb", cursor: "default", color: "#374151" }}
+            style={{
+              background: "#f9fafb",
+              cursor: "default",
+              color: "#374151",
+            }}
           />
         </div>
       </div>
 
       {/* Passport fields — sirf tab dikhao jab requiresPassport true ho */}
       {requiresPassport && (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }} className="two-col">
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: 14,
+            marginBottom: 14,
+          }}
+          className="two-col"
+        >
           <div style={{ position: "relative" }}>
             <label style={labelStyle}>Passport Number *</label>
             <input
               className={`input-field${showErrors && errors?.passportNumber ? " input-err" : ""}`}
               placeholder="Passport Number"
               value={data.passportNumber}
-              onChange={(e) => handleText("passportNumber", e.target.value.toUpperCase())}
+              onChange={(e) =>
+                handleText("passportNumber", e.target.value.toUpperCase())
+              }
             />
             {fieldErr("passportNumber")}
           </div>
@@ -309,7 +447,9 @@ function TravellerCard({
               className={`input-field${showErrors && errors?.passportExpiry ? " input-err" : ""}`}
               type="date"
               value={data.passportExpiry}
-              onChange={(e) => onChange({ ...data, passportExpiry: e.target.value })}
+              onChange={(e) =>
+                onChange({ ...data, passportExpiry: e.target.value })
+              }
             />
             {fieldErr("passportExpiry")}
           </div>
@@ -318,13 +458,21 @@ function TravellerCard({
 
       {/* PAN field — sirf adults ke liye aur sirf tab jab requiresPan true ho */}
       {type === "adults" && requiresPan && (
-        <div style={{ position: "relative", maxWidth: "calc(50% - 7px)", marginBottom: 14 }}>
+        <div
+          style={{
+            position: "relative",
+            maxWidth: "calc(50% - 7px)",
+            marginBottom: 14,
+          }}
+        >
           <label style={labelStyle}>PAN Number *</label>
           <input
             className={`input-field${showErrors && errors?.panNumber ? " input-err" : ""}`}
             placeholder="ABCDE1234F"
             value={data.panNumber}
-            onChange={(e) => handleText("panNumber", e.target.value.toUpperCase())}
+            onChange={(e) =>
+              handleText("panNumber", e.target.value.toUpperCase())
+            }
           />
           {fieldErr("panNumber")}
         </div>
@@ -349,12 +497,31 @@ function TravellerGroup({
 }) {
   return (
     <div style={{ marginBottom: 8 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <div>
-          <span style={{ fontWeight: 700, fontSize: 15, color: "#111827" }}>{label}</span>
-          <span style={{ fontSize: 12, color: "#9ca3af", marginLeft: 6 }}>{ageLabel}</span>
+          <span style={{ fontWeight: 700, fontSize: 15, color: "#111827" }}>
+            {label}
+          </span>
+          <span style={{ fontSize: 12, color: "#9ca3af", marginLeft: 6 }}>
+            {ageLabel}
+          </span>
         </div>
-        <span style={{ fontSize: 12, color: "#6b7280", background: "#f3f4f6", borderRadius: 999, padding: "2px 10px", fontWeight: 500 }}>
+        <span
+          style={{
+            fontSize: 12,
+            color: "#6b7280",
+            background: "#f3f4f6",
+            borderRadius: 999,
+            padding: "2px 10px",
+            fontWeight: 500,
+          }}
+        >
           {list.length} Added
         </span>
       </div>
@@ -384,40 +551,134 @@ function BaggageTab({ segs }) {
 
   if (segs.length > 0 && !hasBaggageData) {
     return (
-      <div style={{ padding: "16px 20px", color: "#9ca3af", fontSize: 13, textAlign: "center" }}>
+      <div
+        style={{
+          padding: "16px 20px",
+          color: "#9ca3af",
+          fontSize: 13,
+          textAlign: "center",
+        }}
+      >
         Baggage information not available for this fare.
       </div>
     );
   }
 
-  const displayData = segs.length > 0 ? segs : [
-    { Origin: { Airport: { AirportCode: "BOM" } }, Destination: { Airport: { AirportCode: "DED" } }, Baggage: "15 kg", CabinBaggage: "7 kg" },
-    { Origin: { Airport: { AirportCode: "DED" } }, Destination: { Airport: { AirportCode: "DEL" } }, Baggage: "15 kg", CabinBaggage: "7 kg" },
-  ];
+  const displayData =
+    segs.length > 0
+      ? segs
+      : [
+          {
+            Origin: { Airport: { AirportCode: "BOM" } },
+            Destination: { Airport: { AirportCode: "DED" } },
+            Baggage: "15 kg",
+            CabinBaggage: "7 kg",
+          },
+          {
+            Origin: { Airport: { AirportCode: "DED" } },
+            Destination: { Airport: { AirportCode: "DEL" } },
+            Baggage: "15 kg",
+            CabinBaggage: "7 kg",
+          },
+        ];
 
   return (
     <div style={{ padding: "16px 20px" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+          gap: 16,
+        }}
+      >
         {displayData.map((seg, i) => (
           <div key={i}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-              <div style={{ width: 28, height: 28, borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <img src={flightlogo} alt="" style={{ width: 18, height: 18 }} />
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                marginBottom: 10,
+              }}
+            >
+              <div
+                style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: 6,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <img
+                  src={flightlogo}
+                  alt=""
+                  style={{ width: 18, height: 18 }}
+                />
               </div>
               <span style={{ fontWeight: 700, fontSize: 14, color: "#111827" }}>
-                {seg?.Origin?.Airport?.AirportCode} – {seg?.Destination?.Airport?.AirportCode}
+                {seg?.Origin?.Airport?.AirportCode} –{" "}
+                {seg?.Destination?.Airport?.AirportCode}
               </span>
             </div>
-            <div style={{ border: "1px solid #e5e7eb", borderRadius: 10, overflow: "hidden" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", background: "#f9fafb", padding: "10px 14px", fontSize: 12, fontWeight: 600, color: "#374151" }}>
+            <div
+              style={{
+                border: "1px solid #e5e7eb",
+                borderRadius: 10,
+                overflow: "hidden",
+              }}
+            >
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr 1fr",
+                  background: "#f9fafb",
+                  padding: "10px 14px",
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: "#374151",
+                }}
+              >
                 <span />
-                <span style={{ display: "flex", alignItems: "center", gap: 4, justifyContent: "center" }}><LuggageIcon /> Check-in</span>
-                <span style={{ display: "flex", alignItems: "center", gap: 4, justifyContent: "center" }}><CabinBagIcon /> Cabin</span>
+                <span
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 4,
+                    justifyContent: "center",
+                  }}
+                >
+                  <LuggageIcon /> Check-in
+                </span>
+                <span
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 4,
+                    justifyContent: "center",
+                  }}
+                >
+                  <CabinBagIcon /> Cabin
+                </span>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "10px 14px", fontSize: 13, color: "#374151", borderTop: "1px solid #e5e7eb" }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr 1fr",
+                  padding: "10px 14px",
+                  fontSize: 13,
+                  color: "#374151",
+                  borderTop: "1px solid #e5e7eb",
+                }}
+              >
                 <span style={{ fontWeight: 500 }}>Adult</span>
-                <span style={{ textAlign: "center", fontWeight: 600 }}>{seg?.Baggage || "15 kg"}</span>
-                <span style={{ textAlign: "center", fontWeight: 600 }}>{seg?.CabinBaggage || "7 kg"}</span>
+                <span style={{ textAlign: "center", fontWeight: 600 }}>
+                  {seg?.Baggage || "15 kg"}
+                </span>
+                <span style={{ textAlign: "center", fontWeight: 600 }}>
+                  {seg?.CabinBaggage || "7 kg"}
+                </span>
               </div>
             </div>
           </div>
@@ -431,14 +692,43 @@ function BaggageTab({ segs }) {
 function renderContentByType(item, idx) {
   switch (item.type) {
     case "text":
-      return <tr key={idx}><td colSpan={2} style={{ fontSize: 13, color: "#374151", lineHeight: 1.7, whiteSpace: "pre-wrap" }}>{item.content}</td></tr>;
+      return (
+        <tr key={idx}>
+          <td
+            colSpan={2}
+            style={{
+              fontSize: 13,
+              color: "#374151",
+              lineHeight: 1.7,
+              whiteSpace: "pre-wrap",
+            }}
+          >
+            {item.content}
+          </td>
+        </tr>
+      );
     case "list":
       return (
         <tr key={idx}>
           <td colSpan={2} style={{ fontSize: 13, color: "#374151" }}>
-            {item.title && <div style={{ fontWeight: 600, marginBottom: 8, color: "#111827", marginTop: idx > 0 ? 8 : 0 }}>{item.title}</div>}
+            {item.title && (
+              <div
+                style={{
+                  fontWeight: 600,
+                  marginBottom: 8,
+                  color: "#111827",
+                  marginTop: idx > 0 ? 8 : 0,
+                }}
+              >
+                {item.title}
+              </div>
+            )}
             <ul style={{ margin: 0, paddingLeft: 20, lineHeight: 1.8 }}>
-              {item.items?.map((point, pi) => <li key={pi} style={{ marginBottom: 4 }}>{point}</li>)}
+              {item.items?.map((point, pi) => (
+                <li key={pi} style={{ marginBottom: 4 }}>
+                  {point}
+                </li>
+              ))}
             </ul>
           </td>
         </tr>
@@ -447,8 +737,23 @@ function renderContentByType(item, idx) {
       return (
         <tr key={idx}>
           <td colSpan={2}>
-            <div style={{ background: "#fef3c7", border: "1px solid #fde68a", borderRadius: 8, padding: "10px 12px", fontSize: 13, color: "#92400e", marginTop: idx > 0 ? 8 : 0, lineHeight: 1.6 }}>
-              {item.title && <div style={{ fontWeight: 600, marginBottom: 4 }}>⚠️ {item.title}</div>}
+            <div
+              style={{
+                background: "#fef3c7",
+                border: "1px solid #fde68a",
+                borderRadius: 8,
+                padding: "10px 12px",
+                fontSize: 13,
+                color: "#92400e",
+                marginTop: idx > 0 ? 8 : 0,
+                lineHeight: 1.6,
+              }}
+            >
+              {item.title && (
+                <div style={{ fontWeight: 600, marginBottom: 4 }}>
+                  ⚠️ {item.title}
+                </div>
+              )}
               <div>{item.content || item.text}</div>
             </div>
           </td>
@@ -458,18 +763,51 @@ function renderContentByType(item, idx) {
       return (
         <tr key={idx}>
           <td colSpan={2} style={{ padding: 0 }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, marginTop: idx > 0 ? 8 : 0 }}>
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                fontSize: 13,
+                marginTop: idx > 0 ? 8 : 0,
+              }}
+            >
               {item.header && (
                 <thead>
                   <tr style={{ background: "#f3f4f6" }}>
-                    {item.header.map((col, ci) => <th key={ci} style={{ padding: "8px 12px", textAlign: "left", fontWeight: 600, color: "#111827", borderBottom: "1px solid #e5e7eb" }}>{col}</th>)}
+                    {item.header.map((col, ci) => (
+                      <th
+                        key={ci}
+                        style={{
+                          padding: "8px 12px",
+                          textAlign: "left",
+                          fontWeight: 600,
+                          color: "#111827",
+                          borderBottom: "1px solid #e5e7eb",
+                        }}
+                      >
+                        {col}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
               )}
               <tbody>
                 {item.rows?.map((row, ri) => (
                   <tr key={ri} style={{ borderBottom: "1px solid #f0f0f0" }}>
-                    {Array.isArray(row) ? row.map((cell, ci) => <td key={ci} style={{ padding: "8px 12px", color: "#374151" }}>{cell}</td>) : <td style={{ padding: "8px 12px", color: "#374151" }}>{row}</td>}
+                    {Array.isArray(row) ? (
+                      row.map((cell, ci) => (
+                        <td
+                          key={ci}
+                          style={{ padding: "8px 12px", color: "#374151" }}
+                        >
+                          {cell}
+                        </td>
+                      ))
+                    ) : (
+                      <td style={{ padding: "8px 12px", color: "#374151" }}>
+                        {row}
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -478,11 +816,41 @@ function renderContentByType(item, idx) {
         </tr>
       );
     case "heading":
-      return <tr key={idx}><td colSpan={2} style={{ fontSize: 14, fontWeight: 700, color: "#111827", paddingTop: idx > 0 ? 12 : 0, paddingBottom: 6 }}>{item.content}</td></tr>;
+      return (
+        <tr key={idx}>
+          <td
+            colSpan={2}
+            style={{
+              fontSize: 14,
+              fontWeight: 700,
+              color: "#111827",
+              paddingTop: idx > 0 ? 12 : 0,
+              paddingBottom: 6,
+            }}
+          >
+            {item.content}
+          </td>
+        </tr>
+      );
     case "divider":
-      return <tr key={idx}><td colSpan={2} style={{ padding: "8px 0" }}><div style={{ height: 1, background: "#e5e7eb" }} /></td></tr>;
+      return (
+        <tr key={idx}>
+          <td colSpan={2} style={{ padding: "8px 0" }}>
+            <div style={{ height: 1, background: "#e5e7eb" }} />
+          </td>
+        </tr>
+      );
     default:
-      return <tr key={idx}><td colSpan={2} style={{ fontSize: 13, color: "#374151", lineHeight: 1.6 }}>{item.content || item.text || JSON.stringify(item)}</td></tr>;
+      return (
+        <tr key={idx}>
+          <td
+            colSpan={2}
+            style={{ fontSize: 13, color: "#374151", lineHeight: 1.6 }}
+          >
+            {item.content || item.text || JSON.stringify(item)}
+          </td>
+        </tr>
+      );
   }
 }
 
@@ -491,8 +859,24 @@ function FareRuleTab({ fareRuleData, fareLoading }) {
   if (fareLoading) {
     return (
       <div style={{ padding: "24px 20px", textAlign: "center" }}>
-        <div style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "#6b7280", fontSize: 13 }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ animation: "spin 1s linear infinite" }}>
+        <div
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            color: "#6b7280",
+            fontSize: 13,
+          }}
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            style={{ animation: "spin 1s linear infinite" }}
+          >
             <path d="M21 12a9 9 0 1 1-6.219-8.56" />
           </svg>
           Loading fare rules...
@@ -506,21 +890,57 @@ function FareRuleTab({ fareRuleData, fareLoading }) {
     return (
       <div style={{ padding: "12px 0" }}>
         {fareRuleData.FareRules.map((rule, ri) => (
-          <div key={ri} style={{ marginBottom: ri < fareRuleData.FareRules.length - 1 ? 10 : 0 }}>
+          <div
+            key={ri}
+            style={{
+              marginBottom: ri < fareRuleData.FareRules.length - 1 ? 10 : 0,
+            }}
+          >
             <table className="rule-table">
               <thead>
                 <tr>
                   <th style={{ width: "70%" }}>
-                    <div>{rule.Origin} → {rule.Destination}</div>
-                    <div style={{ fontWeight: 400, fontSize: 12, color: "#6b7280", marginTop: 2 }}>{rule.Airline}</div>
+                    <div>
+                      {rule.Origin} → {rule.Destination}
+                    </div>
+                    <div
+                      style={{
+                        fontWeight: 400,
+                        fontSize: 12,
+                        color: "#6b7280",
+                        marginTop: 2,
+                      }}
+                    >
+                      {rule.Airline}
+                    </div>
                   </th>
-                  <th><div style={{ whiteSpace: "pre-line", textAlign: "right" }}>Airlines Fees{"\n"}per passenger</div></th>
+                  <th>
+                    <div style={{ whiteSpace: "pre-line", textAlign: "right" }}>
+                      Airlines Fees{"\n"}per passenger
+                    </div>
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {Array.isArray(rule.FareRuleDetail)
-                  ? rule.FareRuleDetail.map((item, idx) => renderContentByType(item, idx))
-                  : <tr><td colSpan={2} style={{ whiteSpace: "pre-line", lineHeight: 1.7, fontSize: 13, color: "#374151" }}>{rule.FareRuleDetail}</td></tr>}
+                {Array.isArray(rule.FareRuleDetail) ? (
+                  rule.FareRuleDetail.map((item, idx) =>
+                    renderContentByType(item, idx),
+                  )
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={2}
+                      style={{
+                        whiteSpace: "pre-line",
+                        lineHeight: 1.7,
+                        fontSize: 13,
+                        color: "#374151",
+                      }}
+                    >
+                      {rule.FareRuleDetail}
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -532,19 +952,40 @@ function FareRuleTab({ fareRuleData, fareLoading }) {
   return (
     <div style={{ padding: "12px 0" }}>
       {FARE_RULES_FALLBACK.map((group, gi) => (
-        <div key={gi} style={{ marginBottom: gi < FARE_RULES_FALLBACK.length - 1 ? 10 : 0 }}>
+        <div
+          key={gi}
+          style={{ marginBottom: gi < FARE_RULES_FALLBACK.length - 1 ? 10 : 0 }}
+        >
           <table className="rule-table">
             <thead>
               <tr>
                 <th style={{ width: "60%" }}>
                   <div>{group.label}</div>
-                  <div style={{ fontWeight: 400, fontSize: 12, color: "#6b7280", marginTop: 2 }}>{group.sublabel}</div>
+                  <div
+                    style={{
+                      fontWeight: 400,
+                      fontSize: 12,
+                      color: "#6b7280",
+                      marginTop: 2,
+                    }}
+                  >
+                    {group.sublabel}
+                  </div>
                 </th>
-                <th><div style={{ whiteSpace: "pre-line", textAlign: "right" }}>{group.column}</div></th>
+                <th>
+                  <div style={{ whiteSpace: "pre-line", textAlign: "right" }}>
+                    {group.column}
+                  </div>
+                </th>
               </tr>
             </thead>
             <tbody>
-              {group.rows.map((row, ri) => <tr key={ri}><td>{row.desc}</td><td>{row.fee}</td></tr>)}
+              {group.rows.map((row, ri) => (
+                <tr key={ri}>
+                  <td>{row.desc}</td>
+                  <td>{row.fee}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -554,7 +995,16 @@ function FareRuleTab({ fareRuleData, fareLoading }) {
 }
 
 // ─── Flight Card ──────────────────────────────────────────────────────────────
-function FlightCard({ flight, legLabel, expanded, onToggle, activeTab, onTabChange, fareRuleData, fareLoading }) {
+function FlightCard({
+  flight,
+  legLabel,
+  expanded,
+  onToggle,
+  activeTab,
+  onTabChange,
+  fareRuleData,
+  fareLoading,
+}) {
   const segs = flight?.Segments?.[0] || [];
   const firstSeg = segs[0];
   const lastSeg = segs[segs.length - 1];
@@ -562,66 +1012,254 @@ function FlightCard({ flight, legLabel, expanded, onToggle, activeTab, onTabChan
   return (
     <div className="card">
       {legLabel && (
-        <div style={{ padding: "10px 20px", fontSize: 12, fontWeight: 700, color: "#16a34a", background: "#f0fdf4", borderBottom: "1px solid #f3f4f6", textTransform: "uppercase", letterSpacing: 0.5 }}>
+        <div
+          style={{
+            padding: "10px 20px",
+            fontSize: 12,
+            fontWeight: 700,
+            color: "#16a34a",
+            background: "#f0fdf4",
+            borderBottom: "1px solid #f3f4f6",
+            textTransform: "uppercase",
+            letterSpacing: 0.5,
+          }}
+        >
           {legLabel}
         </div>
       )}
-      <div onClick={onToggle} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", cursor: "pointer", borderBottom: expanded ? "1px solid #f3f4f6" : "none" }}>
+      <div
+        onClick={onToggle}
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          padding: "14px 16px",
+          cursor: "pointer",
+          borderBottom: expanded ? "1px solid #f3f4f6" : "none",
+          gap: 8,
+        }}
+      >
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{ width: 46, height: 46, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <img src={flightlogo} alt="Flight" style={{ width: 30, height: 30 }} />
+          <div
+            style={{
+              width: 46,
+              height: 46,
+              borderRadius: 10,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            <img
+              src={flightlogo}
+              alt="Flight"
+              style={{ width: 30, height: 30 }}
+            />
           </div>
           <div>
             <div style={{ fontWeight: 700, fontSize: 16, color: "#111827" }}>
-              {firstSeg?.Origin?.Airport?.CityName || "Origin"} to {lastSeg?.Destination?.Airport?.CityName || "Destination"}
+              {firstSeg?.Origin?.Airport?.CityName || "Origin"} to{" "}
+              {lastSeg?.Destination?.Airport?.CityName || "Destination"}
             </div>
             <div style={{ fontSize: 13, color: "#6b7280", marginTop: 2 }}>
-              {formatDate(firstSeg?.Origin?.DepTime)} • {firstSeg?.Airline?.AirlineName || "Airline"} •{" "}
-              {Math.floor((lastSeg?.AccumulatedDuration || 135) / 60)}h {(lastSeg?.AccumulatedDuration || 135) % 60}m •{" "}
-              {segs.length > 1 ? `${segs.length - 1} Stop${segs.length - 1 !== 1 ? "s" : ""}` : "Non-stop"}
+              {formatDate(firstSeg?.Origin?.DepTime)} •{" "}
+              {firstSeg?.Airline?.AirlineName || "Airline"} •{" "}
+              {Math.floor((lastSeg?.AccumulatedDuration || 135) / 60)}h{" "}
+              {(lastSeg?.AccumulatedDuration || 135) % 60}m •{" "}
+              {segs.length > 1
+                ? `${segs.length - 1} Stop${segs.length - 1 !== 1 ? "s" : ""}`
+                : "Non-stop"}
             </div>
           </div>
         </div>
-        <ChevronDown size={20} style={{ color: "#6b7280", transition: "transform 0.25s", transform: expanded ? "rotate(180deg)" : "rotate(0deg)", flexShrink: 0 }} />
+        <ChevronDown
+          size={20}
+          style={{
+            color: "#6b7280",
+            transition: "transform 0.25s",
+            transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
+            flexShrink: 0,
+          }}
+        />
       </div>
 
       {expanded && (
         <>
           {(segs.length > 0 ? segs : [null]).map((seg, idx) => (
             <div key={idx}>
-              <div style={{ display: "grid", gridTemplateColumns: "140px 1fr", gap: 0, alignItems: "center", padding: "18px 20px 14px" }}>
-                <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-                  <div style={{ width: 36, height: 36, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <img src={flightlogo} alt="" style={{ width: 22, height: 22 }} />
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "140px 1fr",
+                  gap: 0,
+                  alignItems: "center",
+                  padding: "18px 20px 14px",
+                }}
+                className="seg-grid"
+              >
+                {" "}
+                <div
+                  style={{ display: "flex", alignItems: "flex-start", gap: 8 }}
+                >
+                  <div
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: 8,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <img
+                      src={flightlogo}
+                      alt=""
+                      style={{ width: 22, height: 22 }}
+                    />
                   </div>
                   <div style={{ display: "flex", flexDirection: "column" }}>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: "#1a56db", lineHeight: 1.4 }}>{seg?.Airline?.AirlineName || "IndiGo"}</div>
-                    <div style={{ fontSize: 11, color: "#1a56db", marginTop: 1 }}>{seg?.Airline?.AirlineCode || "6E"}-{seg?.Airline?.FlightNumber || "5032"}</div>
-                    <div style={{ fontSize: 11, color: "#9ca3af", marginTop: 2 }}>{seg?.Craft || ""}</div>
+                    <div
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 700,
+                        color: "#1a56db",
+                        lineHeight: 1.4,
+                      }}
+                    >
+                      {seg?.Airline?.AirlineName || "IndiGo"}
+                    </div>
+                    <div
+                      style={{ fontSize: 11, color: "#1a56db", marginTop: 1 }}
+                    >
+                      {seg?.Airline?.AirlineCode || "6E"}-
+                      {seg?.Airline?.FlightNumber || "5032"}
+                    </div>
+                    <div
+                      style={{ fontSize: 11, color: "#9ca3af", marginTop: 2 }}
+                    >
+                      {seg?.Craft || ""}
+                    </div>
                   </div>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 32, marginRight: 24 }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 32,
+                    marginRight: 24,
+                  }}
+                  className="seg-times"
+                >
                   <div style={{ flexShrink: 0 }}>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: "#111827", lineHeight: 1.1 }}>{formatTime(seg?.Origin?.DepTime)}</div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginTop: 3 }}>{seg?.Origin?.Airport?.CityName} ({seg?.Origin?.Airport?.AirportCode})</div>
-                    <div style={{ fontSize: 11, color: "#9ca3af", marginTop: 2, lineHeight: 1.4 }}>{seg?.Origin?.Airport?.AirportName}</div>
+                    <div
+                      style={{
+                        fontSize: 22,
+                        fontWeight: 800,
+                        color: "#111827",
+                        lineHeight: 1.1,
+                      }}
+                    >
+                      {formatTime(seg?.Origin?.DepTime)}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 13,
+                        fontWeight: 600,
+                        color: "#374151",
+                        marginTop: 3,
+                      }}
+                    >
+                      {seg?.Origin?.Airport?.CityName} (
+                      {seg?.Origin?.Airport?.AirportCode})
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 11,
+                        color: "#9ca3af",
+                        marginTop: 2,
+                        lineHeight: 1.4,
+                      }}
+                    >
+                      {seg?.Origin?.Airport?.AirportName}
+                    </div>
                   </div>
-                  <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", minWidth: 80 }}>
-                    <span style={{ fontSize: 12, color: "#9ca3af", marginBottom: 6, whiteSpace: "nowrap" }}>
-                      {Math.floor((seg?.Duration || 135) / 60)}h {(seg?.Duration || 135) % 60}m
+                  <div
+                    style={{
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      minWidth: 80,
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: 12,
+                        color: "#9ca3af",
+                        marginBottom: 6,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {Math.floor((seg?.Duration || 135) / 60)}h{" "}
+                      {(seg?.Duration || 135) % 60}m
                     </span>
-                    <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        width: "100%",
+                      }}
+                    >
                       <div className="timeline-dot" />
                       <div className="timeline-line" />
-                      <img src={planlogo} alt="" style={{ width: 28, height: 28, flexShrink: 0, margin: "0 6px" }} />
+                      <img
+                        src={planlogo}
+                        alt=""
+                        style={{
+                          width: 28,
+                          height: 28,
+                          flexShrink: 0,
+                          margin: "0 6px",
+                        }}
+                      />
                       <div className="timeline-line" />
                       <div className="timeline-dot" />
                     </div>
                   </div>
                   <div style={{ flexShrink: 0, textAlign: "right" }}>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: "#111827", lineHeight: 1.1 }}>{formatTime(seg?.Destination?.ArrTime)}</div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginTop: 3 }}>{seg?.Destination?.Airport?.CityName} ({seg?.Destination?.Airport?.AirportCode})</div>
-                    <div style={{ fontSize: 11, color: "#9ca3af", marginTop: 2, lineHeight: 1.4 }}>{seg?.Destination?.Airport?.AirportName}</div>
+                    <div
+                      style={{
+                        fontSize: 22,
+                        fontWeight: 800,
+                        color: "#111827",
+                        lineHeight: 1.1,
+                      }}
+                    >
+                      {formatTime(seg?.Destination?.ArrTime)}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 13,
+                        fontWeight: 600,
+                        color: "#374151",
+                        marginTop: 3,
+                      }}
+                    >
+                      {seg?.Destination?.Airport?.CityName} (
+                      {seg?.Destination?.Airport?.AirportCode})
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 11,
+                        color: "#9ca3af",
+                        marginTop: 2,
+                        lineHeight: 1.4,
+                      }}
+                    >
+                      {seg?.Destination?.Airport?.AirportName}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -636,23 +1274,42 @@ function FlightCard({ flight, legLabel, expanded, onToggle, activeTab, onTabChan
                   </div>
                 </div>
               )}
-              {idx < segs.length - 1 && <div style={{ height: 1, background: "#f3f4f6", margin: "0 20px" }} />}
+              {idx < segs.length - 1 && (
+                <div
+                  style={{ height: 1, background: "#f3f4f6", margin: "0 20px" }}
+                />
+              )}
             </div>
           ))}
 
           <div style={{ borderTop: "1px solid #f3f4f6" }}>
-            <div style={{ display: "flex", gap: 24, padding: "0 20px", borderBottom: "1px solid #f3f4f6" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: 24,
+                padding: "0 20px",
+                borderBottom: "1px solid #f3f4f6",
+              }}
+            >
               {["fare", "baggage"].map((tab) => (
                 <button
                   key={tab}
                   className={`tab-btn ${activeTab === tab ? "tab-active" : "tab-inactive"}`}
-                  onClick={(e) => { e.stopPropagation(); onTabChange(tab); }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onTabChange(tab);
+                  }}
                 >
                   {tab === "fare" ? "Fare Rules" : "Baggage"}
                 </button>
               ))}
             </div>
-            {activeTab === "fare" && <FareRuleTab fareRuleData={fareRuleData} fareLoading={fareLoading} />}
+            {activeTab === "fare" && (
+              <FareRuleTab
+                fareRuleData={fareRuleData}
+                fareLoading={fareLoading}
+              />
+            )}
             {activeTab === "baggage" && <BaggageTab segs={segs} />}
           </div>
         </>
@@ -664,7 +1321,8 @@ function FlightCard({ flight, legLabel, expanded, onToggle, activeTab, onTabChan
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function BookFlight() {
   const location = useLocation();
-  const { flight, onwardFlight, returnFlight, searchMeta } = location.state || {};
+  const { flight, onwardFlight, returnFlight, searchMeta } =
+    location.state || {};
   const navigate = useNavigate();
 
   const isRoundTrip = !!(onwardFlight && returnFlight);
@@ -677,8 +1335,18 @@ export default function BookFlight() {
   const totalPassengers = adultCount + childCount + infantCount;
 
   // ── Hooks ──
-  const { onwardFareRule, returnFareRule, loading: fareLoading, fetchFareRule } = useFareRule();
-  const { onwardFareQuote, returnFareQuote, loading: fareQuoteLoading, fetchFareQuote } = useFareQuote();
+  const {
+    onwardFareRule,
+    returnFareRule,
+    loading: fareLoading,
+    fetchFareRule,
+  } = useFareRule();
+  const {
+    onwardFareQuote,
+    returnFareQuote,
+    loading: fareQuoteLoading,
+    fetchFareQuote,
+  } = useFareQuote();
 
   useEffect(() => {
     if (searchMeta?.traceId && onwardF?.ResultIndex) {
@@ -730,14 +1398,19 @@ export default function BookFlight() {
   const [gstEnabled, setGstEnabled] = useState(false);
   const [showErrors, setShowErrors] = useState(false);
 
-  const [travellers, setTravellers] = useState(() => buildInitialTravellers(searchMeta?.passengers));
+  const [travellers, setTravellers] = useState(() =>
+    buildInitialTravellers(searchMeta?.passengers),
+  );
   const [validationErrors, setValidationErrors] = useState({});
 
   const runValidation = (currentTravellers) => {
     const errs = {};
     ["adults", "children", "infants"].forEach((type) => {
       currentTravellers[type].forEach((t) => {
-        const fieldErrs = validateTraveller(type, t, { requiresPassport, requiresPan });
+        const fieldErrs = validateTraveller(type, t, {
+          requiresPassport,
+          requiresPan,
+        });
         if (Object.keys(fieldErrs).length > 0) errs[t.id] = fieldErrs;
       });
     });
@@ -745,7 +1418,10 @@ export default function BookFlight() {
   };
 
   const handleAdd = (type) => {
-    setTravellers((prev) => ({ ...prev, [type]: [...prev[type], newTraveller(type)] }));
+    setTravellers((prev) => ({
+      ...prev,
+      [type]: [...prev[type], newTraveller(type)],
+    }));
   };
 
   const handleChange = (type, id, updated) => {
@@ -756,7 +1432,10 @@ export default function BookFlight() {
     if (showErrors) {
       setValidationErrors((prev) => {
         const newErrs = { ...prev };
-        newErrs[id] = validateTraveller(type, updated, { requiresPassport, requiresPan });
+        newErrs[id] = validateTraveller(type, updated, {
+          requiresPassport,
+          requiresPan,
+        });
         if (Object.keys(newErrs[id]).length === 0) delete newErrs[id];
         return newErrs;
       });
@@ -764,27 +1443,58 @@ export default function BookFlight() {
   };
 
   const handleRemove = (type, id) => {
-    setTravellers((prev) => ({ ...prev, [type]: prev[type].filter((t) => t.id !== id) }));
-    setValidationErrors((prev) => { const n = { ...prev }; delete n[id]; return n; });
+    setTravellers((prev) => ({
+      ...prev,
+      [type]: prev[type].filter((t) => t.id !== id),
+    }));
+    setValidationErrors((prev) => {
+      const n = { ...prev };
+      delete n[id];
+      return n;
+    });
   };
 
   // ── Contact State ──
   // Yahan SIRF contact info hai — passenger card me email/mobile nahi hai
-  const [contact, setContact] = useState({ countryCode: "+91", mobile: "", email: "" });
+  const [contact, setContact] = useState({
+    countryCode: "+91",
+    mobile: "",
+    email: "",
+  });
   const [contactErrors, setContactErrors] = useState({});
 
   // ── Billing State ──
-  const [billing, setBilling] = useState({ address: "", city: "", state: "", nationality: "India" });
+  const [billing, setBilling] = useState({
+    address: "",
+    city: "",
+    state: "",
+    nationality: "India",
+  });
   const [billingErrors, setBillingErrors] = useState({});
 
-  const [gst, setGst] = useState({ company: "", number: "", address: "", city: "", state: "", nationality: "India" });
+  const [gst, setGst] = useState({
+    company: "",
+    number: "",
+    address: "",
+    city: "",
+    state: "",
+    nationality: "India",
+  });
 
   const handleContactMobile = (val) => {
     const digitsOnly = val.replace(/\D/g, "").slice(0, 10);
     setContact((p) => ({ ...p, mobile: digitsOnly }));
     if (showErrors) {
-      if (!digitsOnly) setContactErrors((p) => ({ ...p, mobile: "Mobile number is required" }));
-      else if (!MOBILE_REGEX.test(digitsOnly)) setContactErrors((p) => ({ ...p, mobile: "Mobile must be exactly 10 digits" }));
+      if (!digitsOnly)
+        setContactErrors((p) => ({
+          ...p,
+          mobile: "Mobile number is required",
+        }));
+      else if (!MOBILE_REGEX.test(digitsOnly))
+        setContactErrors((p) => ({
+          ...p,
+          mobile: "Mobile must be exactly 10 digits",
+        }));
       else setContactErrors((p) => ({ ...p, mobile: "" }));
     }
   };
@@ -793,8 +1503,13 @@ export default function BookFlight() {
     const cleaned = noLeadingSpaces(val);
     setContact((p) => ({ ...p, email: cleaned }));
     if (showErrors) {
-      if (!cleaned) setContactErrors((p) => ({ ...p, email: "Email is required" }));
-      else if (!EMAIL_REGEX.test(cleaned)) setContactErrors((p) => ({ ...p, email: "Enter a valid email address" }));
+      if (!cleaned)
+        setContactErrors((p) => ({ ...p, email: "Email is required" }));
+      else if (!EMAIL_REGEX.test(cleaned))
+        setContactErrors((p) => ({
+          ...p,
+          email: "Enter a valid email address",
+        }));
       else setContactErrors((p) => ({ ...p, email: "" }));
     }
   };
@@ -803,8 +1518,10 @@ export default function BookFlight() {
   const onwardFare = onwardFareQuote?.Results?.Fare;
   const returnFare = returnFareQuote?.Results?.Fare;
 
-  const onwardPublished = onwardFare?.PublishedFare ?? onwardF?.Fare?.PublishedFare ?? 0;
-  const returnPublished = returnFare?.PublishedFare ?? returnF?.Fare?.PublishedFare ?? 0;
+  const onwardPublished =
+    onwardFare?.PublishedFare ?? onwardF?.Fare?.PublishedFare ?? 0;
+  const returnPublished =
+    returnFare?.PublishedFare ?? returnF?.Fare?.PublishedFare ?? 0;
   const onwardTaxAmt = onwardFare?.Tax ?? onwardF?.Fare?.Tax ?? 0;
   const returnTaxAmt = returnFare?.Tax ?? returnF?.Fare?.Tax ?? 0;
 
@@ -812,8 +1529,10 @@ export default function BookFlight() {
   const returnFareTotal = returnPublished * totalPassengers;
   const totalFare = onwardFareTotal + returnFareTotal;
 
-  const isPriceChanged = onwardFareQuote?.IsPriceChanged || returnFareQuote?.IsPriceChanged || false;
-  const isRefundable = onwardFareQuote?.Results?.IsRefundable ?? onwardF?.IsRefundable;
+  const isPriceChanged =
+    onwardFareQuote?.IsPriceChanged || returnFareQuote?.IsPriceChanged || false;
+  const isRefundable =
+    onwardFareQuote?.Results?.IsRefundable ?? onwardF?.IsRefundable;
 
   // ── handleProceed ──
   const handleProceed = () => {
@@ -824,9 +1543,11 @@ export default function BookFlight() {
 
     const cErrs = {};
     if (!contact.mobile) cErrs.mobile = "Mobile number is required";
-    else if (!MOBILE_REGEX.test(contact.mobile)) cErrs.mobile = "Mobile must be exactly 10 digits";
+    else if (!MOBILE_REGEX.test(contact.mobile))
+      cErrs.mobile = "Mobile must be exactly 10 digits";
     if (!contact.email) cErrs.email = "Email is required";
-    else if (!EMAIL_REGEX.test(contact.email)) cErrs.email = "Enter a valid email address";
+    else if (!EMAIL_REGEX.test(contact.email))
+      cErrs.email = "Enter a valid email address";
     setContactErrors(cErrs);
 
     const bErrs = {};
@@ -835,12 +1556,16 @@ export default function BookFlight() {
     if (!billing.state.trim()) bErrs.state = "State is required";
     setBillingErrors(bErrs);
 
-    const hasErrors = Object.keys(travErrs).length > 0 || Object.keys(cErrs).length > 0 || Object.keys(bErrs).length > 0;
+    const hasErrors =
+      Object.keys(travErrs).length > 0 ||
+      Object.keys(cErrs).length > 0 ||
+      Object.keys(bErrs).length > 0;
 
     if (hasErrors) {
       setTimeout(() => {
         const firstErr = document.querySelector(".input-err");
-        if (firstErr) firstErr.scrollIntoView({ behavior: "smooth", block: "center" });
+        if (firstErr)
+          firstErr.scrollIntoView({ behavior: "smooth", block: "center" });
       }, 50);
       return;
     }
@@ -868,7 +1593,14 @@ export default function BookFlight() {
   };
 
   return (
-    <div style={{ fontFamily: "'Inter', 'Segoe UI', sans-serif", background: "#f0f4fa", minHeight: "100vh", padding: "24px 0 64px" }}>
+    <div
+      style={{
+        fontFamily: "'Inter', 'Segoe UI', sans-serif",
+        background: "#f0f4fa",
+        minHeight: "100vh",
+        padding: "24px 0 64px",
+      }}
+    >
       <style>{`
         * { box-sizing: border-box; margin: 0; padding: 0; }
         .bk-wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
@@ -901,7 +1633,69 @@ export default function BookFlight() {
         .rule-table td { padding: 11px 16px; color: #374151; border-top: 1px solid #f0f0f0; }
         .rule-table td:last-child:not([colspan]) { text-align: right; font-weight: 600; color: #111827; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @media (max-width: 580px) { .two-col { grid-template-columns: 1fr !important; } }
+        @media (max-width: 580px) { 
+  .two-col { grid-template-columns: 1fr !important; }
+  .seg-grid { 
+    grid-template-columns: 1fr !important; 
+    gap: 12px !important; 
+    padding: 14px 14px 10px !important;
+  }
+  .seg-times { 
+    gap: 8px !important; 
+    margin-right: 0 !important;
+    width: 100%;
+  }
+  .seg-times > div:first-child,
+  .seg-times > div:last-child {
+    min-width: 0 !important;
+    flex: 1 !important;
+  }
+  .seg-times > div:first-child > div:first-child,
+  .seg-times > div:last-child > div:first-child {
+    font-size: 17px !important;
+  }
+  .seg-times > div:nth-child(2) {
+    min-width: 60px !important;
+  }
+  .bk-wrap { padding: 0 10px !important; }
+  .card { border-radius: 10px !important; }
+  .section-hdr { 
+    flex-direction: column !important; 
+    align-items: flex-start !important; 
+    gap: 6px !important;
+  }
+  .section-hdr > div:last-child {
+    font-size: 11px !important;
+  }
+  .fare-row { 
+    padding: 8px 14px !important; 
+    font-size: 13px !important;
+  }
+  .rule-table th,
+  .rule-table td { 
+    padding: 8px 10px !important; 
+    font-size: 12px !important;
+  }
+  .layover-badge span {
+    font-size: 11px !important;
+    white-space: normal !important;
+    text-align: center !important;
+  }
+  .tab-btn {
+    font-size: 13px !important;
+    padding: 11px 0 !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .seg-times > div:first-child > div:first-child,
+  .seg-times > div:last-child > div:first-child {
+    font-size: 15px !important;
+  }
+  .seg-times > div:nth-child(2) {
+    min-width: 50px !important;
+  }
+}
 
         /* Passport/PAN info badge */
         .doc-badge {
@@ -948,18 +1742,37 @@ export default function BookFlight() {
 
             {/* ── Travellers ── */}
             <div className="card">
-              <div className="section-hdr" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div
+                className="section-hdr"
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
                 <div>
                   <h3>Travellers Details</h3>
                   <p style={{ marginTop: 2 }}>
                     {adultCount} Adult{adultCount !== 1 ? "s" : ""}
-                    {childCount > 0 ? `, ${childCount} Child${childCount !== 1 ? "ren" : ""}` : ""}
-                    {infantCount > 0 ? `, ${infantCount} Infant${infantCount !== 1 ? "s" : ""}` : ""}
+                    {childCount > 0
+                      ? `, ${childCount} Child${childCount !== 1 ? "ren" : ""}`
+                      : ""}
+                    {infantCount > 0
+                      ? `, ${infantCount} Infant${infantCount !== 1 ? "s" : ""}`
+                      : ""}
                     {" · "}
                     {searchMeta?.cabinClass || "Economy"}
                   </p>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, color: "#6b7280" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 5,
+                    fontSize: 12,
+                    color: "#6b7280",
+                  }}
+                >
                   <UserIcon />
                   <span>Name should match Government ID proof</span>
                 </div>
@@ -968,7 +1781,14 @@ export default function BookFlight() {
               <div style={{ padding: "16px 20px 4px" }}>
                 {/* Passport/PAN required badges — fareQuote load hone ke baad dikhao */}
                 {!fareQuoteLoading && (requiresPassport || requiresPan) && (
-                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 8 }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: 8,
+                      flexWrap: "wrap",
+                      marginBottom: 8,
+                    }}
+                  >
                     {requiresPassport && (
                       <div className="doc-badge">
                         🛂 Passport number &amp; expiry required for this flight
@@ -1000,7 +1820,9 @@ export default function BookFlight() {
                   />
                 )}
                 {travellers.children.length > 0 && (
-                  <div style={{ marginTop: travellers.adults.length > 0 ? 16 : 0 }}>
+                  <div
+                    style={{ marginTop: travellers.adults.length > 0 ? 16 : 0 }}
+                  >
                     <TravellerGroup
                       type="children"
                       label="Child"
@@ -1012,12 +1834,20 @@ export default function BookFlight() {
                       allErrors={validationErrors}
                       showErrors={showErrors}
                       requiresPassport={requiresPassport}
-                      requiresPan={false}  
+                      requiresPan={false}
                     />
                   </div>
                 )}
                 {travellers.infants.length > 0 && (
-                  <div style={{ marginTop: (travellers.adults.length > 0 || travellers.children.length > 0) ? 16 : 0 }}>
+                  <div
+                    style={{
+                      marginTop:
+                        travellers.adults.length > 0 ||
+                        travellers.children.length > 0
+                          ? 16
+                          : 0,
+                    }}
+                  >
                     <TravellerGroup
                       type="infants"
                       label="Infant"
@@ -1029,7 +1859,7 @@ export default function BookFlight() {
                       allErrors={validationErrors}
                       showErrors={showErrors}
                       requiresPassport={requiresPassport}
-                      requiresPan={false} 
+                      requiresPan={false}
                     />
                   </div>
                 )}
@@ -1046,15 +1876,33 @@ export default function BookFlight() {
                 <p>Your ticket &amp; flight details will be shared here</p>
               </div>
               <div style={{ padding: 20 }}>
-                <div className="two-col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+                <div
+                  className="two-col"
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: 14,
+                  }}
+                >
                   <div style={{ position: "relative" }}>
                     <label style={labelStyle}>Mobile Number *</label>
                     <div style={{ display: "flex" }}>
                       <select
                         className="input-field"
-                        style={{ width: 84, borderRadius: "8px 0 0 8px", borderRight: "none", background: "#f9fafb", paddingRight: 8 }}
+                        style={{
+                          width: 84,
+                          borderRadius: "8px 0 0 8px",
+                          borderRight: "none",
+                          background: "#f9fafb",
+                          paddingRight: 8,
+                        }}
                         value={contact.countryCode}
-                        onChange={(e) => setContact((p) => ({ ...p, countryCode: e.target.value }))}
+                        onChange={(e) =>
+                          setContact((p) => ({
+                            ...p,
+                            countryCode: e.target.value,
+                          }))
+                        }
                       >
                         <option>+91</option>
                         <option>+1</option>
@@ -1072,7 +1920,9 @@ export default function BookFlight() {
                         onChange={(e) => handleContactMobile(e.target.value)}
                       />
                     </div>
-                    {showErrors && contactErrors.mobile && <span style={errStyle}>⚠ {contactErrors.mobile}</span>}
+                    {showErrors && contactErrors.mobile && (
+                      <span style={errStyle}>⚠ {contactErrors.mobile}</span>
+                    )}
                   </div>
                   <div style={{ position: "relative" }}>
                     <label style={labelStyle}>Email Address *</label>
@@ -1083,7 +1933,9 @@ export default function BookFlight() {
                       value={contact.email}
                       onChange={(e) => handleContactEmail(e.target.value)}
                     />
-                    {showErrors && contactErrors.email && <span style={errStyle}>⚠ {contactErrors.email}</span>}
+                    {showErrors && contactErrors.email && (
+                      <span style={errStyle}>⚠ {contactErrors.email}</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1102,20 +1954,42 @@ export default function BookFlight() {
                     className={`input-field${showErrors && billingErrors.address ? " input-err" : ""}`}
                     placeholder="Address"
                     value={billing.address}
-                    onChange={(e) => setBilling((p) => ({ ...p, address: noLeadingSpaces(e.target.value) }))}
+                    onChange={(e) =>
+                      setBilling((p) => ({
+                        ...p,
+                        address: noLeadingSpaces(e.target.value),
+                      }))
+                    }
                   />
-                  {showErrors && billingErrors.address && <span style={errStyle}>⚠ {billingErrors.address}</span>}
+                  {showErrors && billingErrors.address && (
+                    <span style={errStyle}>⚠ {billingErrors.address}</span>
+                  )}
                 </div>
-                <div className="two-col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+                <div
+                  className="two-col"
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: 14,
+                    marginBottom: 14,
+                  }}
+                >
                   <div style={{ position: "relative" }}>
                     <label style={labelStyle}>City *</label>
                     <input
                       className={`input-field${showErrors && billingErrors.city ? " input-err" : ""}`}
                       placeholder="City"
                       value={billing.city}
-                      onChange={(e) => setBilling((p) => ({ ...p, city: noLeadingSpaces(e.target.value) }))}
+                      onChange={(e) =>
+                        setBilling((p) => ({
+                          ...p,
+                          city: noLeadingSpaces(e.target.value),
+                        }))
+                      }
                     />
-                    {showErrors && billingErrors.city && <span style={errStyle}>⚠ {billingErrors.city}</span>}
+                    {showErrors && billingErrors.city && (
+                      <span style={errStyle}>⚠ {billingErrors.city}</span>
+                    )}
                   </div>
                   <div style={{ position: "relative" }}>
                     <label style={labelStyle}>State *</label>
@@ -1123,14 +1997,32 @@ export default function BookFlight() {
                       className={`input-field${showErrors && billingErrors.state ? " input-err" : ""}`}
                       placeholder="State"
                       value={billing.state}
-                      onChange={(e) => setBilling((p) => ({ ...p, state: noLeadingSpaces(e.target.value) }))}
+                      onChange={(e) =>
+                        setBilling((p) => ({
+                          ...p,
+                          state: noLeadingSpaces(e.target.value),
+                        }))
+                      }
                     />
-                    {showErrors && billingErrors.state && <span style={errStyle}>⚠ {billingErrors.state}</span>}
+                    {showErrors && billingErrors.state && (
+                      <span style={errStyle}>⚠ {billingErrors.state}</span>
+                    )}
                   </div>
                 </div>
-                <div style={{ maxWidth: "calc(50% - 7px)", position: "relative" }}>
+                <div
+                  style={{ maxWidth: "calc(50% - 7px)", position: "relative" }}
+                >
                   <label style={labelStyle}>Nationality</label>
-                  <input className="input-field" value="India" readOnly style={{ background: "#f9fafb", cursor: "default", color: "#374151" }} />
+                  <input
+                    className="input-field"
+                    value="India"
+                    readOnly
+                    style={{
+                      background: "#f9fafb",
+                      cursor: "default",
+                      color: "#374151",
+                    }}
+                  />
                 </div>
               </div>
             </div>
@@ -1139,42 +2031,129 @@ export default function BookFlight() {
             <div className="card">
               <div className="section-hdr">
                 <h3>GST Details</h3>
-                <p>Use GST number to avail GST Benefits &amp; additional savings</p>
+                <p>
+                  Use GST number to avail GST Benefits &amp; additional savings
+                </p>
               </div>
               <div style={{ padding: 20 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <GSTToggle checked={gstEnabled} onChange={() => setGstEnabled((v) => !v)} />
-                  <span style={{ fontSize: 14, color: "#374151" }}>I would like to add my GST Number</span>
+                  <GSTToggle
+                    checked={gstEnabled}
+                    onChange={() => setGstEnabled((v) => !v)}
+                  />
+                  <span style={{ fontSize: 14, color: "#374151" }}>
+                    I would like to add my GST Number
+                  </span>
                 </div>
                 {gstEnabled && (
                   <div style={{ marginTop: 18 }}>
-                    <div className="two-col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+                    <div
+                      className="two-col"
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr 1fr",
+                        gap: 14,
+                        marginBottom: 14,
+                      }}
+                    >
                       <div style={{ position: "relative" }}>
                         <label style={labelStyle}>Company Name</label>
-                        <input className="input-field" placeholder="Company Name" value={gst.company} onChange={(e) => setGst((p) => ({ ...p, company: noLeadingSpaces(e.target.value) }))} />
+                        <input
+                          className="input-field"
+                          placeholder="Company Name"
+                          value={gst.company}
+                          onChange={(e) =>
+                            setGst((p) => ({
+                              ...p,
+                              company: noLeadingSpaces(e.target.value),
+                            }))
+                          }
+                        />
                       </div>
                       <div style={{ position: "relative" }}>
                         <label style={labelStyle}>GST Number</label>
-                        <input className="input-field" placeholder="GST Number" value={gst.number} onChange={(e) => setGst((p) => ({ ...p, number: noLeadingSpaces(e.target.value) }))} />
+                        <input
+                          className="input-field"
+                          placeholder="GST Number"
+                          value={gst.number}
+                          onChange={(e) =>
+                            setGst((p) => ({
+                              ...p,
+                              number: noLeadingSpaces(e.target.value),
+                            }))
+                          }
+                        />
                       </div>
                     </div>
                     <div style={{ marginBottom: 14, position: "relative" }}>
                       <label style={labelStyle}>Address</label>
-                      <input className="input-field" placeholder="Address" value={gst.address} onChange={(e) => setGst((p) => ({ ...p, address: noLeadingSpaces(e.target.value) }))} />
+                      <input
+                        className="input-field"
+                        placeholder="Address"
+                        value={gst.address}
+                        onChange={(e) =>
+                          setGst((p) => ({
+                            ...p,
+                            address: noLeadingSpaces(e.target.value),
+                          }))
+                        }
+                      />
                     </div>
-                    <div className="two-col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+                    <div
+                      className="two-col"
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr 1fr",
+                        gap: 14,
+                        marginBottom: 14,
+                      }}
+                    >
                       <div style={{ position: "relative" }}>
                         <label style={labelStyle}>City</label>
-                        <input className="input-field" placeholder="City" value={gst.city} onChange={(e) => setGst((p) => ({ ...p, city: noLeadingSpaces(e.target.value) }))} />
+                        <input
+                          className="input-field"
+                          placeholder="City"
+                          value={gst.city}
+                          onChange={(e) =>
+                            setGst((p) => ({
+                              ...p,
+                              city: noLeadingSpaces(e.target.value),
+                            }))
+                          }
+                        />
                       </div>
                       <div style={{ position: "relative" }}>
                         <label style={labelStyle}>State</label>
-                        <input className="input-field" placeholder="State" value={gst.state} onChange={(e) => setGst((p) => ({ ...p, state: noLeadingSpaces(e.target.value) }))} />
+                        <input
+                          className="input-field"
+                          placeholder="State"
+                          value={gst.state}
+                          onChange={(e) =>
+                            setGst((p) => ({
+                              ...p,
+                              state: noLeadingSpaces(e.target.value),
+                            }))
+                          }
+                        />
                       </div>
                     </div>
-                    <div style={{ maxWidth: "calc(50% - 7px)", position: "relative" }}>
+                    <div
+                      style={{
+                        maxWidth: "calc(50% - 7px)",
+                        position: "relative",
+                      }}
+                    >
                       <label style={labelStyle}>Nationality</label>
-                      <input className="input-field" value="India" readOnly style={{ background: "#f9fafb", cursor: "default", color: "#374151" }} />
+                      <input
+                        className="input-field"
+                        value="India"
+                        readOnly
+                        style={{
+                          background: "#f9fafb",
+                          cursor: "default",
+                          color: "#374151",
+                        }}
+                      />
                     </div>
                   </div>
                 )}
@@ -1183,17 +2162,47 @@ export default function BookFlight() {
           </div>
 
           {/* ── Fare Summary (sticky) ── */}
-          <div style={{ position: "sticky", top: 24 }}>
+          <div style={{ position: "sticky", top: 12 }}>
             <div className="card">
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 20px 12px", borderBottom: "1px solid #f3f4f6" }}>
-                <span style={{ fontWeight: 700, fontSize: 16, color: "#111827" }}>Fare Summary</span>
-                <span style={{ fontSize: 13, color: "#6b7280" }}>{totalPassengers} Traveller{totalPassengers !== 1 ? "s" : ""}</span>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  padding: "16px 20px 12px",
+                  borderBottom: "1px solid #f3f4f6",
+                }}
+              >
+                <span
+                  style={{ fontWeight: 700, fontSize: 16, color: "#111827" }}
+                >
+                  Fare Summary
+                </span>
+                <span style={{ fontSize: 13, color: "#6b7280" }}>
+                  {totalPassengers} Traveller{totalPassengers !== 1 ? "s" : ""}
+                </span>
               </div>
 
               {fareQuoteLoading ? (
                 <div style={{ padding: "28px 20px", textAlign: "center" }}>
-                  <div style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "#6b7280", fontSize: 13 }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ animation: "spin 1s linear infinite" }}>
+                  <div
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 8,
+                      color: "#6b7280",
+                      fontSize: 13,
+                    }}
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      style={{ animation: "spin 1s linear infinite" }}
+                    >
                       <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                     </svg>
                     Fetching latest fare...
@@ -1208,78 +2217,174 @@ export default function BookFlight() {
                     </span>
                   </div>
 
-                  <div style={{ padding: "10px 20px 4px", fontSize: 12, fontWeight: 700, color: "#16a34a", textTransform: "uppercase", letterSpacing: 0.5 }}>
+                  <div
+                    style={{
+                      padding: "10px 20px 4px",
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: "#16a34a",
+                      textTransform: "uppercase",
+                      letterSpacing: 0.5,
+                    }}
+                  >
                     {isRoundTrip ? "Onward Flight" : "Flight Fare"}
                   </div>
                   <div className="fare-row">
                     <span>{isRoundTrip ? "Onward Fare" : "Base Fare"}</span>
-                    <span style={{ fontWeight: 600 }}>₹{onwardFareTotal.toLocaleString("en-IN")}</span>
+                    <span style={{ fontWeight: 600 }}>
+                      ₹{onwardFareTotal.toLocaleString("en-IN")}
+                    </span>
                   </div>
                   {adultCount > 0 && (
                     <div className="fare-row">
                       <span>Adult × {adultCount}</span>
-                      <span style={{ fontWeight: 600 }}>₹{(Math.round(onwardPublished) * adultCount).toLocaleString("en-IN")}</span>
+                      <span style={{ fontWeight: 600 }}>
+                        ₹
+                        {(
+                          Math.round(onwardPublished) * adultCount
+                        ).toLocaleString("en-IN")}
+                      </span>
                     </div>
                   )}
                   {childCount > 0 && (
                     <div className="fare-row">
                       <span>Child × {childCount}</span>
-                      <span style={{ fontWeight: 600 }}>₹{(Math.round(onwardPublished) * childCount).toLocaleString("en-IN")}</span>
+                      <span style={{ fontWeight: 600 }}>
+                        ₹
+                        {(
+                          Math.round(onwardPublished) * childCount
+                        ).toLocaleString("en-IN")}
+                      </span>
                     </div>
                   )}
                   {infantCount > 0 && (
                     <div className="fare-row">
                       <span>Infant × {infantCount}</span>
-                      <span style={{ fontWeight: 600 }}>₹{(Math.round(onwardPublished) * infantCount).toLocaleString("en-IN")}</span>
+                      <span style={{ fontWeight: 600 }}>
+                        ₹
+                        {(
+                          Math.round(onwardPublished) * infantCount
+                        ).toLocaleString("en-IN")}
+                      </span>
                     </div>
                   )}
                   <div className="fare-row">
                     <span>Taxes &amp; Fees</span>
-                    <span style={{ fontWeight: 600 }}>₹{(onwardTaxAmt * totalPassengers).toLocaleString("en-IN")}</span>
+                    <span style={{ fontWeight: 600 }}>
+                      ₹
+                      {(onwardTaxAmt * totalPassengers).toLocaleString("en-IN")}
+                    </span>
                   </div>
-                  <div className="fare-row" style={{ borderTop: "1px solid #e5e7eb" }}>
-                    <span style={{ fontWeight: 700, color: "#111827" }}>{isRoundTrip ? "Onward Subtotal" : "Subtotal"}</span>
-                    <span style={{ fontWeight: 700, color: "#111827" }}>₹{(onwardFareTotal + onwardTaxAmt * totalPassengers).toLocaleString("en-IN")}</span>
+                  <div
+                    className="fare-row"
+                    style={{ borderTop: "1px solid #e5e7eb" }}
+                  >
+                    <span style={{ fontWeight: 700, color: "#111827" }}>
+                      {isRoundTrip ? "Onward Subtotal" : "Subtotal"}
+                    </span>
+                    <span style={{ fontWeight: 700, color: "#111827" }}>
+                      ₹
+                      {(
+                        onwardFareTotal +
+                        onwardTaxAmt * totalPassengers
+                      ).toLocaleString("en-IN")}
+                    </span>
                   </div>
 
                   {isRoundTrip && (
                     <>
-                      <div style={{ padding: "12px 20px 4px", fontSize: 12, fontWeight: 700, color: "#16a34a", textTransform: "uppercase", letterSpacing: 0.5, borderTop: "1px dashed #e5e7eb", marginTop: 4 }}>
+                      <div
+                        style={{
+                          padding: "12px 20px 4px",
+                          fontSize: 12,
+                          fontWeight: 700,
+                          color: "#16a34a",
+                          textTransform: "uppercase",
+                          letterSpacing: 0.5,
+                          borderTop: "1px dashed #e5e7eb",
+                          marginTop: 4,
+                        }}
+                      >
                         Return Flight
                       </div>
                       <div className="fare-row">
                         <span>Return Fare</span>
-                        <span style={{ fontWeight: 600 }}>₹{returnFareTotal.toLocaleString("en-IN")}</span>
+                        <span style={{ fontWeight: 600 }}>
+                          ₹{returnFareTotal.toLocaleString("en-IN")}
+                        </span>
                       </div>
                       {adultCount > 0 && (
                         <div className="fare-row">
                           <span>Adult × {adultCount}</span>
-                          <span style={{ fontWeight: 600 }}>₹{(Math.round(returnPublished) * adultCount).toLocaleString("en-IN")}</span>
+                          <span style={{ fontWeight: 600 }}>
+                            ₹
+                            {(
+                              Math.round(returnPublished) * adultCount
+                            ).toLocaleString("en-IN")}
+                          </span>
                         </div>
                       )}
                       {childCount > 0 && (
                         <div className="fare-row">
                           <span>Child × {childCount}</span>
-                          <span style={{ fontWeight: 600 }}>₹{(Math.round(returnPublished) * childCount).toLocaleString("en-IN")}</span>
+                          <span style={{ fontWeight: 600 }}>
+                            ₹
+                            {(
+                              Math.round(returnPublished) * childCount
+                            ).toLocaleString("en-IN")}
+                          </span>
                         </div>
                       )}
                       <div className="fare-row">
                         <span>Taxes &amp; Fees</span>
-                        <span style={{ fontWeight: 600 }}>₹{(returnTaxAmt * totalPassengers).toLocaleString("en-IN")}</span>
+                        <span style={{ fontWeight: 600 }}>
+                          ₹
+                          {(returnTaxAmt * totalPassengers).toLocaleString(
+                            "en-IN",
+                          )}
+                        </span>
                       </div>
-                      <div className="fare-row" style={{ borderTop: "1px solid #e5e7eb" }}>
-                        <span style={{ fontWeight: 700, color: "#111827" }}>Return Subtotal</span>
-                        <span style={{ fontWeight: 700, color: "#111827" }}>₹{(returnFareTotal + returnTaxAmt * totalPassengers).toLocaleString("en-IN")}</span>
+                      <div
+                        className="fare-row"
+                        style={{ borderTop: "1px solid #e5e7eb" }}
+                      >
+                        <span style={{ fontWeight: 700, color: "#111827" }}>
+                          Return Subtotal
+                        </span>
+                        <span style={{ fontWeight: 700, color: "#111827" }}>
+                          ₹
+                          {(
+                            returnFareTotal +
+                            returnTaxAmt * totalPassengers
+                          ).toLocaleString("en-IN")}
+                        </span>
                       </div>
                     </>
                   )}
                 </div>
               )}
 
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 20px", background: "#f9fafb", borderTop: "2px solid #e5e7eb" }}>
-                <span style={{ fontWeight: 700, fontSize: 15, color: "#111827" }}>Net Amount Payable</span>
-                <span style={{ fontWeight: 800, fontSize: 17, color: "#111827" }}>
-                  {fareQuoteLoading ? "—" : `₹${totalFare.toLocaleString("en-IN")}`}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  padding: "14px 20px",
+                  background: "#f9fafb",
+                  borderTop: "2px solid #e5e7eb",
+                }}
+              >
+                <span
+                  style={{ fontWeight: 700, fontSize: 15, color: "#111827" }}
+                >
+                  Net Amount Payable
+                </span>
+                <span
+                  style={{ fontWeight: 800, fontSize: 17, color: "#111827" }}
+                >
+                  {fareQuoteLoading
+                    ? "—"
+                    : `₹${totalFare.toLocaleString("en-IN")}`}
                 </span>
               </div>
 
@@ -1288,31 +2393,76 @@ export default function BookFlight() {
                   onClick={handleProceed}
                   disabled={fareQuoteLoading}
                   style={{
-                    width: "100%", padding: "13px 0", borderRadius: 10,
-                    background: fareQuoteLoading ? "#d1d5db" : "linear-gradient(135deg, #16a34a, #15803d)",
-                    color: "#fff", fontSize: 15, fontWeight: 700, border: "none",
+                    width: "100%",
+                    padding: "13px 0",
+                    borderRadius: 10,
+                    background: fareQuoteLoading
+                      ? "#d1d5db"
+                      : "linear-gradient(135deg, #16a34a, #15803d)",
+                    color: "#fff",
+                    fontSize: 15,
+                    fontWeight: 700,
+                    border: "none",
                     cursor: fareQuoteLoading ? "not-allowed" : "pointer",
-                    boxShadow: fareQuoteLoading ? "none" : "0 2px 12px rgba(22,163,74,0.3)",
+                    boxShadow: fareQuoteLoading
+                      ? "none"
+                      : "0 2px 12px rgba(22,163,74,0.3)",
                     transition: "opacity 0.15s",
                   }}
-                  onMouseOver={(e) => { if (!fareQuoteLoading) e.currentTarget.style.opacity = "0.9"; }}
+                  onMouseOver={(e) => {
+                    if (!fareQuoteLoading)
+                      e.currentTarget.style.opacity = "0.9";
+                  }}
                   onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
                 >
                   {fareQuoteLoading ? "Loading Fare..." : "Proceed to Payment"}
                 </button>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 10 }}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2">
-                    <rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 6,
+                    marginTop: 10,
+                  }}
+                >
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#9ca3af"
+                    strokeWidth="2"
+                  >
+                    <rect x="3" y="11" width="18" height="11" rx="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                   </svg>
-                  <span style={{ fontSize: 12, color: "#9ca3af" }}>Secured &amp; Encrypted Payment</span>
+                  <span style={{ fontSize: 12, color: "#9ca3af" }}>
+                    Secured &amp; Encrypted Payment
+                  </span>
                 </div>
               </div>
 
-              {showErrors && (Object.keys(validationErrors).length > 0 || Object.keys(contactErrors).length > 0 || Object.keys(billingErrors).length > 0) && (
-                <div style={{ margin: "0 16px 16px", padding: "10px 14px", background: "#fff5f5", border: "1px solid #fca5a5", borderRadius: 8, fontSize: 12, color: "#dc2626", fontWeight: 500 }}>
-                  ⚠ Please fill all required fields correctly before proceeding.
-                </div>
-              )}
+              {showErrors &&
+                (Object.keys(validationErrors).length > 0 ||
+                  Object.keys(contactErrors).length > 0 ||
+                  Object.keys(billingErrors).length > 0) && (
+                  <div
+                    style={{
+                      margin: "0 16px 16px",
+                      padding: "10px 14px",
+                      background: "#fff5f5",
+                      border: "1px solid #fca5a5",
+                      borderRadius: 8,
+                      fontSize: 12,
+                      color: "#dc2626",
+                      fontWeight: 500,
+                    }}
+                  >
+                    ⚠ Please fill all required fields correctly before
+                    proceeding.
+                  </div>
+                )}
             </div>
           </div>
         </div>

@@ -363,11 +363,13 @@ const FlightDetailSidebar = ({
               flexShrink: 0,
             }}
           />
-          <Box sx={{ width: 2, height: 55, bgcolor: "#E5E7EB" }} />
+          <Box
+            sx={{ width: 2, height: { xs: 70, sm: 60 }, bgcolor: "#E5E7EB" }}
+          />
           <Box
             sx={{
               width: 34,
-              height: 4,
+              height: 6,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -380,7 +382,9 @@ const FlightDetailSidebar = ({
               style={{ width: 20, height: 20, objectFit: "contain" }}
             />
           </Box>
-          <Box sx={{ width: 2, height: 55, bgcolor: "#E5E7EB" }} />
+          <Box
+            sx={{ width: 2, height: { xs: 70, sm: 60 }, bgcolor: "#E5E7EB" }}
+          />
           <Box
             sx={{
               width: 10,
@@ -1609,6 +1613,13 @@ const MONTH_SHORT = [
 ];
 const DAY_SHORT = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const VISIBLE_COUNT = 7;
+const getVisibleCount = () => {
+  if (typeof window === "undefined") return VISIBLE_COUNT;
+  if (window.innerWidth < 400) return 4;
+  if (window.innerWidth < 520) return 5;
+  if (window.innerWidth < 768) return 6;
+  return VISIBLE_COUNT;
+};
 
 const CalendarFareStrip = ({
   calendarData,
@@ -1626,7 +1637,15 @@ const CalendarFareStrip = ({
       .sort((a, b) => a.dateObj - b.dateObj);
   }, [calendarData]);
 
+  // const [startIdx, setStartIdx] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(getVisibleCount);
   const [startIdx, setStartIdx] = useState(0);
+
+  useEffect(() => {
+    const handleResize = () => setVisibleCount(getVisibleCount());
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     if (!allItems.length) return;
@@ -1648,16 +1667,16 @@ const CalendarFareStrip = ({
       Math.max(
         0,
         Math.min(
-          idx - Math.floor(VISIBLE_COUNT / 2),
-          allItems.length - VISIBLE_COUNT,
+          idx - Math.floor(visibleCount / 2),
+          allItems.length - visibleCount,
         ),
       ),
     );
   }, [allItems, selectedDate]);
 
   const canGoPrev = startIdx > 0;
-  const canGoNext = startIdx + VISIBLE_COUNT < allItems.length;
-  const visibleItems = allItems.slice(startIdx, startIdx + VISIBLE_COUNT);
+  const canGoNext = startIdx + visibleCount < allItems.length;
+  const visibleItems = allItems.slice(startIdx, startIdx + visibleCount);
   const lowestFare = useMemo(
     () =>
       allItems.length ? Math.min(...allItems.map((r) => r.TotalFare)) : null,
@@ -1684,7 +1703,7 @@ const CalendarFareStrip = ({
       >
         <Box
           sx={{
-            px: 2.5,
+            px: { xs: 1.5, sm: 2.5 },
             py: 1.5,
             borderBottom: "1px solid #F3F4F6",
             display: "flex",
@@ -1702,7 +1721,7 @@ const CalendarFareStrip = ({
         </Box>
         <Box sx={{ display: "flex", alignItems: "center", px: 1, py: 1.5 }}>
           <Box sx={{ width: 32 }} />
-          {Array.from({ length: VISIBLE_COUNT }).map((_, i) => (
+          {Array.from({ length: visibleCount }).map((_, i) => (
             <Box key={i} sx={{ flex: 1, mx: 0.5 }}>
               <Skeleton
                 variant="text"
@@ -1789,7 +1808,8 @@ const CalendarFareStrip = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            width: 36,
+            width: { xs: 28, sm: 36 },
+            minWidth: { xs: 28, sm: 36 },
             flexShrink: 0,
             cursor: canGoPrev ? "pointer" : "default",
             borderRight: "1px solid #F3F4F6",
@@ -1798,8 +1818,9 @@ const CalendarFareStrip = ({
             transition: "background 0.15s",
           }}
         >
-          <ChevronLeft sx={{ fontSize: 20 }} />
+          <ChevronLeft sx={{ fontSize: { xs: 16, sm: 20 } }} />
         </Box>
+
         {/* FIX: minWidth:0 on flex container prevents overflow */}
         <Box sx={{ flex: 1, display: "flex", minWidth: 0 }}>
           {visibleItems.map((item, idx) => {
@@ -1878,13 +1899,14 @@ const CalendarFareStrip = ({
         <Box
           onClick={() =>
             canGoNext &&
-            setStartIdx((i) => Math.min(allItems.length - VISIBLE_COUNT, i + 1))
+            setStartIdx((i) => Math.min(allItems.length - visibleCount, i + 1))
           }
           sx={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            width: 36,
+            width: { xs: 28, sm: 36 },
+            minWidth: { xs: 28, sm: 36 },
             flexShrink: 0,
             cursor: canGoNext ? "pointer" : "default",
             borderLeft: "1px solid #F3F4F6",
@@ -1893,14 +1915,22 @@ const CalendarFareStrip = ({
             transition: "background 0.15s",
           }}
         >
-          <ChevronRight sx={{ fontSize: 20 }} />
+          <ChevronRight sx={{ fontSize: { xs: 16, sm: 20 } }} />
         </Box>
       </Box>
     </Paper>
   );
 };
 
+// const RT_VISIBLE = 5;
+
 const RT_VISIBLE = 5;
+const getRtVisibleCount = () => {
+  if (typeof window === "undefined") return RT_VISIBLE;
+  if (window.innerWidth < 400) return 2;
+  if (window.innerWidth < 520) return 3;
+  return RT_VISIBLE;
+};
 
 const RoundTripCalendarStrip = ({
   onwardData,
@@ -1927,8 +1957,22 @@ const RoundTripCalendarStrip = ({
       .sort((a, b) => a.dateObj - b.dateObj);
   }, [returnData]);
 
+  // const [onwardStart, setOnwardStart] = useState(0);
+  // const [returnStart, setReturnStart] = useState(0);
+
+  const [rtVisible, setRtVisible] = useState(getRtVisibleCount);
   const [onwardStart, setOnwardStart] = useState(0);
   const [returnStart, setReturnStart] = useState(0);
+
+  useEffect(() => {
+    const handleResize = () => setRtVisible(getRtVisibleCount());
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const visibleItems = items.slice(startIdx, startIdx + RT_VISIBLE);
+  const canPrev = startIdx > 0;
+  const canNext = startIdx + RT_VISIBLE < items.length;
 
   useEffect(() => {
     if (!onwardItems.length) return;
@@ -2046,7 +2090,7 @@ const RoundTripCalendarStrip = ({
                 <Skeleton variant="text" width={120} />
               </Box>
               <Box sx={{ display: "flex", gap: 0.5 }}>
-                {Array.from({ length: RT_VISIBLE }).map((_, j) => (
+                {Array.from({ length: rtVisible }).map((_, j) => (
                   <Box key={j} sx={{ flex: 1 }}>
                     <Skeleton variant="text" sx={{ mb: 0.3 }} />
                     <Skeleton variant="text" />
@@ -2429,10 +2473,12 @@ const RoundTripFlightCard = ({ flight, selected, onSelect }) => {
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
         {/* FIX: fixed width instead of minWidth to prevent overflow */}
-        <Box sx={{ flexShrink: 0, textAlign: "left", width: 50 }}>
+        <Box
+          sx={{ flexShrink: 0, textAlign: "left", width: { xs: 46, sm: 52 } }}
+        >
           <Typography
             sx={{
-              fontSize: 15,
+              fontSize: { xs: 14, sm: 17 },
               fontWeight: 700,
               color: "#111",
               fontFamily: "Inter,Sans-serif",
@@ -2504,10 +2550,12 @@ const RoundTripFlightCard = ({ flight, selected, onSelect }) => {
             {stopLabel}
           </Typography>
         </Box>
-        <Box sx={{ flexShrink: 0, textAlign: "right", width: 50 }}>
+        <Box
+          sx={{ flexShrink: 0, textAlign: "right", width: { xs: 46, sm: 52 } }}
+        >
           <Typography
             sx={{
-              fontSize: 15,
+              fontSize: { xs: 14, sm: 17 },
               fontWeight: 700,
               color: "#111",
               fontFamily: "Inter,Sans-serif",
@@ -3691,7 +3739,7 @@ const FlightsListingPage = () => {
             <Box sx={{ textAlign: "right", flexShrink: 0, ml: 1 }}>
               <Typography
                 sx={{
-                  fontSize: 17,
+                  fontSize: { xs: 14, sm: 17 },
                   fontWeight: 700,
                   color: "#111",
                   fontFamily: "Inter,Sans-serif",
@@ -3718,10 +3766,16 @@ const FlightsListingPage = () => {
           {/* Row 2: Flight timeline */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             {/* FIX: use fixed width, not minWidth, to prevent overflow */}
-            <Box sx={{ flexShrink: 0, textAlign: "left", width: 52 }}>
+            <Box
+              sx={{
+                flexShrink: 0,
+                textAlign: "left",
+                width: { xs: 44, sm: 50 },
+              }}
+            >
               <Typography
                 sx={{
-                  fontSize: 17,
+                  fontSize: { xs: 13, sm: 15 },
                   fontWeight: 700,
                   color: "#111",
                   fontFamily: "Inter,Sans-serif",
@@ -3819,10 +3873,16 @@ const FlightsListingPage = () => {
                 </Typography>
               )}
             </Box>
-            <Box sx={{ flexShrink: 0, textAlign: "right", width: 52 }}>
+            <Box
+              sx={{
+                flexShrink: 0,
+                textAlign: "right",
+                width: { xs: 44, sm: 50 },
+              }}
+            >
               <Typography
                 sx={{
-                  fontSize: 17,
+                  fontSize: { xs: 13, sm: 15 },
                   fontWeight: 700,
                   color: "#111",
                   fontFamily: "Inter,Sans-serif",
@@ -3972,7 +4032,7 @@ const FlightsListingPage = () => {
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
           gap: { xs: 2, md: 3 },
-          p: { xs: 2, sm: 2.5, md: 3 },
+          p: { xs: 3, sm: 2.5, md: 3 },
           maxWidth: 1400,
           mx: "auto",
           alignItems: "flex-start",
