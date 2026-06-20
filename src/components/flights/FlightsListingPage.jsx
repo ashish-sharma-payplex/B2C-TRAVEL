@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from "react";
+import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import {
@@ -1593,19 +1593,192 @@ const applyFilters = (
   });
 };
 
+const PAGE_SIZE = 20;
+
+const useLazyList = (items, pageSize = PAGE_SIZE) => {
+  const [visibleCount, setVisibleCount] = useState(pageSize);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  useEffect(() => {
+    setVisibleCount(pageSize);
+    setIsLoadingMore(false);
+  }, [items, pageSize]);
+
+  const visibleItems = useMemo(
+    () => items.slice(0, visibleCount),
+    [items, visibleCount],
+  );
+
+  const hasMore = visibleCount < items.length;
+
+  const loadMore = useCallback(() => {
+    if (isLoadingMore) return;
+    setIsLoadingMore(true);
+    setTimeout(() => {
+      setVisibleCount((c) => Math.min(c + pageSize, items.length));
+      setIsLoadingMore(false);
+    }, 600);
+  }, [items.length, pageSize, isLoadingMore]);
+
+  return { visibleItems, hasMore, loadMore, isLoadingMore };
+};
+
+const FlightCardSkeleton = () => (
+  <Paper
+    elevation={0}
+    sx={{
+      mb: 1.5,
+      borderRadius: "14px",
+      border: "1px solid #E3E8EE",
+      bgcolor: "#fff",
+      overflow: "hidden",
+      p: 2.5,
+    }}
+  >
+    <Box
+      sx={{
+        display: { xs: "none", sm: "grid" },
+        gridTemplateColumns: "1.8fr 1.2fr 1.4fr 1.2fr 1.4fr",
+        alignItems: "center",
+        gap: 2,
+      }}
+    >
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+        <Skeleton variant="rounded" width={44} height={44} sx={{ borderRadius: "7.5px" }} />
+        <Box sx={{ flex: 1 }}>
+          <Skeleton variant="text" width="80%" height={20} />
+          <Skeleton variant="text" width="60%" height={16} />
+          <Skeleton variant="text" width="50%" height={14} />
+        </Box>
+      </Box>
+      <Box>
+        <Skeleton variant="text" width={60} height={26} />
+        <Skeleton variant="text" width={80} height={16} />
+      </Box>
+      <Box sx={{ textAlign: "center" }}>
+        <Skeleton variant="text" width="60%" height={20} sx={{ mx: "auto" }} />
+        <Skeleton variant="text" width="80%" height={12} sx={{ mx: "auto", my: 0.5 }} />
+        <Skeleton variant="text" width="50%" height={16} sx={{ mx: "auto" }} />
+      </Box>
+      <Box>
+        <Skeleton variant="text" width={60} height={26} />
+        <Skeleton variant="text" width={80} height={16} />
+      </Box>
+      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 1 }}>
+        <Skeleton variant="text" width={90} height={32} />
+        <Skeleton variant="rounded" width={100} height={36} sx={{ borderRadius: "8px" }} />
+      </Box>
+    </Box>
+
+    <Box sx={{ display: { xs: "flex", sm: "none" }, flexDirection: "column", gap: 1.5 }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Skeleton variant="rounded" width={32} height={32} sx={{ borderRadius: "7.5px" }} />
+          <Box>
+            <Skeleton variant="text" width={100} height={18} />
+            <Skeleton variant="text" width={70} height={14} />
+          </Box>
+        </Box>
+        <Skeleton variant="text" width={70} height={26} />
+      </Box>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Skeleton variant="text" width={52} height={40} />
+        <Box sx={{ flex: 1 }}>
+          <Skeleton variant="text" width="100%" height={12} />
+          <Skeleton variant="text" width="60%" height={12} sx={{ mx: "auto" }} />
+        </Box>
+        <Skeleton variant="text" width={52} height={40} />
+      </Box>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", pt: 0.5, borderTop: "1px solid #F3F4F6" }}>
+        <Skeleton variant="text" width={120} height={16} />
+        <Skeleton variant="rounded" width={80} height={32} sx={{ borderRadius: "8px" }} />
+      </Box>
+    </Box>
+  </Paper>
+);
+
+const InfiniteScrollSentinel = ({ onIntersect, hasMore, isLoadingMore, skeletonCount = 3, variant = "oneway" }) => {
+  const ref = useRef(null);
+  const called = useRef(false);
+
+  useEffect(() => {
+    called.current = false;
+  }, [hasMore]);
+
+  useEffect(() => {
+    if (!hasMore) return;
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !called.current) {
+          called.current = true;
+          onIntersect();
+        }
+      },
+      { rootMargin: "400px", threshold: 0 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [onIntersect, hasMore]);
+
+  if (isLoadingMore) {
+    if (variant === "roundtrip") {
+      return (
+        <Box>
+          {Array.from({ length: skeletonCount }).map((_, i) => (
+            <Paper
+              key={i}
+              elevation={0}
+              sx={{
+                p: 1.5,
+                mb: 1,
+                borderRadius: "12px",
+                border: "1px solid #E3E8EE",
+                bgcolor: "#fff",
+              }}
+            >
+              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1, flex: 1 }}>
+                  <Skeleton variant="rounded" width={28} height={28} sx={{ borderRadius: "7.5px" }} />
+                  <Box sx={{ flex: 1 }}>
+                    <Skeleton variant="text" width="70%" height={16} />
+                    <Skeleton variant="text" width="50%" height={13} />
+                  </Box>
+                </Box>
+                <Skeleton variant="text" width={60} height={22} />
+              </Box>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Skeleton variant="text" width={50} height={36} />
+                <Box sx={{ flex: 1 }}>
+                  <Skeleton variant="text" width="100%" height={10} />
+                  <Skeleton variant="text" width="60%" height={10} sx={{ mx: "auto" }} />
+                </Box>
+                <Skeleton variant="text" width={50} height={36} />
+              </Box>
+            </Paper>
+          ))}
+        </Box>
+      );
+    }
+    return (
+      <Box>
+        {Array.from({ length: skeletonCount }).map((_, i) => (
+          <FlightCardSkeleton key={i} />
+        ))}
+      </Box>
+    );
+  }
+
+  if (!hasMore) return null;
+
+  return <Box ref={ref} sx={{ height: 1, mt: 1 }} />;
+};
+
 const MONTH_SHORT = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
 const DAY_SHORT = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const VISIBLE_COUNT = 7;
@@ -1800,7 +1973,6 @@ const CalendarFareStrip = ({
         >
           <ChevronLeft sx={{ fontSize: 20 }} />
         </Box>
-        {/* FIX: minWidth:0 on flex container prevents overflow */}
         <Box sx={{ flex: 1, display: "flex", minWidth: 0 }}>
           {visibleItems.map((item, idx) => {
             const d = item.dateObj;
@@ -2164,7 +2336,6 @@ const RoundTripCalendarStrip = ({
           >
             <ChevronLeft sx={{ fontSize: 16 }} />
           </Box>
-          {/* FIX: minWidth:0 prevents overflow */}
           <Box sx={{ flex: 1, display: "flex", minWidth: 0 }}>
             {visibleItems.map((item, idx) => {
               const d = item.dateObj;
@@ -2428,7 +2599,6 @@ const RoundTripFlightCard = ({ flight, selected, onSelect }) => {
         </Box>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
-        {/* FIX: fixed width instead of minWidth to prevent overflow */}
         <Box sx={{ flexShrink: 0, textAlign: "left", width: 50 }}>
           <Typography
             sx={{
@@ -2544,7 +2714,18 @@ const RoundTripLayout = ({
   selectedReturn,
   setSelectedReturn,
   onOpenSidebar,
+  hasMoreOnward,
+  hasMoreReturn,
+  isLoadingMoreOnward,
+  isLoadingMoreReturn,
+  loadMoreOnward,
+  loadMoreReturn,
 }) => {
+  // Server pagination ke saath dono lists already accumulated aate hai —
+  // reveal seedha render karte hai, sentinel sirf next server page fetch karta hai.
+  const visibleOnward = onwardFlights;
+  const visibleReturn = returnFlights;
+
   const fromCode = searchMeta?.fromCity?.code || "Origin";
   const toCode = searchMeta?.toCity?.code || "Dest";
   const depDate = searchMeta?.departureDate
@@ -2634,14 +2815,25 @@ const RoundTripLayout = ({
               </Typography>
             </Paper>
           ) : (
-            onwardFlights.map((flight, i) => (
-              <RoundTripFlightCard
-                key={flight.ResultIndex || i}
-                flight={flight}
-                selected={selectedOnward?.ResultIndex === flight.ResultIndex}
-                onSelect={() => setSelectedOnward(flight)}
+            <>
+              {visibleOnward.map((flight, i) => (
+                <RoundTripFlightCard
+                  key={flight.ResultIndex || i}
+                  flight={flight}
+                  selected={
+                    selectedOnward?.ResultIndex === flight.ResultIndex
+                  }
+                  onSelect={() => setSelectedOnward(flight)}
+                />
+              ))}
+              <InfiniteScrollSentinel
+                onIntersect={loadMoreOnward}
+                hasMore={hasMoreOnward}
+                isLoadingMore={isLoadingMoreOnward}
+                skeletonCount={3}
+                variant="roundtrip"
               />
-            ))
+            </>
           )}
         </Box>
         <Box>
@@ -2709,14 +2901,25 @@ const RoundTripLayout = ({
               </Typography>
             </Paper>
           ) : (
-            returnFlights.map((flight, i) => (
-              <RoundTripFlightCard
-                key={flight.ResultIndex || i}
-                flight={flight}
-                selected={selectedReturn?.ResultIndex === flight.ResultIndex}
-                onSelect={() => setSelectedReturn(flight)}
+            <>
+              {visibleReturn.map((flight, i) => (
+                <RoundTripFlightCard
+                  key={flight.ResultIndex || i}
+                  flight={flight}
+                  selected={
+                    selectedReturn?.ResultIndex === flight.ResultIndex
+                  }
+                  onSelect={() => setSelectedReturn(flight)}
+                />
+              ))}
+              <InfiniteScrollSentinel
+                onIntersect={loadMoreReturn}
+                hasMore={hasMoreReturn}
+                isLoadingMore={isLoadingMoreReturn}
+                skeletonCount={3}
+                variant="roundtrip"
               />
-            ))
+            </>
           )}
         </Box>
       </Box>
@@ -2910,27 +3113,76 @@ const FlightsListingPage = () => {
     [navigate],
   );
 
-  const rawResults = useMemo(() => {
-    const state = location.state || {};
-    const data = state.searchResult?.data;
-    if (!data)
-      return { onwardFlights: [], returnFlights: [], isRoundTrip: false };
-    return normalizeFlightResponse(data);
+  // ── Accumulated flights + server-side pagination meta ──────────────────
+  // Naya search/date-change navigate karte hi location.state badalta hai,
+  // to yaha reset ho jata hai aur fresh page-1 set ho jaata hai.
+  const [accOnward, setAccOnward] = useState([]);
+  const [accReturn, setAccReturn] = useState([]);
+  const [onwardMeta, setOnwardMeta] = useState(null);
+  const [returnMeta, setReturnMeta] = useState(null);
+  const [loadingMoreOnward, setLoadingMoreOnward] = useState(false);
+  const [loadingMoreReturn, setLoadingMoreReturn] = useState(false);
+
+  useEffect(() => {
+    const data = location.state?.searchResult?.data;
+    const normalized = normalizeFlightResponse(data);
+    setAccOnward(normalized.onwardFlights || []);
+    setAccReturn(normalized.returnFlights || []);
+    setOnwardMeta(normalized.onwardMeta || null);
+    setReturnMeta(normalized.returnMeta || null);
   }, [location.state]);
+
+  const fetchMoreOnward = useCallback(async () => {
+    if (loadingMoreOnward || !onwardMeta?.next) return;
+    setLoadingMoreOnward(true);
+    const result = await searchFlights({
+      fromCity: searchMeta.fromCity,
+      toCity: searchMeta.toCity,
+      departureDate: new Date(searchMeta.departureDate),
+      returnDate: searchMeta.returnDate ? new Date(searchMeta.returnDate) : null,
+      passengers: searchMeta.passengers,
+      cabinClass: searchMeta.cabinClass || "Economy",
+      tripType,
+      outboundPage: onwardMeta.next,
+      outboundPageSize: onwardMeta.pageSize || 20,
+      inboundPage: returnMeta?.page || 1,
+      inboundPageSize: returnMeta?.pageSize || 20,
+    });
+    setLoadingMoreOnward(false);
+    if (!result?.data) return;
+    const normalized = normalizeFlightResponse(result.data);
+    setAccOnward((prev) => [...prev, ...(normalized.onwardFlights || [])]);
+    setOnwardMeta(normalized.onwardMeta || null);
+  }, [loadingMoreOnward, onwardMeta, returnMeta, searchMeta, tripType, searchFlights]);
+
+  const fetchMoreReturn = useCallback(async () => {
+    if (loadingMoreReturn || !returnMeta?.next) return;
+    setLoadingMoreReturn(true);
+    const result = await searchFlights({
+      fromCity: searchMeta.fromCity,
+      toCity: searchMeta.toCity,
+      departureDate: new Date(searchMeta.departureDate),
+      returnDate: searchMeta.returnDate ? new Date(searchMeta.returnDate) : null,
+      passengers: searchMeta.passengers,
+      cabinClass: searchMeta.cabinClass || "Economy",
+      tripType,
+      outboundPage: onwardMeta?.page || 1,
+      outboundPageSize: onwardMeta?.pageSize || 20,
+      inboundPage: returnMeta.next,
+      inboundPageSize: returnMeta.pageSize || 20,
+    });
+    setLoadingMoreReturn(false);
+    if (!result?.data) return;
+    const normalized = normalizeFlightResponse(result.data);
+    setAccReturn((prev) => [...prev, ...(normalized.returnFlights || [])]);
+    setReturnMeta(normalized.returnMeta || null);
+  }, [loadingMoreReturn, returnMeta, onwardMeta, searchMeta, tripType, searchFlights]);
 
   const { onwardFlights, returnFlights, oneWayFlights } = useMemo(() => {
     if (tripType === "roundtrip")
-      return {
-        onwardFlights: rawResults.onwardFlights || [],
-        returnFlights: rawResults.returnFlights || [],
-        oneWayFlights: [],
-      };
-    return {
-      onwardFlights: [],
-      returnFlights: [],
-      oneWayFlights: rawResults.onwardFlights || [],
-    };
-  }, [rawResults, tripType]);
+      return { onwardFlights: accOnward, returnFlights: accReturn, oneWayFlights: [] };
+    return { onwardFlights: [], returnFlights: [], oneWayFlights: accOnward };
+  }, [accOnward, accReturn, tripType]);
 
   const allFlightsForFilters = useMemo(
     () =>
@@ -2996,6 +3248,7 @@ const FlightsListingPage = () => {
         departureTime,
         arrivalTime,
         selectedAirlines,
+        fareTypeFilter,
       ),
     [
       onwardFlights,
@@ -3004,6 +3257,7 @@ const FlightsListingPage = () => {
       departureTime,
       arrivalTime,
       selectedAirlines,
+      fareTypeFilter,
     ],
   );
   const filteredReturnFlights = useMemo(
@@ -3015,6 +3269,7 @@ const FlightsListingPage = () => {
         departureTime,
         arrivalTime,
         selectedAirlines,
+        fareTypeFilter,
       ),
     [
       returnFlights,
@@ -3023,8 +3278,16 @@ const FlightsListingPage = () => {
       departureTime,
       arrivalTime,
       selectedAirlines,
+      fareTypeFilter,
     ],
   );
+
+  // Oneway list ka reveal ab seedha server-meta driven hai (page2/3...
+  // jab tak onwardMeta.next null na ho jaaye)
+  const visibleFlights = filteredFlights;
+  const hasMoreFlights = !!onwardMeta?.next;
+  const loadMoreFlights = fetchMoreOnward;
+  const isLoadingMoreFlights = loadingMoreOnward;
 
   const FilterPanel = () => (
     <Paper
@@ -3717,7 +3980,6 @@ const FlightsListingPage = () => {
 
           {/* Row 2: Flight timeline */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            {/* FIX: use fixed width, not minWidth, to prevent overflow */}
             <Box sx={{ flexShrink: 0, textAlign: "left", width: 52 }}>
               <Typography
                 sx={{
@@ -3906,7 +4168,6 @@ const FlightsListingPage = () => {
   };
 
   return (
-    // ── KEY FIX: overflowX hidden + width 100% on root prevents any horizontal scroll ──
     <Box
       sx={{
         bgcolor: "#F5F7FA",
@@ -3976,7 +4237,6 @@ const FlightsListingPage = () => {
           maxWidth: 1400,
           mx: "auto",
           alignItems: "flex-start",
-          // FIX: box-sizing + width 100% ensures padding doesn't push content out
           boxSizing: "border-box",
           width: "100%",
         }}
@@ -3991,7 +4251,6 @@ const FlightsListingPage = () => {
           <FilterPanel />
         </Box>
 
-        {/* FIX: minWidth: 0 is the most critical fix for flex children overflow */}
         <Box sx={{ flex: 1, minWidth: 0, boxSizing: "border-box" }}>
           {tripType === "oneway" ? (
             <CalendarFareStrip
@@ -4036,6 +4295,12 @@ const FlightsListingPage = () => {
               selectedReturn={selectedReturn}
               setSelectedReturn={setSelectedReturn}
               onOpenSidebar={() => setRtSidebarOpen(true)}
+              hasMoreOnward={!!onwardMeta?.next}
+              hasMoreReturn={!!returnMeta?.next}
+              isLoadingMoreOnward={loadingMoreOnward}
+              isLoadingMoreReturn={loadingMoreReturn}
+              loadMoreOnward={fetchMoreOnward}
+              loadMoreReturn={fetchMoreReturn}
             />
           ) : (
             <>
@@ -4086,7 +4351,7 @@ const FlightsListingPage = () => {
                       fontFamily: "Inter,Sans-serif",
                     }}
                   >
-                    {rawResults.length === 0
+                    {oneWayFlights.length === 0
                       ? "No flights data received"
                       : "No flights match your filters"}
                   </Typography>
@@ -4098,15 +4363,24 @@ const FlightsListingPage = () => {
                       fontFamily: "Inter,Sans-serif",
                     }}
                   >
-                    {rawResults.length === 0
+                    {oneWayFlights.length === 0
                       ? "Please search again"
                       : "Try adjusting your filters"}
                   </Typography>
                 </Paper>
               ) : (
-                filteredFlights.map((flight, i) => (
-                  <FlightCard key={flight.ResultIndex || i} flight={flight} />
-                ))
+                <>
+                  {visibleFlights.map((flight, i) => (
+                    <FlightCard key={flight.ResultIndex || i} flight={flight} />
+                  ))}
+                  <InfiniteScrollSentinel
+                    onIntersect={loadMoreFlights}
+                    hasMore={hasMoreFlights}
+                    isLoadingMore={isLoadingMoreFlights}
+                    skeletonCount={3}
+                    variant="oneway"
+                  />
+                </>
               )}
             </>
           )}

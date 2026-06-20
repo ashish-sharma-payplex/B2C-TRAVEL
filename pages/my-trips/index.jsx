@@ -43,35 +43,35 @@ const TicketSection = ({
 
       elevation={0}
 
-sx={{
+      sx={{
 
-p:2.5,
+        p: 2.5,
 
-border:"1px solid #e5e7eb",
+        border: "1px solid #e5e7eb",
 
-borderRadius:3,
+        borderRadius: 3,
 
-height:"170px",
+        height: "170px",
 
-display:"flex",
+        display: "flex",
 
-flexDirection:"column",
+        flexDirection: "column",
 
-justifyContent:"flex-start",
+        justifyContent: "flex-start",
 
-boxSizing:"border-box",
+        boxSizing: "border-box",
 
-transition:"0.2s ease",
+        transition: "0.2s ease",
 
-"&:hover":{
+        "&:hover": {
 
-boxShadow:
+          boxShadow:
 
-"0 4px 10px rgba(0,0,0,0.08)"
+            "0 4px 10px rgba(0,0,0,0.08)"
 
-}
+        }
 
-}}
+      }}
 
     >
 
@@ -79,13 +79,13 @@ boxShadow:
 
         sx={{
 
-          fontWeight:700,
+          fontWeight: 700,
 
-          fontSize:16,
+          fontSize: 16,
 
-          color:"#166534",
+          color: "#166534",
 
-          mb:2
+          mb: 2
 
         }}
 
@@ -231,67 +231,67 @@ const MyTrips = () => {
 
 
 
-      const fetchFlightBookings = async () => {
+  const fetchFlightBookings = async () => {
 
-      try {
+    try {
 
-        setLoading(true);
+      setLoading(true);
 
-        const response = await getMyTrips();
+      const response = await getMyTrips();
 
-        console.log("API Response :", response);
+      console.log("API Response :", response);
 
-        if (response.results?.length > 0) {
+      if (response.results?.length > 0) {
 
-          const firstBooking = response.results[0];
+        const firstBooking = response.results[0];
 
-          const details = await getBookingDetails(
-            firstBooking.booking_id
-          );
+        const details = await getBookingDetails(
+          firstBooking.booking_id
+        );
 
-          console.log("Booking Details :", details);
-
-        }
-
-        setFlightBookings(response.results || []);
-
-      } catch (error) {
-
-        console.log("Flight Booking Error :", error);
-
-      } finally {
-
-        setLoading(false);
+        console.log("Booking Details :", details);
 
       }
 
-    };
+      setFlightBookings(response.results || []);
 
-      useEffect(() => {
+    } catch (error) {
 
-        fetchFlightBookings();
+      console.log("Flight Booking Error :", error);
 
-      }, []);
+    } finally {
+
+      setLoading(false);
+
+    }
+
+  };
+
+  useEffect(() => {
+
+    fetchFlightBookings();
+
+  }, []);
 
 
 
-      const statusMap = {
-      Upcoming: "BOOKED",
-      Past: "TICKETED",
-      Cancelled: "CANCELLED",
-      Failed: "FAILED",
-    };
+  const statusMap = {
+    Upcoming: "BOOKED",
+    Past: "TICKETED",
+    Cancelled: "CANCELLED",
+    Failed: "FAILED",
+  };
 
 
 
   const filteredData =
-  selectedCategory === "Flights"
+    selectedCategory === "Flights"
 
-    ? flightBookings.filter(
+      ? flightBookings.filter(
         (item) => item.status === statusMap[selectedStatus]
       )
 
-    : STATIC_DATA[selectedCategory]?.filter(
+      : STATIC_DATA[selectedCategory]?.filter(
         (item) => item.status === selectedStatus
       ) || [];
 
@@ -301,76 +301,76 @@ const MyTrips = () => {
 
   const handleViewDetails = async (bookingId) => {
 
-  try {
+    try {
 
-    setDetailsLoading(true);
+      setDetailsLoading(true);
 
-    const response = await getBookingDetails(bookingId);
+      const response = await getBookingDetails(bookingId);
 
-    console.log(
-      "Booking Details :",
-      response
-    );
+      console.log(
+        "Booking Details :",
+        response
+      );
 
-    setSelectedBooking(response.data);
+      setSelectedBooking(response.data);
 
-    setOpenDetails(true);
+      setOpenDetails(true);
 
-  } catch (error) {
+    } catch (error) {
 
-    console.log(error);
+      console.log(error);
 
-  } finally {
+    } finally {
 
-    setDetailsLoading(false);
+      setDetailsLoading(false);
 
-  }
+    }
 
-};
-
-
+  };
 
 
-const handleOpenDetails = async (booking) => {
 
-  try {
 
-    setDetailsLoading(true);
+  const handleOpenDetails = async (booking) => {
 
-    const response = await getBookingDetails(
-      booking.booking_id
-    );
+    try {
 
-    console.log(
-      "Booking Details :",
-      response
-    );
+      setDetailsLoading(true);
 
-    setSelectedBooking(
-      response.data
-    );
+      const response = await getBookingDetails(
+        booking.booking_id
+      );
 
-    setOpenDetails(true);
+      console.log(
+        "Booking Details :",
+        response
+      );
 
-  } catch (error) {
+      setSelectedBooking(
+        response.data
+      );
 
-    console.log(error);
+      setOpenDetails(true);
 
-  } finally {
+    } catch (error) {
 
-    setDetailsLoading(false);
+      console.log(error);
 
-  }
+    } finally {
 
-};
+      setDetailsLoading(false);
 
-const handleCloseDetails = () => {
+    }
 
-  setOpenDetails(false);
+  };
 
-  setSelectedBooking(null);
+  const handleCloseDetails = () => {
 
-};
+    setOpenDetails(false);
+
+    setSelectedBooking(null);
+
+  };
 
   const renderBookingCard = (booking) => {
     return (
@@ -401,22 +401,22 @@ const handleCloseDetails = () => {
                 fontWeight: 600,
 
                 bgcolor:
-                    booking.status === "BOOKED"
-                      ? "#fef3c7"
-                      : booking.status === "TICKETED"
+                  booking.status === "BOOKED"
+                    ? "#fef3c7"
+                    : booking.status === "TICKETED"
                       ? "#dbeafe"
                       : booking.status === "CANCELLED"
-                      ? "#fee2e2"
-                      : "#f3f4f6",
+                        ? "#fee2e2"
+                        : "#f3f4f6",
 
-                  color:
-                    booking.status === "BOOKED"
-                      ? "#d97706"
-                      : booking.status === "TICKETED"
+                color:
+                  booking.status === "BOOKED"
+                    ? "#d97706"
+                    : booking.status === "TICKETED"
                       ? "#0369a1"
                       : booking.status === "CANCELLED"
-                      ? "#dc2626"
-                      : "#374151",
+                        ? "#dc2626"
+                        : "#374151",
 
 
 
@@ -467,113 +467,113 @@ const handleCloseDetails = () => {
 
           {selectedCategory === "Flights" && (
 
-<Box
-  sx={{
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    flexWrap: "wrap",
-    gap: 2,
-  }}
->
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: 2,
+              }}
+            >
 
-{/* Left */}
+              {/* Left */}
 
-<Box sx={{ flex: 3 }}>
+              <Box sx={{ flex: 3 }}>
 
-  <Typography
-    sx={{
-      fontSize: 18,
-      fontWeight: 700,
-      color: "#166534",
-      mb: 1,
-    }}
-  >
-    ✈️ Booking #{booking.booking_id}
-  </Typography>
+                <Typography
+                  sx={{
+                    fontSize: 18,
+                    fontWeight: 700,
+                    color: "#166534",
+                    mb: 1,
+                  }}
+                >
+                  ✈️ Booking #{booking.booking_id}
+                </Typography>
 
-  <Box
-    sx={{
-      display: "flex",
-      flexWrap: "wrap",
-      gap: 4,
-    }}
-  >
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 4,
+                  }}
+                >
 
-    <Box>
+                  <Box>
 
-      <Typography
-        sx={{
-          fontSize: 12,
-          color: "#666",
-        }}
-      >
-        PNR
-      </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: 12,
+                        color: "#666",
+                      }}
+                    >
+                      PNR
+                    </Typography>
 
-      <Typography
-        sx={{
-          fontWeight: 700,
-        }}
-      >
-        {booking.pnr}
-      </Typography>
+                    <Typography
+                      sx={{
+                        fontWeight: 700,
+                      }}
+                    >
+                      {booking.pnr}
+                    </Typography>
 
-    </Box>
+                  </Box>
 
-    <Box>
+                  <Box>
 
-      <Typography
-        sx={{
-          fontSize: 12,
-          color: "#666",
-        }}
-      >
-        Created
-      </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: 12,
+                        color: "#666",
+                      }}
+                    >
+                      Created
+                    </Typography>
 
-      <Typography
-        sx={{
-          fontWeight: 600,
-        }}
-      >
-        {new Date(
-          booking.created_at
-        ).toLocaleDateString()}
-      </Typography>
+                    <Typography
+                      sx={{
+                        fontWeight: 600,
+                      }}
+                    >
+                      {new Date(
+                        booking.created_at
+                      ).toLocaleDateString()}
+                    </Typography>
 
-    </Box>
+                  </Box>
 
-  </Box>
+                </Box>
 
-  <Typography
-    sx={{
-      mt: 1,
-      fontSize: 13,
-      color: "#666",
-      wordBreak: "break-all",
-    }}
-  >
+                <Typography
+                  sx={{
+                    mt: 1,
+                    fontSize: 13,
+                    color: "#666",
+                    wordBreak: "break-all",
+                  }}
+                >
 
-    Order : {booking.order_id}
+                  Order : {booking.order_id}
 
-  </Typography>
+                </Typography>
 
-</Box>
+              </Box>
 
 
-{/* Right */}
+              {/* Right */}
 
-<Box
-  sx={{
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "flex-end",
-    gap: 2,
-  }}
->
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-end",
+                  gap: 2,
+                }}
+              >
 
-{/* <Typography
+                {/* <Typography
 
   sx={{
 
@@ -605,41 +605,41 @@ const handleCloseDetails = () => {
 
 </Typography> */}
 
-<Button
+                <Button
 
-variant="contained"
+                  variant="contained"
 
-size="small"
+                  size="small"
 
-onClick={() => handleOpenDetails(booking)}
+                  onClick={() => handleOpenDetails(booking)}
 
-sx={{
+                  sx={{
 
-textTransform:"none",
+                    textTransform: "none",
 
-bgcolor:"#16a34a",
+                    bgcolor: "#16a34a",
 
-"&:hover":{
+                    "&:hover": {
 
-bgcolor:"#15803d"
+                      bgcolor: "#15803d"
 
-}
+                    }
 
-}}
+                  }}
 
->
+                >
 
-{detailsLoading
- ? "Loading..."
- : "View Details"}
+                  {detailsLoading
+                    ? "Loading..."
+                    : "View Details"}
 
-</Button>
+                </Button>
 
-</Box>
+              </Box>
 
-</Box>
+            </Box>
 
-)}
+          )}
 
           {selectedCategory === "Trains" && (
             <>
@@ -795,618 +795,618 @@ bgcolor:"#15803d"
 
   return (
     <>
-    <Box sx={{ minHeight: "100vh", bgcolor: "#f5f5f5", py: 3 }}>
-      {/* Container wrapper - centered */}
-      <Box sx={{ maxWidth: 1400, mx: "auto", px: { xs: 2, md: 4 } }}>
-        {/* Status Filter Buttons - Top Right */}
-        <Box sx={{ display: "flex", gap: 2, mb: 4, justifyContent: "flex-end" }}>
-          {STATUS_FILTERS.map((status) => (
-            <Button
-              key={status}
-              variant={selectedStatus === status ? "contained" : "outlined"}
-              onClick={() => setSelectedStatus(status)}
-              sx={{
-                borderRadius: "20px",
-                fontWeight: 600,
-                fontSize: 13,
-                textTransform: "none",
-                px: 2.5,
-                py: 1,
-                ...(selectedStatus === status
-                  ? {
+      <Box sx={{ minHeight: "100vh", bgcolor: "#f5f5f5", py: 3 }}>
+        {/* Container wrapper - centered */}
+        <Box sx={{ maxWidth: 1400, mx: "auto", px: { xs: 2, md: 4 } }}>
+          {/* Status Filter Buttons - Top Right */}
+          <Box sx={{ display: "flex", gap: 2, mb: 4, justifyContent: "flex-end" }}>
+            {STATUS_FILTERS.map((status) => (
+              <Button
+                key={status}
+                variant={selectedStatus === status ? "contained" : "outlined"}
+                onClick={() => setSelectedStatus(status)}
+                sx={{
+                  borderRadius: "20px",
+                  fontWeight: 600,
+                  fontSize: 13,
+                  textTransform: "none",
+                  px: 2.5,
+                  py: 1,
+                  ...(selectedStatus === status
+                    ? {
                       bgcolor: GREEN,
                       color: "#fff",
                       borderColor: GREEN,
                       "&:hover": { bgcolor: "#15803d" },
                     }
-                  : {
+                    : {
                       borderColor: "#ddd",
                       color: "#666",
                       "&:hover": { borderColor: GREEN, color: GREEN },
                     }),
-              }}
-            >
-              {status}
-            </Button>
-          ))}
-        </Box>
-
-        {/* Main Content Wrapper - Flex with gap */}
-        <Box sx={{ display: "flex", gap: 3, minHeight: "calc(100vh - 150px)" }}>
-          {/* Left Sidebar Card */}
-          <Paper
-            elevation={0}
-            sx={{
-              width: 300,
-              bgcolor: "#ffffff",
-              borderRadius: "16px",
-              border: "1px solid #e8e8e8",
-              flexShrink: 0,
-              display: "flex",
-              flexDirection: "column",
-              height: "fit-content",
-              position: "sticky",
-              top: 24,
-            }}
-          >
-            <Box sx={{ p: 2.5, pb: 1.5 }}>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <CalendarMonthIcon sx={{ fontSize: 24, color: GREEN }} />
-                <Typography sx={{ fontSize: 18, fontWeight: 700, color: "#1a1a1a" }}>
-                  My Trips
-                </Typography>
-              </Box>
-            </Box>
-
-            <Divider />
-
-            <List sx={{ p: 0 }}>
-              {CATEGORIES.map((category) => (
-                <ListItem
-                  key={category.label}
-                  disablePadding
-                  onClick={() => {
-                    setSelectedCategory(category.label);
-                    setSelectedStatus("Upcoming");
-                  }}
-                  sx={{
-                    bgcolor:
-                      selectedCategory === category.label ? "#f0fdf4" : "transparent",
-                  }}
-                >
-                  <ListItemButton
-                    sx={{
-                      py: 1.5,
-                      px: 2,
-                      color:
-                        selectedCategory === category.label ? GREEN : "#666",
-                      fontWeight: selectedCategory === category.label ? 700 : 500,
-                      borderLeft:
-                        selectedCategory === category.label
-                          ? `3px solid ${GREEN}`
-                          : "3px solid transparent",
-                      transition: "all 0.2s ease",
-                      "&:hover": { bgcolor: "#fafafa" },
-                    }}
-                  >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 40,
-                        color:
-                          selectedCategory === category.label
-                            ? GREEN
-                            : "#999",
-                      }}
-                    >
-                      {category.icon}
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={category.label}
-                      primaryTypographyProps={{
-                        fontSize: 14,
-                        fontWeight:
-                          selectedCategory === category.label ? 700 : 500,
-                        color:
-                          selectedCategory === category.label
-                            ? GREEN
-                            : "#333",
-                      }}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-          </Paper>
-
-          {/* Right Content Card */}
-          <Paper
-            elevation={0}
-            sx={{
-              flex: 1,
-              bgcolor: "#ffffff",
-              borderRadius: "16px",
-              border: "1px solid #e8e8e8",
-              p: 4,
-              minHeight: "600px",
-            }}
-          >
-            {/* Booking Cards */}
-            {filteredData.length > 0 ? (
-              <Box>
-                {filteredData.map((booking) => renderBookingCard(booking))}
-              </Box>
-            ) : (
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  minHeight: "500px",
                 }}
               >
+                {status}
+              </Button>
+            ))}
+          </Box>
+
+          {/* Main Content Wrapper - Flex with gap */}
+          <Box sx={{ display: "flex", gap: 3, minHeight: "calc(100vh - 150px)" }}>
+            {/* Left Sidebar Card */}
+            <Paper
+              elevation={0}
+              sx={{
+                width: 300,
+                bgcolor: "#ffffff",
+                borderRadius: "16px",
+                border: "1px solid #e8e8e8",
+                flexShrink: 0,
+                display: "flex",
+                flexDirection: "column",
+                height: "fit-content",
+                position: "sticky",
+                top: 24,
+              }}
+            >
+              <Box sx={{ p: 2.5, pb: 1.5 }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <CalendarMonthIcon sx={{ fontSize: 24, color: GREEN }} />
+                  <Typography sx={{ fontSize: 18, fontWeight: 700, color: "#1a1a1a" }}>
+                    My Trips
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Divider />
+
+              <List sx={{ p: 0 }}>
+                {CATEGORIES.map((category) => (
+                  <ListItem
+                    key={category.label}
+                    disablePadding
+                    onClick={() => {
+                      setSelectedCategory(category.label);
+                      setSelectedStatus("Upcoming");
+                    }}
+                    sx={{
+                      bgcolor:
+                        selectedCategory === category.label ? "#f0fdf4" : "transparent",
+                    }}
+                  >
+                    <ListItemButton
+                      sx={{
+                        py: 1.5,
+                        px: 2,
+                        color:
+                          selectedCategory === category.label ? GREEN : "#666",
+                        fontWeight: selectedCategory === category.label ? 700 : 500,
+                        borderLeft:
+                          selectedCategory === category.label
+                            ? `3px solid ${GREEN}`
+                            : "3px solid transparent",
+                        transition: "all 0.2s ease",
+                        "&:hover": { bgcolor: "#fafafa" },
+                      }}
+                    >
+                      <ListItemIcon
+                        sx={{
+                          minWidth: 40,
+                          color:
+                            selectedCategory === category.label
+                              ? GREEN
+                              : "#999",
+                        }}
+                      >
+                        {category.icon}
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={category.label}
+                        primaryTypographyProps={{
+                          fontSize: 14,
+                          fontWeight:
+                            selectedCategory === category.label ? 700 : 500,
+                          color:
+                            selectedCategory === category.label
+                              ? GREEN
+                              : "#333",
+                        }}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
+            </Paper>
+
+            {/* Right Content Card */}
+            <Paper
+              elevation={0}
+              sx={{
+                flex: 1,
+                bgcolor: "#ffffff",
+                borderRadius: "16px",
+                border: "1px solid #e8e8e8",
+                p: 4,
+                minHeight: "600px",
+              }}
+            >
+              {/* Booking Cards */}
+              {filteredData.length > 0 ? (
+                <Box>
+                  {filteredData.map((booking) => renderBookingCard(booking))}
+                </Box>
+              ) : (
                 <Box
                   sx={{
-                    mb: 3,
-                    fontSize: 80,
-                    opacity: 0.3,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    minHeight: "500px",
                   }}
                 >
-                  📅
+                  <Box
+                    sx={{
+                      mb: 3,
+                      fontSize: 80,
+                      opacity: 0.3,
+                    }}
+                  >
+                    📅
+                  </Box>
+                  <Typography
+                    sx={{
+                      fontSize: 24,
+                      fontWeight: 700,
+                      color: "#1a1a1a",
+                      mb: 1,
+                    }}
+                  >
+                    No {selectedStatus} Bookings
+                  </Typography>
+                  <Typography sx={{ color: "#666", fontSize: 14 }}>
+                    Looks like you don't have any {selectedStatus.toLowerCase()} {selectedCategory.toLowerCase()} bookings yet.
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      mt: 3,
+                      bgcolor: GREEN,
+                      textTransform: "none",
+                      fontWeight: 600,
+                      "&:hover": { bgcolor: "#15803d" },
+                    }}
+                  >
+                    Book your next trip
+                  </Button>
                 </Box>
-                <Typography
-                  sx={{
-                    fontSize: 24,
-                    fontWeight: 700,
-                    color: "#1a1a1a",
-                    mb: 1,
-                  }}
-                >
-                  No {selectedStatus} Bookings
-                </Typography>
-                <Typography sx={{ color: "#666", fontSize: 14 }}>
-                  Looks like you don't have any {selectedStatus.toLowerCase()} {selectedCategory.toLowerCase()} bookings yet.
-                </Typography>
-                <Button
-                  variant="contained"
-                  sx={{
-                    mt: 3,
-                    bgcolor: GREEN,
-                    textTransform: "none",
-                    fontWeight: 600,
-                    "&:hover": { bgcolor: "#15803d" },
-                  }}
-                >
-                  Book your next trip
-                </Button>
-              </Box>
-            )}
-          </Paper>
+              )}
+            </Paper>
+          </Box>
         </Box>
       </Box>
-    </Box>
 
-<Dialog
+      <Dialog
 
-open={openDetails}
+        open={openDetails}
 
-onClose={handleCloseDetails}
+        onClose={handleCloseDetails}
 
-fullWidth
+        fullWidth
 
-maxWidth="lg"
+        maxWidth="lg"
 
-PaperProps={{
+        PaperProps={{
 
-sx:{
+          sx: {
 
-borderRadius:6,
+            borderRadius: 6,
 
-overflow:"hidden",
+            overflow: "hidden",
 
-width:"100%",
+            width: "100%",
 
-maxWidth:"950px",
+            maxWidth: "950px",
 
-maxHeight:"85vh",
+            maxHeight: "85vh",
 
-boxShadow:
+            boxShadow:
 
-"0 20px 50px rgba(0,0,0,0.15)"
+              "0 20px 50px rgba(0,0,0,0.15)"
 
-}
+          }
 
-}}
+        }}
 
->
+      >
 
-<DialogContent sx={{ p: 0 }}>
+        <DialogContent sx={{ p: 0 }}>
 
-{selectedBooking && (
+          {selectedBooking && (
 
-(() => {
+            (() => {
 
-const itinerary =
-selectedBooking.raw?.FlightItinerary;
+              const itinerary =
+                selectedBooking.raw?.FlightItinerary;
 
-const segment =
-itinerary?.Segments?.[0];
+              const segment =
+                itinerary?.Segments?.[0];
 
-const passenger =
-itinerary?.Passenger?.[0];
+              const passenger =
+                itinerary?.Passenger?.[0];
 
-const fare =
-itinerary?.Fare;
+              const fare =
+                itinerary?.Fare;
 
-const invoice =
-itinerary?.Invoice?.[0];
+              const invoice =
+                itinerary?.Invoice?.[0];
 
-const ticket =
-passenger?.Ticket;
+              const ticket =
+                passenger?.Ticket;
 
-return (
+              return (
 
-<Box>
+                <Box>
 
-<Box
+                  <Box
 
-sx={{
+                    sx={{
 
-bgcolor:"#16a34a",
+                      bgcolor: "#16a34a",
 
-color:"#fff",
+                      color: "#fff",
 
-p:3
+                      p: 3
 
-}}
+                    }}
 
->
+                  >
 
-<Typography
+                    <Typography
 
-sx={{
+                      sx={{
 
-fontSize:24,
+                        fontSize: 24,
 
-fontWeight:700
+                        fontWeight: 700
 
-}}
+                      }}
 
->
+                    >
 
-✈️ Flight Ticket
+                      ✈️ Flight Ticket
 
-</Typography>
+                    </Typography>
 
-<Typography>
+                    <Typography>
 
-PNR : {selectedBooking.pnr}
+                      PNR : {selectedBooking.pnr}
 
-</Typography>
+                    </Typography>
 
-</Box>
+                  </Box>
 
 
-<Box
+                  <Box
 
-sx={{
+                    sx={{
 
-p:4,
+                      p: 4,
 
-bgcolor:"#fafafa"
+                      bgcolor: "#fafafa"
 
-}}
+                    }}
 
->
+                  >
 
-<Grid
+                    <Grid
 
-container
+                      container
 
-spacing={3}
+                      spacing={3}
 
-alignItems="stretch"
+                      alignItems="stretch"
 
->
+                    >
 
 
-<Grid item xs={12} md={6}>
+                      <Grid item xs={12} md={6}>
 
-<TicketSection title="Flight Details">
+                        <TicketSection title="Flight Details">
 
-<Typography>
+                          <Typography>
 
-Booking :
+                            Booking :
 
-{selectedBooking.booking_id}
+                            {selectedBooking.booking_id}
 
-</Typography>
+                          </Typography>
 
-<Typography>
+                          <Typography>
 
-Route :
+                            Route :
 
-{selectedBooking.origin}
+                            {selectedBooking.origin}
 
-{" → "}
+                            {" → "}
 
-{selectedBooking.destination}
+                            {selectedBooking.destination}
 
-</Typography>
+                          </Typography>
 
-</TicketSection>
+                        </TicketSection>
 
-</Grid>
+                      </Grid>
 
 
-<Grid item xs={12} md={6}>
+                      <Grid item xs={12} md={6}>
 
-<TicketSection title="Passenger Details">
+                        <TicketSection title="Passenger Details">
 
-<Typography>
+                          <Typography>
 
-{passenger?.Title}
+                            {passenger?.Title}
 
-{" "}
+                            {" "}
 
-{passenger?.FirstName}
+                            {passenger?.FirstName}
 
-{" "}
+                            {" "}
 
-{passenger?.LastName}
+                            {passenger?.LastName}
 
-</Typography>
+                          </Typography>
 
-<Typography>
+                          <Typography>
 
-{passenger?.Email}
+                            {passenger?.Email}
 
-</Typography>
+                          </Typography>
 
-<Typography>
+                          <Typography>
 
-{passenger?.ContactNo}
+                            {passenger?.ContactNo}
 
-</Typography>
+                          </Typography>
 
-</TicketSection>
+                        </TicketSection>
 
-</Grid>
+                      </Grid>
 
 
-<Grid item xs={12} md={6}>
+                      <Grid item xs={12} md={6}>
 
-<TicketSection title="Departure">
+                        <TicketSection title="Departure">
 
-<Typography>
+                          <Typography>
 
-{
+                            {
 
-segment?.Origin
+                              segment?.Origin
 
-?.Airport
+                                ?.Airport
 
-?.CityName
+                                ?.CityName
 
-}
+                            }
 
-</Typography>
+                          </Typography>
 
-<Typography>
+                          <Typography>
 
-{
+                            {
 
-new Date(
+                              new Date(
 
-segment?.Origin
+                                segment?.Origin
 
-?.DepTime
+                                  ?.DepTime
 
-).toLocaleString()
+                              ).toLocaleString()
 
-}
+                            }
 
-</Typography>
+                          </Typography>
 
-</TicketSection>
+                        </TicketSection>
 
-</Grid>
+                      </Grid>
 
 
-<Grid item xs={12} md={6}>
+                      <Grid item xs={12} md={6}>
 
-<TicketSection title="Arrival">
+                        <TicketSection title="Arrival">
 
-<Typography>
+                          <Typography>
 
-{
+                            {
 
-segment?.Destination
+                              segment?.Destination
 
-?.Airport
+                                ?.Airport
 
-?.CityName
+                                ?.CityName
 
-}
+                            }
 
-</Typography>
+                          </Typography>
 
-<Typography>
+                          <Typography>
 
-{
+                            {
 
-new Date(
+                              new Date(
 
-segment?.Destination
+                                segment?.Destination
 
-?.ArrTime
+                                  ?.ArrTime
 
-).toLocaleString()
+                              ).toLocaleString()
 
-}
+                            }
 
-</Typography>
+                          </Typography>
 
-</TicketSection>
+                        </TicketSection>
 
-</Grid>
+                      </Grid>
 
 
-<Grid item xs={12} md={6}>
+                      <Grid item xs={12} md={6}>
 
-<TicketSection title="Airline">
+                        <TicketSection title="Airline">
 
-<Typography>
+                          <Typography>
 
-{
+                            {
 
-segment?.Airline
+                              segment?.Airline
 
-?.AirlineName
+                                ?.AirlineName
 
-}
+                            }
 
-</Typography>
+                          </Typography>
 
-<Typography>
+                          <Typography>
 
-Flight :
+                            Flight :
 
-{
+                            {
 
-segment?.Airline
+                              segment?.Airline
 
-?.FlightNumber
+                                ?.FlightNumber
 
-}
+                            }
 
-</Typography>
+                          </Typography>
 
-</TicketSection>
+                        </TicketSection>
 
-</Grid>
+                      </Grid>
 
 
-<Grid item xs={12} md={6}>
+                      <Grid item xs={12} md={6}>
 
-<TicketSection title="Baggage">
+                        <TicketSection title="Baggage">
 
-<Typography>
+                          <Typography>
 
-Check In :
+                            Check In :
 
-{segment?.Baggage}
+                            {segment?.Baggage}
 
-</Typography>
+                          </Typography>
 
-<Typography>
+                          <Typography>
 
-Cabin :
+                            Cabin :
 
-{segment?.CabinBaggage}
+                            {segment?.CabinBaggage}
 
-</Typography>
+                          </Typography>
 
-</TicketSection>
+                        </TicketSection>
 
-</Grid>
+                      </Grid>
 
 
-<Grid item xs={12} md={6}>
+                      <Grid item xs={12} md={6}>
 
-<TicketSection title="Fare">
+                        <TicketSection title="Fare">
 
-<Typography>
+                          <Typography>
 
-Base :
+                            Base :
 
-₹{fare?.BaseFare}
+                            ₹{fare?.BaseFare}
 
-</Typography>
+                          </Typography>
 
-<Typography>
+                          <Typography>
 
-Tax :
+                            Tax :
 
-₹{fare?.Tax}
+                            ₹{fare?.Tax}
 
-</Typography>
+                          </Typography>
 
-<Typography>
+                          <Typography>
 
-Total :
+                            Total :
 
-₹{fare?.PublishedFare}
+                            ₹{fare?.PublishedFare}
 
-</Typography>
+                          </Typography>
 
-</TicketSection>
+                        </TicketSection>
 
-</Grid>
+                      </Grid>
 
 
-<Grid item xs={12} md={6}>
+                      <Grid item xs={12} md={6}>
 
-<TicketSection title="Invoice">
+                        <TicketSection title="Invoice">
 
-<Typography>
+                          <Typography>
 
-{invoice?.InvoiceNo}
+                            {invoice?.InvoiceNo}
 
-</Typography>
+                          </Typography>
 
-<Typography>
+                          <Typography>
 
-₹{invoice?.InvoiceAmount}
+                            ₹{invoice?.InvoiceAmount}
 
-</Typography>
+                          </Typography>
 
-</TicketSection>
+                        </TicketSection>
 
-</Grid>
+                      </Grid>
 
 
-<Grid item xs={12}>
+                      <Grid item xs={12}>
 
-<TicketSection title="Ticket Details">
+                        <TicketSection title="Ticket Details">
 
-<Typography>
+                          <Typography>
 
-Ticket :
+                            Ticket :
 
-{ticket?.TicketNumber}
+                            {ticket?.TicketNumber}
 
-</Typography>
+                          </Typography>
 
-<Typography>
+                          <Typography>
 
-Status :
+                            Status :
 
-{ticket?.Status}
+                            {ticket?.Status}
 
-</Typography>
+                          </Typography>
 
-</TicketSection>
+                        </TicketSection>
 
-</Grid>
+                      </Grid>
 
 
-</Grid>
+                    </Grid>
 
-</Box>
+                  </Box>
 
-</Box>
+                </Box>
 
-);
+              );
 
-})()
+            })()
 
-)}
+          )}
 
-</DialogContent>
+        </DialogContent>
 
-</Dialog>
-</>
+      </Dialog>
+    </>
 
   );
 };

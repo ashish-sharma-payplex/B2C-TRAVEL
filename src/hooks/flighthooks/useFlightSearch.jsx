@@ -29,12 +29,19 @@ function withTimeout(promise, ms, errorMsg = "Request timed out") {
 }
 
 // ── Normalize API response into consistent shape ──────────────────────────────
-// Returns: { onwardFlights, returnFlights, isRoundTrip, raw }
+// Returns: { onwardFlights, returnFlights, isRoundTrip, onwardMeta, returnMeta }
 // Case 1: Old format  → data.results.Results (flat array, one-way)
 // Case 2: New format  → data.Outbound + data.Inbound (round trip)
 // Case 3: New format  → data.Outbound + Inbound: null (one-way)
 export function normalizeFlightResponse(data) {
-  if (!data) return { onwardFlights: [], returnFlights: [], isRoundTrip: false };
+  if (!data)
+    return {
+      onwardFlights: [],
+      returnFlights: [],
+      isRoundTrip: false,
+      onwardMeta: null,
+      returnMeta: null,
+    };
 
   // New format
   if (data.Outbound !== undefined) {
@@ -46,6 +53,22 @@ export function normalizeFlightResponse(data) {
       onwardFlights: outbound,
       returnFlights: inbound,
       isRoundTrip,
+      onwardMeta: data.Outbound
+        ? {
+            count: data.Outbound.count,
+            page: data.Outbound.page,
+            pageSize: data.Outbound.page_size,
+            next: data.Outbound.next,
+          }
+        : null,
+      returnMeta: data.Inbound
+        ? {
+            count: data.Inbound.count,
+            page: data.Inbound.page,
+            pageSize: data.Inbound.page_size,
+            next: data.Inbound.next,
+          }
+        : null,
     };
   }
 
@@ -55,6 +78,8 @@ export function normalizeFlightResponse(data) {
     onwardFlights: flat,
     returnFlights: [],
     isRoundTrip: false,
+    onwardMeta: null,
+    returnMeta: null,
   };
 }
 
@@ -71,7 +96,7 @@ export function useFlightSearch() {
       passengers,
       cabinClass,
       tripType,
-      // ── Pagination params (optional, defaults provided) ──
+      
       outboundPage      = 1,
       outboundPageSize  = 20,
       inboundPage       = 1,
