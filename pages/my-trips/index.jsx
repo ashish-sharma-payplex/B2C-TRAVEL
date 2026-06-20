@@ -28,7 +28,7 @@ import TrainIcon from "@mui/icons-material/Train";
 import HotelIcon from "@mui/icons-material/Hotel";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-
+import BusBooking from "../my-trips booking details/BusBooking";
 
 const GREEN = "#16a34a";
 
@@ -205,8 +205,9 @@ const STATIC_DATA = {
 
 const CATEGORIES = [
   { label: "Flights", icon: <FlightIcon /> },
-  { label: "Trains", icon: <TrainIcon /> },
+  { label: "Bus", icon: <TrainIcon /> },
   { label: "Hotels", icon: <HotelIcon /> },
+  { label: "Trains", icon: <TrainIcon /> },
   { label: "Cabs", icon: <DirectionsCarIcon /> },
 ];
 
@@ -931,7 +932,141 @@ bgcolor:"#15803d"
             }}
           >
             {/* Booking Cards */}
-            {filteredData.length > 0 ? (
+
+            {selectedCategory === "Bus" ? (
+
+  <BusBooking />
+
+) : (
+
+  filteredData.length > 0 ? (
+
+    <Box>
+
+      {filteredData.map((booking) =>
+
+        renderBookingCard(booking)
+
+      )}
+
+    </Box>
+
+  ) : (
+
+    <Box
+
+      sx={{
+
+        display: "flex",
+
+        flexDirection: "column",
+
+        alignItems: "center",
+
+        justifyContent: "center",
+
+        minHeight: "500px",
+
+      }}
+
+    >
+
+      <Box
+
+        sx={{
+
+          mb: 3,
+
+          fontSize: 80,
+
+          opacity: 0.3,
+
+        }}
+
+      >
+
+        📅
+
+      </Box>
+
+      <Typography
+
+        sx={{
+
+          fontSize: 24,
+
+          fontWeight: 700,
+
+          color: "#1a1a1a",
+
+          mb: 1,
+
+        }}
+
+      >
+
+        No {selectedStatus} Bookings
+
+      </Typography>
+
+      <Typography
+
+        sx={{
+
+          color: "#666",
+
+          fontSize: 14,
+
+        }}
+
+      >
+
+        Looks like you don't have any{" "}
+
+        {selectedStatus.toLowerCase()}{" "}
+
+        {selectedCategory.toLowerCase()} bookings yet.
+
+      </Typography>
+
+      <Button
+
+        variant="contained"
+
+        sx={{
+
+          mt: 3,
+
+          bgcolor: GREEN,
+
+          textTransform: "none",
+
+          fontWeight: 600,
+
+          "&:hover": {
+
+            bgcolor: "#15803d",
+
+          },
+
+        }}
+
+      >
+
+        Book your next trip
+
+      </Button>
+
+    </Box>
+
+  )
+
+)}
+
+
+            {selectedCategory !== "Bus" && (
+
+            filteredData.length > 0 ? (
               <Box>
                 {filteredData.map((booking) => renderBookingCard(booking))}
               </Box>
@@ -980,7 +1115,9 @@ bgcolor:"#15803d"
                   Book your next trip
                 </Button>
               </Box>
+            )
             )}
+          
           </Paper>
         </Box>
       </Box>

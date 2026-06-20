@@ -30,8 +30,56 @@ export async function busFetch(
   return data;
 }
 
+
+
+
+
+export async function getBusBookingList() {
+  return await busFetch(
+    BUS_ENDPOINTS.BOOKING_LIST
+  );
+}
+
+export async function getBusBookingDetails(
+  traceId,
+  busId
+
+) {
+
+  return await busFetch(
+    BUS_ENDPOINTS.BOOKING_DETAILS,
+    {
+
+      method: "POST",
+      body: {
+        trace_id: traceId,
+        bus_id: busId,
+
+      },
+
+    }
+
+  );
+
+}
+
+
+
+
+
 export const BUS_ENDPOINTS = {
+
   CITY_LIST: "/api/busv2/city-list/",
+
   BUS_SEARCH: "/api/busv2/search/",
-  PAYMENT_CANCEL: "/api/busv2/payment/cancel/"
+
+  PAYMENT_CANCEL: "/api/busv2/payment/cancel/",
+
+  BOOKING_LIST: "/api/busv2/bookings/list/",
+
+  BOOKING_DETAILS: "/api/busv2/booking-detail/",
+
 };
+
+
+
