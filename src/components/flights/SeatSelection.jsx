@@ -434,19 +434,23 @@ export default function SeatSelectionPage() {
   // ── Agar seat data nahi hai — skip option do ──────────────────────────────
   if (error || segments.length === 0) return (
   <div style={styles.center}>
-    <div style={{
-      background: "#fff",
-      borderRadius: 16,
-      padding: "32px 40px",
-      boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
-      textAlign: "center",
-      maxWidth: 400,
-    }}>
+<div
+  style={{
+    background: "#fff",
+    borderRadius: 16,
+    padding: "32px 40px",
+    boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+    textAlign: "center",
+    maxWidth: 400,
+    width: "100%",
+    margin: "0 16px",
+  }}
+>
       <div style={{ fontSize: 40, marginBottom: 12 }}>💺</div>
-      <p style={{ color: "#374151", fontWeight: 600, fontSize: 16, marginBottom: 8 }}>
+      <p style={{ color: "#374151", fontWeight: 600,fontFamily: "Inter,sans-serif", fontSize: 16, marginBottom: 8 }}>
         Seat map not available
       </p>
-      <p style={{ color: "#9ca3af", fontSize: 13, marginBottom: 24 }}>
+      <p style={{ color: "#9ca3af", fontSize: 13,fontFamily: "Inter,sans-serif", marginBottom: 24 }}>
         Seat selection is not available for this flight. You can proceed to payment.
       </p>
       <button
@@ -463,7 +467,9 @@ export default function SeatSelectionPage() {
           });
         }}
       >
+        <p style={{fontSize: 15, fontWeight: 700, fontFamily: "Inter,sans-serif"}}>
         Continue to Payment
+        </p>
       </button>
 
       {/* ← Yahi naya button hai — seedha flights pe */}
@@ -478,14 +484,16 @@ export default function SeatSelectionPage() {
         }}
         onClick={() => navigate("/flights", { replace: true })}
       >
+        <p style={{fontSize: 15, fontWeight: 700, fontFamily: "Inter,sans-serif"}}>
         Back to Home
+        </p>
       </button>
     </div>
   </div>
 );
 
   return (
-    <div style={{ fontFamily: "'Inter','Segoe UI',sans-serif", background: "#F1F5F9", minHeight: "100vh", padding: "24px 0 80px" }}>
+    <div style={{ fontFamily: "Inter,sans-serif", background: "#F1F5F9", minHeight: "100vh", padding: "24px 0 80px" }}>
       <style>{`
         *{box-sizing:border-box;margin:0;padding:0;}
         .ss-grid{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start;max-width:1200px;margin:0 auto;padding:0 16px;}
@@ -735,16 +743,24 @@ export default function SeatSelectionPage() {
    SHARED STYLES
 ───────────────────────────────────────────────────────────────────────────── */
 const styles = {
+  // center: {
+  //   fontFamily: "'Inter','Segoe UI',sans-serif",
+  //   minHeight: "100vh", display: "flex", flexDirection: "column",
+  //   alignItems: "center", justifyContent: "center", gap: 12,
+  //   background: "#F1F5F9",
+  // },
+
   center: {
-    fontFamily: "'Inter','Segoe UI',sans-serif",
-    minHeight: "100vh", display: "flex", flexDirection: "column",
-    alignItems: "center", justifyContent: "center", gap: 12,
-    background: "#F1F5F9",
-  },
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  minHeight: "100vh",
+  padding: "16px",
+},
   continueBtn: {
     width: "100%", padding: "13px 0", borderRadius: 10,
     background: "linear-gradient(135deg,#16a34a,#15803d)",
-    color: "#fff", fontSize: 15, fontWeight: 700,
+    color: "#fff", fontSize: 15, fontWeight: 700,minHeight: 48,
     border: "none", cursor: "pointer",
     boxShadow: "0 2px 12px rgba(22,163,74,0.28)",
     transition: "opacity 0.15s",

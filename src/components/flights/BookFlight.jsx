@@ -1595,7 +1595,7 @@ export default function BookFlight() {
   return (
     <div
       style={{
-        fontFamily: "'Inter', 'Segoe UI', sans-serif",
+        fontFamily: "Inter,sans-serif",
         background: "#f0f4fa",
         minHeight: "100vh",
         padding: "24px 0 64px",
@@ -1770,6 +1770,7 @@ export default function BookFlight() {
                     alignItems: "center",
                     gap: 5,
                     fontSize: 12,
+                    fontFamily:"Inter, sans-serif",
                     color: "#6b7280",
                   }}
                 >
