@@ -599,7 +599,7 @@ const BusCardExpanded = ({ bus }) => {
     { status: "male",      label: "Gents" },
     { status: "selected",  label: "Selected" },
   ];
-
+console.log("🟢 CONTINUE CLICK:", selectedBoardingPoint, selectedDroppingPoint);
   return (
     <div
       style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 12, overflow: "hidden",fontFamily: "Inter, sans-serif", boxShadow: "0 2px 10px rgba(0,0,0,0.07)", transition: "box-shadow 0.2s" }}

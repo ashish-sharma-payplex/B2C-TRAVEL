@@ -1722,7 +1722,6 @@ const CATEGORIES = [
   { label: "Flights", icon: <FlightIcon /> },
   { label: "Bus", icon: <TrainIcon /> },
   { label: "Hotels", icon: <HotelIcon /> },
-  { label: "Trains", icon: <TrainIcon /> },
   { label: "Cabs", icon: <DirectionsCarIcon /> },
 ];
 

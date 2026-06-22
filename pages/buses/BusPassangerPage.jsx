@@ -15,7 +15,7 @@ const BusPassengerPage = () => {
   if (!location.state) return null;
 
   const { bus, selectedSeatObjects, selectedSeatNames, selectedBoardingPoint, selectedDroppingPoint } = state;
-
+console.log("🟡 PASSENGER PAGE STATE:", selectedBoardingPoint, selectedDroppingPoint);
   return (
     <PassengerDetailsForm
       bus={bus}

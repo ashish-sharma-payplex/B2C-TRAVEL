@@ -78,6 +78,7 @@ export const BUS_ENDPOINTS = {
   BOOKING_LIST: "/api/busv2/bookings/list/",
 
   BOOKING_DETAILS: "/api/busv2/booking-detail/",
+  BOOK: "/api/busv2/book/"
 
 };
 
