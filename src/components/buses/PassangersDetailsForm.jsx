@@ -5,6 +5,7 @@ import { useBusBlock } from "../../hooks/buseshooks/useBusBlock";
 import { useBusSeatLayout } from "../../hooks/buseshooks/useBusSeatLayout";
 import { useBusPayment } from "../../hooks/buseshooks/useBusPayment";
 import BusPaymentQRModal from "./BusPaymentQRModal";
+import { useBusBook } from "../../hooks/buseshooks/useBusBook";
 
 const STYLES = `
   .pdf-page {
@@ -617,6 +618,7 @@ const PassengerDetailsForm = ({
   const { blockSeat, loading: paying } = useBusBlock();
   const { fetchSeatLayout } = useBusSeatLayout();
   const { initiatePayment, startPolling, stopPolling } = useBusPayment();
+  const { bookTicket } = useBusBook();
 
   // ── Form state ──
   const [passengers, setPassengers] = useState(
@@ -726,19 +728,39 @@ const PassengerDetailsForm = ({
             onStatus: (statusData) => {
               setPaymentStatus(statusData?.status ?? "PENDING");
             },
-            onSuccess: (statusData) => {
+            onSuccess: async (statusData) => {
               setPaymentStatus("SUCCESS");
-              setTimeout(() => {
-                navigate("/buses/booking", {
-                  state: {
-                    blockResponse: null,
-                    bus,
-                    contact,
-                    billing,
-                    paymentData: res.data,
-                  },
+              try {
+                const bookRes = await bookTicket(traceId, resultIndex);
+                console.log("🎫 BOOK RESPONSE:", JSON.stringify(bookRes, null, 2));
+
+                setTimeout(() => {
+                  setQrVisible(false);
+                  navigate("/buses/ticket", {
+                    state: {
+                      bookingResponse: bookRes,
+                      bus,
+                      contact,
+                      billing,
+                      passengers,
+                      selectedSeatObjects,
+                      selectedBoardingPoint,
+                      selectedDroppingPoint,
+                    },
+                  });
+                }, 1200);
+              } catch (err) {
+                console.error("Book API error:", err);
+                setQrVisible(false);
+                Swal.fire({
+                  icon: "error",
+                  title: "Booking Failed",
+                  text:
+                    err?.message ||
+                    "Payment was successful but booking confirmation failed. Please contact support.",
+                  confirmButtonColor: GREEN,
                 });
-              }, 1500);
+              }
             },
             onExpired: () => {
               setPaymentStatus("EXPIRED");
@@ -802,15 +824,19 @@ const PassengerDetailsForm = ({
         });
       }
     },
-    [
-      initiatePayment,
-      startPolling,
-      stopPolling,
-      navigate,
-      bus,
-      contact,
-      billing,
-    ],
+   [
+  initiatePayment,
+  startPolling,
+  stopPolling,
+  navigate,
+  bus,
+  contact,
+  billing,
+  selectedBoardingPoint,
+  selectedDroppingPoint,
+  selectedSeatObjects,
+  passengers,
+],
   );
 
   // ── Retry handler ──
@@ -1131,7 +1157,7 @@ const PassengerDetailsForm = ({
         onClose={handleCloseQR}
         paymentData={paymentData}
         onRetry={handleRetry}
-        onSuccess={() => {}}
+        onSuccess={() => { }}
         onFailed={() => navigate("/")}
         retrying={retrying}
         paymentStatus={paymentStatus}
