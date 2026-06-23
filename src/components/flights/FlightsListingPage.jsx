@@ -1970,9 +1970,9 @@ const RoundTripCalendarStrip = ({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const visibleItems = items.slice(startIdx, startIdx + RT_VISIBLE);
-  const canPrev = startIdx > 0;
-  const canNext = startIdx + RT_VISIBLE < items.length;
+  // const visibleItems = items.slice(startIdx, startIdx + RT_VISIBLE);
+  // const canPrev = startIdx > 0;
+  // const canNext = startIdx + RT_VISIBLE < items.length;
 
   useEffect(() => {
     if (!onwardItems.length) return;

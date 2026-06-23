@@ -4,26 +4,27 @@ import { hotelFetch } from "../../api/hotelApi";
 export function usePayment() {
   const [initiating, setInitiating] = useState(false);
   const [cancelling, setCancelling] = useState(false);
+  const [booking, setBooking] = useState(false);
   const [paymentData, setPaymentData] = useState(null);
   const [paymentStatus, setPaymentStatus] = useState(null);
+  const [bookingResult, setBookingResult] = useState(null);
   const [error, setError] = useState(null);
   const [resetKey, setResetKey] = useState(0);
 
   const pollingRef = useRef(null);
   const prebookIdRef = useRef(null);
-  const expiryMsRef = useRef(null); // ✅ expiry track karo polling ke liye
+  const expiryMsRef = useRef(null);
+  const bookingCalledRef = useRef(false); // ✅ double-call guard
 
   const stopPolling = useCallback(() => {
     if (pollingRef.current) {
-      clearInterval(pollingRef.current);
+      clearTimeout(pollingRef.current);
       pollingRef.current = null;
     }
   }, []);
 
-  // ✅ Client-side se directly EXPIRED set karo — polling ka wait nahi
   const handleClientExpiry = useCallback(() => {
     setPaymentStatus((prev) => {
-      // Sirf tab set karo jab abhi bhi PENDING hai
       if (prev === "PENDING") {
         stopPolling();
         return "EXPIRED";
@@ -32,6 +33,25 @@ export function usePayment() {
     });
   }, [stopPolling]);
 
+  // ✅ Book karo SUCCESS ke baad
+  const triggerBooking = useCallback(async (prebookId) => {
+    if (bookingCalledRef.current) return; // already called guard
+    bookingCalledRef.current = true;
+    setBooking(true);
+    try {
+      const result = await hotelFetch("/api/hotelv2/book/", {
+        body: { prebookId: String(prebookId), paymentMode: "upi" },
+      });
+      setBookingResult(result);
+      return result;
+    } catch (err) {
+      console.error("[booking error]", err.message);
+      setBookingResult({ error: err.message });
+    } finally {
+      setBooking(false);
+    }
+  }, []);
+
   const startPolling = useCallback(
     (prebookId, expiryMs) => {
       stopPolling();
@@ -39,7 +59,6 @@ export function usePayment() {
       expiryMsRef.current = expiryMs ?? null;
 
       const poll = async () => {
-        // ✅ Client side pe already expired check — polling band karo
         if (expiryMsRef.current && Date.now() > expiryMsRef.current + 5000) {
           stopPolling();
           return;
@@ -56,6 +75,10 @@ export function usePayment() {
             setPaymentStatus(normalized);
             if (["SUCCESS", "FAILED", "EXPIRED", "CANCELLED"].includes(normalized)) {
               stopPolling();
+              // ✅ SUCCESS pe book API call
+              if (normalized === "SUCCESS") {
+                triggerBooking(prebookIdRef.current);
+              }
             }
           }
         } catch (err) {
@@ -63,27 +86,24 @@ export function usePayment() {
         }
       };
 
-      // ✅ Adaptive polling — last 60 sec mein faster poll
       const getInterval = () => {
         if (!expiryMsRef.current) return 3000;
         const remaining = expiryMsRef.current - Date.now();
-        if (remaining < 60000) return 2000; // last 1 min → 2 sec
-        return 3000;
+        return remaining < 60000 ? 2000 : 3000;
       };
 
-      poll(); // immediate first poll
+      poll();
 
-      // ✅ Smart interval — check karta rahe aur adjust kare
       const scheduleNext = () => {
         pollingRef.current = setTimeout(async () => {
           await poll();
-          if (pollingRef.current !== null) scheduleNext(); // next schedule
+          if (pollingRef.current !== null) scheduleNext();
         }, getInterval());
       };
 
       scheduleNext();
     },
-    [stopPolling],
+    [stopPolling, triggerBooking],
   );
 
   const initiatePayment = useCallback(
@@ -92,8 +112,10 @@ export function usePayment() {
       setError(null);
       setPaymentData(null);
       setPaymentStatus("PENDING");
+      setBookingResult(null);
       setResetKey((k) => k + 1);
       stopPolling();
+      bookingCalledRef.current = false; // reset guard on new payment
       prebookIdRef.current = String(prebookId);
 
       try {
@@ -103,12 +125,12 @@ export function usePayment() {
         const data = result?.data ?? result;
         const dataWithTs = { ...data, _ts: Date.now() };
 
-        // ✅ Expiry parse karke ref mein store karo
         if (data.expiryDate) {
-          const rawExpiry = data.expiryDate.includes("Z") || data.expiryDate.includes("+")
-            ? new Date(data.expiryDate).getTime()
-            : new Date(data.expiryDate.replace(" ", "T") + "+05:30").getTime();
-          expiryMsRef.current = rawExpiry - 3000; // same buffer as countdown
+          const rawExpiry =
+            data.expiryDate.includes("Z") || data.expiryDate.includes("+")
+              ? new Date(data.expiryDate).getTime()
+              : new Date(data.expiryDate.replace(" ", "T") + "+05:30").getTime();
+          expiryMsRef.current = rawExpiry - 3000;
         }
 
         setPaymentData(dataWithTs);
@@ -150,9 +172,11 @@ export function usePayment() {
     initiatePayment,
     cancelPayment,
     stopPolling,
-    handleClientExpiry, // ✅ export karo
+    handleClientExpiry,
     paymentData,
     paymentStatus,
+    bookingResult,
+    booking,
     initiating,
     cancelling,
     error,

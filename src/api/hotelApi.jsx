@@ -1,9 +1,12 @@
+import { getUserId } from "../config/userConfig";
+
 export const API_BASE_URL = "https://travelmytrip.com";
 
-export const API_HEADERS = {
-  "Content-Type": "application/json",
-  "x-api-key": "ft4xaqQzYscsEfWAqrl-iLqq67xzrHqGPxVHRXzm_NI",
-  "x-user-id": "1",
+export const ENDPOINTS = {
+  CITIES: "/api/hotelv2/cities/",
+  HOTEL_CODES: "/api/hotelv2/hotel-codes/",
+  HOTEL_DETAILS: "/api/hotelv2/hotel-details/",
+  HOTEL_SEARCH: "/api/hotelv2/search/",
 };
 
 export async function hotelFetch(
@@ -18,17 +21,19 @@ export async function hotelFetch(
     }
   });
 
-  const options = { method, headers: { ...API_HEADERS } };
+  const userId = getUserId();
+  console.log(`🏨 hotelFetch | endpoint: ${endpoint} | x-user-id: ${userId}`);
+
+  const headers = {
+    "Content-Type": "application/json",
+    "x-api-key": "ft4xaqQzYscsEfWAqrl-iLqq67xzrHqGPxVHRXzm_NI",
+    "x-user-id": userId,
+  };
+
+  const options = { method, headers };
   if (method === "POST") options.body = JSON.stringify(body);
 
   const res = await fetch(url.toString(), options);
   if (!res.ok) throw new Error(`API Error: ${res.status} ${res.statusText}`);
   return res.json();
 }
-
-export const ENDPOINTS = {
-  CITIES: "/api/hotelv2/cities/",
-  HOTEL_CODES: "/api/hotelv2/hotel-codes/",
-  HOTEL_DETAILS: "/api/hotelv2/hotel-details/",
-  HOTEL_SEARCH: "/api/hotelv2/search/",
-};

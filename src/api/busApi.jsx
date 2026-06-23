@@ -1,9 +1,14 @@
+import { getUserId } from "../config/userConfig";
+
 export const API_BASE_URL = "https://travelmytrip.com";
 
-export const BUS_API_HEADERS = {
-  "Content-Type": "application/json",
-  "x-api-key": "ft4xaqQzYscsEfWAqrl-iLqq67xzrHqGPxVHRXzm_NI",
-  "x-user-id": "1",
+export const BUS_ENDPOINTS = {
+  CITY_LIST: "/api/busv2/city-list/",
+  BUS_SEARCH: "/api/busv2/search/",
+  PAYMENT_CANCEL: "/api/busv2/payment/cancel/",
+  BOOKING_LIST: "/api/busv2/bookings/list/",
+  BOOKING_DETAILS: "/api/busv2/booking-detail/",
+  BOOK: "/api/busv2/book/",
 };
 
 export async function busFetch(
@@ -18,69 +23,33 @@ export async function busFetch(
     }
   });
 
-  const options = { method, headers: { ...BUS_API_HEADERS } };
+  const userId = getUserId();
+  console.log(`🚌 busFetch | endpoint: ${endpoint} | x-user-id: ${userId}`);
+
+  const headers = {
+    "Content-Type": "application/json",
+    "x-api-key": "ft4xaqQzYscsEfWAqrl-iLqq67xzrHqGPxVHRXzm_NI",
+    "x-user-id": userId,
+  };
+
+  const options = { method, headers };
   if (method === "POST" && body) options.body = JSON.stringify(body);
 
   const res = await fetch(url.toString(), options);
-
-  // Pehle JSON parse karo, chahe status kuch bhi ho
   const data = await res.json();
-
-  // Server ka JSON seedha return karo taaki error.message upar handle ho sake
   return data;
 }
 
-
-
-
-
 export async function getBusBookingList() {
-  return await busFetch(
-    BUS_ENDPOINTS.BOOKING_LIST
-  );
+  return await busFetch(BUS_ENDPOINTS.BOOKING_LIST);
 }
 
-export async function getBusBookingDetails(
-  traceId,
-  busId
-
-) {
-
-  return await busFetch(
-    BUS_ENDPOINTS.BOOKING_DETAILS,
-    {
-
-      method: "POST",
-      body: {
-        trace_id: traceId,
-        bus_id: busId,
-
-      },
-
-    }
-
-  );
-
+export async function getBusBookingDetails(traceId, busId) {
+  return await busFetch(BUS_ENDPOINTS.BOOKING_DETAILS, {
+    method: "POST",
+    body: {
+      trace_id: traceId,
+      bus_id: busId,
+    },
+  });
 }
-
-
-
-
-
-export const BUS_ENDPOINTS = {
-
-  CITY_LIST: "/api/busv2/city-list/",
-
-  BUS_SEARCH: "/api/busv2/search/",
-
-  PAYMENT_CANCEL: "/api/busv2/payment/cancel/",
-
-  BOOKING_LIST: "/api/busv2/bookings/list/",
-
-  BOOKING_DETAILS: "/api/busv2/booking-detail/",
-  BOOK: "/api/busv2/book/"
-
-};
-
-
-
