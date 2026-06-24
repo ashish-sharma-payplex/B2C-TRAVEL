@@ -607,7 +607,7 @@ console.log("🟢 CONTINUE CLICK:", selectedBoardingPoint, selectedDroppingPoint
       onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 2px 10px rgba(0,0,0,0.07)")}
     >
       {/* Card Header */}
-      <div style={{ padding: "16px 18px" }}>
+      {/* <div style={{ padding: "16px 18px" }}>
         <div style={{ display: "flex", justifyContent: "space-between",fontFamily: "Inter, sans-serif", alignItems: "flex-start" }}>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 16, fontWeight: 700, fontFamily: "Inter, sans-serif", color: "#111", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{bus.operatorName}</div>
@@ -640,12 +640,87 @@ console.log("🟢 CONTINUE CLICK:", selectedBoardingPoint, selectedDroppingPoint
               disabled={seatLoading && !seatLayoutLoaded}
               style={{ background: expanded ? "#374151" : GREEN, color: "#fff", border: "none", borderRadius: 8, padding: "6px 14px", fontWeight: 600, fontSize: 13,fontFamily: "Inter, sans-serif", cursor: seatLoading ? "wait" : "pointer", marginTop: 8, whiteSpace: "nowrap", transition: "background 0.15s" }}
             >
-              {seatLoading && !seatLayoutLoaded ? "Loading..." : expanded ? "Hide seats" : "Select Seats"}
+              {seatLoading && !seatLayoutLoaded ? "Loading..." : expanded ? "Hide seats" : "Select Seatsss"}
             </button>
             <div style={{ fontSize: 11, color: "#6b7280", marginTop: 5 }}>{bus.seatsAvailable} Seats</div>
           </div>
         </div>
+      </div> */}
+
+
+
+      {/* Card Header */}
+<div style={{ padding: "16px 18px" }}>
+
+  {/* Row 1: Operator Name + Price */}
+  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", fontFamily: "Inter, sans-serif" }}>
+    <div style={{ flex: 1, minWidth: 0, paddingRight: 12 }}>
+      <div style={{ fontSize: 15, fontWeight: 700, color: "#111", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+        {bus.operatorName}
       </div>
+      <div style={{ fontSize: 12, color: "#6b7280", marginTop: 2 }}>
+        {bus.busType}
+      </div>
+    </div>
+    <div style={{ textAlign: "right", flexShrink: 0 }}>
+      <div style={{ fontSize: 11, color: "#9ca3af", fontFamily: "Inter, sans-serif" }}>from</div>
+      <div style={{ fontSize: 17, fontWeight: 700, color: "#111", lineHeight: 1.2, fontFamily: "Inter, sans-serif" }}>
+        ₹{bus.price?.toLocaleString("en-IN")}
+      </div>
+    </div>
+  </div>
+
+  {/* Row 2: Departure → Duration → Arrival */}
+  <div style={{ display: "flex", alignItems: "center", marginTop: 14, fontFamily: "Inter, sans-serif" }}>
+    <div style={{ flexShrink: 0 }}>
+      <div style={{ fontSize: 20, fontWeight: 700, color: "#111", lineHeight: 1 }}>{bus.departureTime}</div>
+      <div style={{ fontSize: 11, color: "#9ca3af", marginTop: 3 }}>{bus.departureDate}</div>
+    </div>
+
+    <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", paddingLeft: 8, paddingRight: 8, minWidth: 0 }}>
+      <span style={{ fontSize: 11, color: "#9ca3af", marginBottom: 3, whiteSpace: "nowrap" }}>{bus.duration}</span>
+      <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
+        <div style={{ flex: 1, height: 1, background: "#d1d5db" }} />
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <polyline points="12 5 19 12 12 19" />
+        </svg>
+      </div>
+    </div>
+
+    <div style={{ flexShrink: 0, textAlign: "right" }}>
+      <div style={{ fontSize: 20, fontWeight: 700, color: "#111", lineHeight: 1 }}>{bus.arrivalTime}</div>
+      <div style={{ fontSize: 11, color: "#9ca3af", marginTop: 3 }}>{bus.arrivalDate}</div>
+    </div>
+  </div>
+
+  {/* Row 3: Button + Seats — खाली right side ला */}
+  <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", marginTop: 12, gap: 10 }}>
+    <div style={{ fontSize: 11, color: "#6b7280", fontFamily: "Inter, sans-serif" }}>
+      {bus.seatsAvailable} Seats
+    </div>
+    <button
+      onClick={handleToggleExpand}
+      disabled={seatLoading && !seatLayoutLoaded}
+      style={{
+        background: expanded ? "#374151" : GREEN,
+        color: "#fff",
+        border: "none",
+        borderRadius: 8,
+        padding: "6px 14px",
+        fontWeight: 600,
+        fontSize: 12,
+        fontFamily: "Inter, sans-serif",
+        cursor: seatLoading ? "wait" : "pointer",
+        whiteSpace: "nowrap",
+        transition: "background 0.15s"
+      }}
+    >
+      {seatLoading && !seatLayoutLoaded ? "Loading..." : expanded ? "Hide Seats" : "Select Seats"}
+    </button>
+  </div>
+
+</div>
 
       {/* Expanded */}
       {expanded && (
@@ -753,7 +828,7 @@ console.log("🟢 CONTINUE CLICK:", selectedBoardingPoint, selectedDroppingPoint
       )}
 
       {/* Footer */}
-      <div style={{ borderTop: "1px solid #f3f4f6", padding: "10px 18px", display: "flex", gap: 16, flexWrap: "wrap" }}>
+      {/* <div style={{ borderTop: "1px solid #f3f4f6", padding: "10px 18px", display: "flex", gap: 16, flexWrap: "wrap" }}>
         {(bus.footerTags || []).map((tag) => (
           <div key={tag} style={{ display: "flex", alignItems: "center", gap: 4, cursor: "pointer" }}>
             <span style={{ fontSize: 12, color: "#6b7280" }}>{tag}</span>
@@ -762,7 +837,31 @@ console.log("🟢 CONTINUE CLICK:", selectedBoardingPoint, selectedDroppingPoint
             </svg>
           </div>
         ))}
-      </div>
+      </div> */}
+
+
+      {/* Footer */}
+<div style={{ borderTop: "1px solid #f3f4f6", padding: "10px 18px", display: "flex", alignItems: "center", gap: 20 }}>
+  <div style={{ display: "flex", alignItems: "center", gap: 4, cursor: "pointer" }}>
+    <span style={{ fontSize: 12, color: "#6b7280", fontWeight: 500, fontFamily: "Inter, sans-serif" }}>
+      Boarding & Dropping points
+    </span>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round">
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  </div>
+
+  <div style={{ width: 1, height: 14, background: "#e5e7eb" }} />
+
+  <div style={{ display: "flex", alignItems: "center", gap: 4, cursor: "pointer" }}>
+    <span style={{ fontSize: 12, color: "#6b7280", fontWeight: 500, fontFamily: "Inter, sans-serif" }}>
+      Cancellation Policy
+    </span>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2" strokeLinecap="round">
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  </div>
+</div>
     </div>
   );
 };

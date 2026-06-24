@@ -760,15 +760,30 @@ const HotelsPage = ({ scrolled }) => {
             },
             }}
           >
-            <Box>
+            <Box
+              sx={{
+                // ✅ Mobile only center
+                textAlign: {
+                  xs: "center",
+                  md: "left",
+                },
+
+                width: "100%",
+              }}
+>
               <Typography
                 sx={{
-                  fontSize: { xs: "1.25rem", md: "1.65rem" },
-                  fontWeight: 800,
+                  fontSize: { xs: "1.5rem", md: "1.65rem" },
+                  fontWeight: 400,
                   fontFamily: "Inter, sans-serif",
                   color: "#111827",
                   letterSpacing: "-0.3px",
                   lineHeight: 1.2,
+                  // ✅ Mobile only
+                  textAlign: {
+                    xs: "center",
+                    md: "left",
+                  },
                 }}
               >
                 Book a Hotel
@@ -778,15 +793,20 @@ const HotelsPage = ({ scrolled }) => {
                 sx={{
                   fontSize: "0.875rem",
                   fontFamily: "Inter, sans-serif",
-                  color: "#6b7280",
+                  color: "rgba(0, 0, 0, 0.87)", 
                   mt: 0.5,
+                  // ✅ Mobile only
+                  textAlign: {
+                    xs: "center",
+                    md: "left",
+                  },
                 }}
               >
                 Discover the perfect space for you!
               </Typography>
             </Box>
 
-            <Button
+            {/* <Button
               disableRipple
               disableElevation
               startIcon={
@@ -808,7 +828,7 @@ const HotelsPage = ({ scrolled }) => {
               }}
             >
               Need some help?
-            </Button>
+            </Button> */}
           </Box>
 
           {/* SEARCH BOX */}
