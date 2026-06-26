@@ -1180,47 +1180,24 @@ const MyTrips = () => {
               const ticket = passenger?.Ticket;
 
               return (
-                //             <Box
-                //               sx={{
-                //                 fontFamily: "'Inter', sans-serif",
-                //                 maxWidth: 1200,
-                //                 mx: "auto",
-                //                 px: 2,
-                //                 py: 2,
-                //                 backgroundImage: `
-                //   linear-gradient(rgba(255,255,255,0.75), rgba(255,255,255,0.75)),
-                //   url("https://img.magnific.com/free-photo/top-view-small-plane-with-copy-space_23-2148580907.jpg?semt=ais_hybrid&w=740&q=80")
-                // `,
-                //                 backgroundSize: "cover",
-                //                 backgroundPosition: "center",
-                //                 backgroundRepeat: "no-repeat",
-                //                 backgroundAttachment: "fixed",
-                //               }}
-                //             >
                 <Box
                   sx={{
                     position: "relative",
-                    maxWidth: 1200,
+                    Width: 800,
+                    minHeight: 300,
                     mx: "auto",
                     borderRadius: 4,
                     overflow: "hidden",
                     bgcolor: "#fff",
                     border: "1px solid #dbe7dd",
                     boxShadow: "0 12px 30px rgba(15, 23, 42, 0.08)",
-                    backgroundImage: `
-        linear-gradient(rgba(255,255,255,0.96), rgba(255,255,255,0.96)),
-        url("https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1600&q=80")
-      `,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
                   }}
                 >
                   {/* top green strip */}
                   <Box
                     sx={{
-                      height: 14,
-                      bgcolor: "#15803d",
-                      backgroundImage:
+                      height: 8,
+                      background:
                         "linear-gradient(90deg, #15803d 0%, #166534 100%)",
                     }}
                   />
@@ -1228,39 +1205,53 @@ const MyTrips = () => {
                   <Box
                     sx={{
                       display: "grid",
-                      gridTemplateColumns: {
-                        xs: "1fr",
-                        md: "1fr 1.45fr 1fr",
-                      },
-                      minHeight: { xs: "auto", md: 390 },
+                      gridTemplateColumns: { xs: "1fr", md: "1fr 1.45fr 1fr" },
+                      minHeight: { xs: "auto", md: 300 },
                     }}
                   >
-                    {/* Left stub */}
+                    {/* ── LEFT STUB ── */}
                     <Box
                       sx={{
-                        p: 3,
+                        p: 2,
                         bgcolor: "rgba(255,255,255,0.92)",
-                        borderRight: { xs: "none", md: "1px dashed #cfe7d4" },
+                        borderRight: { xs: "none", md: "2px dashed #cfe7d4" },
                         position: "relative",
+                        overflow: "hidden",
                       }}
                     >
+                      {/* decorative circles */}
                       <Box
                         sx={{
                           position: "absolute",
                           inset: 0,
-                          opacity: 0.08,
+                          opacity: 0.06,
+                          pointerEvents: "none",
                           backgroundImage:
                             "radial-gradient(circle at 20% 25%, #15803d 0 10px, transparent 10px), radial-gradient(circle at 80% 75%, #15803d 0 14px, transparent 14px)",
-                          pointerEvents: "none",
                         }}
                       />
+                      {/* plane watermark */}
+                      <Typography
+                        sx={{
+                          position: "absolute",
+                          bottom: 16,
+                          right: -10,
+                          opacity: 0.04,
+                          fontSize: 70,
+                          transform: "rotate(-20deg)",
+                          pointerEvents: "none",
+                          lineHeight: 1,
+                        }}
+                      >
+                        ✈
+                      </Typography>
 
                       <Box sx={{ position: "relative", zIndex: 1 }}>
                         <Typography
                           sx={{
                             fontSize: 11,
                             letterSpacing: 2.5,
-                            color: "#16a34a",
+                            color: "#111827",
                             textTransform: "uppercase",
                             fontWeight: 800,
                           }}
@@ -1286,15 +1277,15 @@ const MyTrips = () => {
                             gap: 1.5,
                           }}
                         >
+                          {/* barcode bars */}
                           <Box
                             sx={{
                               width: 12,
-                              height: 170,
-                              bgcolor: "#111827",
+                              height: 130,
+                              flexShrink: 0,
+                              opacity: 0.85,
                               background:
                                 "repeating-linear-gradient(to bottom, #111827 0px, #111827 3px, transparent 3px, transparent 6px)",
-                              opacity: 0.85,
-                              flexShrink: 0,
                             }}
                           />
                           <Box sx={{ flex: 1 }}>
@@ -1335,7 +1326,7 @@ const MyTrips = () => {
                                 sx={{
                                   fontSize: 16,
                                   fontWeight: 800,
-                                  color: "#15803d",
+                                  color: "#111827",
                                 }}
                               >
                                 {selectedBooking.origin}
@@ -1362,7 +1353,7 @@ const MyTrips = () => {
                                 sx={{
                                   fontSize: 16,
                                   fontWeight: 800,
-                                  color: "#15803d",
+                                  color: "#111827",
                                 }}
                               >
                                 {selectedBooking.destination}
@@ -1378,47 +1369,79 @@ const MyTrips = () => {
                       </Box>
                     </Box>
 
-                    {/* Center main body */}
+                    {/* ── CENTER MAIN ── */}
                     <Box
                       sx={{
-                        px: 4,
-                        py: 3,
+                        px: 3,
+                        py: 2,
                         position: "relative",
                         bgcolor: "rgba(240, 253, 244, 0.72)",
-                        borderRight: { xs: "none", md: "1px dashed #cfe7d4" },
+                        borderRight: { xs: "none", md: "2px dashed #cfe7d4" },
                         overflow: "hidden",
                       }}
                     >
+                      {/* plane SVG watermark */}
                       <Box
                         sx={{
                           position: "absolute",
                           inset: 0,
-                          opacity: 0.14,
-                          backgroundImage:
-                            "url('https://images.unsplash.com/photo-1500417148159-8279bc5b6f0d?auto=format&fit=crop&w=1400&q=80')",
-                          backgroundSize: "cover",
-                          backgroundPosition: "center",
-                          filter: "grayscale(100%)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          opacity: 0.045,
                           pointerEvents: "none",
                         }}
-                      />
+                      >
+                        <svg
+                          viewBox="0 0 300 180"
+                          width="260"
+                          height="150"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M10 90 L180 20 L230 45 L130 80 L200 110 L160 115 L115 90 L60 130 Z"
+                            fill="#111827"
+                          />
+                          <path
+                            d="M125 90 L230 45 L240 65 L160 90 Z"
+                            fill="#111827"
+                          />
+                          <rect
+                            x="155"
+                            y="78"
+                            width="50"
+                            height="5"
+                            rx="2"
+                            fill="#111827"
+                            transform="rotate(-10,155,78)"
+                          />
+                          <path
+                            d="M10 90 L60 130 L55 140 L20 105 Z"
+                            fill="#111827"
+                          />
+                        </svg>
+                      </Box>
+                      {/* grid texture */}
                       <Box
                         sx={{
                           position: "absolute",
                           inset: 0,
-                          background:
-                            "linear-gradient(135deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.55) 100%)",
+                          opacity: 0.03,
                           pointerEvents: "none",
+                          backgroundImage:
+                            "linear-gradient(#15803d 1px,transparent 1px),linear-gradient(90deg,#15803d 1px,transparent 1px)",
+                          backgroundSize: "28px 28px",
                         }}
                       />
 
                       <Box sx={{ position: "relative", zIndex: 1 }}>
+                        {/* PNR + Booking Ref */}
                         <Box
                           sx={{
                             display: "flex",
                             justifyContent: "space-between",
-                            gap: 2,
                             alignItems: "flex-start",
+                            gap: 2,
                           }}
                         >
                           <Box>
@@ -1426,7 +1449,7 @@ const MyTrips = () => {
                               sx={{
                                 fontSize: 11,
                                 letterSpacing: 2,
-                                color: "#16a34a",
+                                color: "#111827",
                                 textTransform: "uppercase",
                                 fontWeight: 800,
                               }}
@@ -1446,13 +1469,12 @@ const MyTrips = () => {
                               {selectedBooking.pnr}
                             </Typography>
                           </Box>
-
                           <Box sx={{ textAlign: "right" }}>
                             <Typography
                               sx={{
                                 fontSize: 11,
                                 letterSpacing: 2,
-                                color: "#16a34a",
+                                color: "#111827",
                                 textTransform: "uppercase",
                                 fontWeight: 800,
                               }}
@@ -1472,6 +1494,7 @@ const MyTrips = () => {
                           </Box>
                         </Box>
 
+                        {/* Airport codes */}
                         <Box
                           sx={{
                             mt: 4,
@@ -1484,9 +1507,9 @@ const MyTrips = () => {
                           <Box sx={{ flex: 1 }}>
                             <Typography
                               sx={{
-                                fontSize: 48,
+                                fontSize: 38,
                                 fontWeight: 900,
-                                color: "#15803d",
+                                color: "#111827",
                                 lineHeight: 1,
                                 letterSpacing: -1,
                               }}
@@ -1507,8 +1530,8 @@ const MyTrips = () => {
                                 weekday: "short",
                                 month: "short",
                                 day: "numeric",
-                              })}{" "}
-                              ·{" "}
+                              })}
+                              {" · "}
                               {new Date(
                                 segment?.Origin?.DepTime,
                               ).toLocaleTimeString([], {
@@ -1528,7 +1551,7 @@ const MyTrips = () => {
                             <Typography
                               sx={{
                                 fontSize: 12,
-                                color: "#15803d",
+                                color: "#111827",
                                 fontWeight: 900,
                                 letterSpacing: 1.2,
                                 textTransform: "uppercase",
@@ -1536,7 +1559,6 @@ const MyTrips = () => {
                             >
                               {segment?.Airline?.AirlineName}
                             </Typography>
-
                             <Box
                               sx={{
                                 display: "flex",
@@ -1545,31 +1567,22 @@ const MyTrips = () => {
                               }}
                             >
                               <Box
-                                sx={{
-                                  flex: 1,
-                                  height: 2,
-                                  bgcolor: "#bbf7d0",
-                                }}
+                                sx={{ flex: 1, height: 2, bgcolor: "#bbf7d0" }}
                               />
                               <Typography
                                 sx={{
                                   px: 1,
-                                  color: "#15803d",
+                                  color: "#111827",
                                   fontSize: 22,
-                                  transform: "rotate(90deg)",
+                                  transform: "rotate(0deg)",
                                 }}
                               >
                                 ✈
                               </Typography>
                               <Box
-                                sx={{
-                                  flex: 1,
-                                  height: 2,
-                                  bgcolor: "#bbf7d0",
-                                }}
+                                sx={{ flex: 1, height: 2, bgcolor: "#bbf7d0" }}
                               />
                             </Box>
-
                             <Typography
                               sx={{
                                 fontSize: 12,
@@ -1585,9 +1598,9 @@ const MyTrips = () => {
                           <Box sx={{ flex: 1, textAlign: "right" }}>
                             <Typography
                               sx={{
-                                fontSize: 48,
+                                fontSize: 38,
                                 fontWeight: 900,
-                                color: "#15803d",
+                                color: "#111827",
                                 lineHeight: 1,
                                 letterSpacing: -1,
                               }}
@@ -1608,8 +1621,8 @@ const MyTrips = () => {
                                 weekday: "short",
                                 month: "short",
                                 day: "numeric",
-                              })}{" "}
-                              ·{" "}
+                              })}
+                              {" · "}
                               {new Date(
                                 segment?.Destination?.ArrTime,
                               ).toLocaleTimeString([], {
@@ -1620,12 +1633,15 @@ const MyTrips = () => {
                           </Box>
                         </Box>
 
+                        {/* Seat & Class */}
                         <Box
                           sx={{
                             mt: 4,
                             display: "grid",
                             gridTemplateColumns: "1fr 1fr",
                             gap: 2,
+                            pt: 2.5,
+                            borderTop: "1px dashed #d1fae5",
                           }}
                         >
                           <Box>
@@ -1674,31 +1690,46 @@ const MyTrips = () => {
                       </Box>
                     </Box>
 
-                    {/* Right stub */}
+                    {/* ── RIGHT STUB ── */}
                     <Box
                       sx={{
-                        p: 3,
+                        p: 2,
                         bgcolor: "rgba(255,255,255,0.94)",
                         position: "relative",
+                        overflow: "hidden",
                       }}
                     >
                       <Box
                         sx={{
                           position: "absolute",
                           inset: 0,
-                          opacity: 0.08,
+                          opacity: 0.06,
+                          pointerEvents: "none",
                           backgroundImage:
                             "radial-gradient(circle at 75% 20%, #15803d 0 12px, transparent 12px), radial-gradient(circle at 40% 80%, #15803d 0 16px, transparent 16px)",
-                          pointerEvents: "none",
                         }}
                       />
+                      <Typography
+                        sx={{
+                          position: "absolute",
+                          bottom: 16,
+                          left: "50%",
+                          transform: "translateX(-50%)",
+                          opacity: 0.04,
+                          fontSize: 55,
+                          pointerEvents: "none",
+                          lineHeight: 1,
+                        }}
+                      >
+                        ✈
+                      </Typography>
 
                       <Box sx={{ position: "relative", zIndex: 1 }}>
                         <Typography
                           sx={{
                             fontSize: 11,
                             letterSpacing: 2,
-                            color: "#16a34a",
+                            color: "#6b7280",
                             textTransform: "uppercase",
                             fontWeight: 800,
                           }}
@@ -1722,7 +1753,7 @@ const MyTrips = () => {
                             sx={{
                               fontSize: 11,
                               letterSpacing: 2,
-                              color: "#16a34a",
+                              color: "#6b7280",
                               textTransform: "uppercase",
                               fontWeight: 800,
                             }}
@@ -1747,7 +1778,7 @@ const MyTrips = () => {
                             sx={{
                               fontSize: 11,
                               letterSpacing: 2,
-                              color: "#16a34a",
+                              color: "#6b7280",
                               textTransform: "uppercase",
                               fontWeight: 800,
                             }}
@@ -1758,7 +1789,7 @@ const MyTrips = () => {
                             sx={{
                               fontSize: 16,
                               fontWeight: 900,
-                              color: "#15803d",
+                              color: "#111827",
                               mt: 0.5,
                             }}
                           >
@@ -1776,7 +1807,7 @@ const MyTrips = () => {
                             sx={{
                               fontSize: 11,
                               letterSpacing: 2,
-                              color: "#16a34a",
+                              color: "#6b7280",
                               textTransform: "uppercase",
                               fontWeight: 800,
                             }}
@@ -1807,7 +1838,7 @@ const MyTrips = () => {
                               sx={{
                                 fontSize: 11,
                                 fontWeight: 900,
-                                color: "#15803d",
+                                color: "#111827",
                                 textTransform: "uppercase",
                               }}
                             >
@@ -1819,9 +1850,9 @@ const MyTrips = () => {
                         <Box sx={{ mt: 2.25 }}>
                           <Typography
                             sx={{
-                              fontSize: 11,
+                              fontSize: 13,
                               letterSpacing: 2,
-                              color: "#16a34a",
+                              color: "#6b7280",
                               textTransform: "uppercase",
                               fontWeight: 800,
                             }}
@@ -1853,17 +1884,15 @@ const MyTrips = () => {
                     </Box>
                   </Box>
 
-                  {/* bottom strip */}
+                  {/* bottom green strip */}
                   <Box
                     sx={{
-                      height: 14,
-                      bgcolor: "#15803d",
-                      backgroundImage:
+                      height: 8,
+                      background:
                         "linear-gradient(90deg, #15803d 0%, #166534 100%)",
                     }}
                   />
                 </Box>
-                // </Box>
               );
             })()}
         </DialogContent>
