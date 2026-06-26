@@ -19,20 +19,20 @@ const BORDER = "#e2e8f0";
 const BG = "#f1f5f9";
 const FONT = "'Inter', sans-serif";
 
-// ── Dotted Tear Line with ACTUAL CUTOUTS ─────────────────────────────────────
+// ── Dotted Tear Line with SEMI-CIRCLE CUTOUTS ─────────────────────────────────────
 const TearLine = () => (
   <Box 
     sx={{ 
       position: "relative", 
       my: 0, 
       mx: 0,
-      height: 40,
+      height: 32,
       display: "flex",
       alignItems: "center",
-      overflow: "visible"
+      overflow: "hidden"
     }}
   >
-    {/* Left cutout circle - creates actual tear-off notch */}
+    {/* Left semi-circle cutout (carved INTO ticket) */}
     <Box
       sx={{
         position: "absolute",
@@ -41,13 +41,12 @@ const TearLine = () => (
         transform: "translateY(-50%)",
         width: 32,
         height: 32,
-        borderRadius: "50%",
+        borderRadius: "0 50% 50% 0",  /* Only RIGHT half is rounded = left side carved in */
         bgcolor: BG,
         zIndex: 10,
-        border: `2px dashed #cbd5e1`,
       }}
     />
-    {/* Right cutout circle - creates actual tear-off notch */}
+    {/* Right semi-circle cutout (carved INTO ticket) */}
     <Box
       sx={{
         position: "absolute",
@@ -56,10 +55,9 @@ const TearLine = () => (
         transform: "translateY(-50%)",
         width: 32,
         height: 32,
-        borderRadius: "50%",
+        borderRadius: "50% 0 0 50%",  /* Only LEFT half is rounded = right side carved in */
         bgcolor: BG,
         zIndex: 10,
-        border: `2px dashed #cbd5e1`,
       }}
     />
     {/* Dotted line - full width */}
@@ -206,7 +204,7 @@ const HotelBookingTicket = () => {
     <Box
       sx={{
         minHeight: "100vh",
-        bgcolor: BG,
+        // bgcolor: BG,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
