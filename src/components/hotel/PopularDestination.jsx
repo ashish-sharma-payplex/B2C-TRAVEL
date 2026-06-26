@@ -461,7 +461,7 @@ export default function PopularDestinations() {
   return (
     <Box sx={{ p: { xs: "20px 16px", md: "32px 24px" } }}>
       <Typography
-        sx={{ fontSize: { xs: "1.3rem", md: "1.6rem" }, fontWeight: 800, color: "#111827", mb: 0.5 }}
+        sx={{ fontSize: { xs: "1.3rem", md: "1.6rem" }, fontWeight: 600, color: "#111827", mb: 0.5 }}
       >
         Popular Destinations
       </Typography>

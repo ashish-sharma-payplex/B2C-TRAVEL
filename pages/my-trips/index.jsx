@@ -2202,7 +2202,7 @@ const handleSortSelect = (status) => {
   </Box>
 )}
 
-{/* Mobile */}
+
 {/* Mobile */}
 {isMobile && (
   <>

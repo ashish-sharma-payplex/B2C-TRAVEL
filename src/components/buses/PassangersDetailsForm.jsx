@@ -27,7 +27,7 @@ const STYLES = `
   .pdf-summary { position:sticky; top:24px; background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:20px; }
   @media (max-width:860px) {
     .pdf-page { grid-template-columns:1fr; padding:16px; }
-    .pdf-summary { position:static; order:-1; }
+    .pdf-summary { position:static; order:999; }
   }
   @media (max-width:520px) {
     .pdf-page { padding:12px; gap:12px; }

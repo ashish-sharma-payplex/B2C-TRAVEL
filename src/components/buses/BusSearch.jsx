@@ -194,10 +194,34 @@
         const rect = anchorEl.getBoundingClientRect();
         const scrollY = window.scrollY || document.documentElement.scrollTop;
         const scrollX = window.scrollX || document.documentElement.scrollLeft;
-        setPosition({
-          top: rect.bottom + scrollY + 8,
-          left: rect.left + scrollX,
-        });
+        
+
+                
+const dropdownWidth = 320;
+const padding = 12; // 🔥 increased safety padding
+
+// center align
+let left =
+  rect.left + rect.width / 2 - dropdownWidth / 2;
+
+// 🔥 soft boundary control (not aggressive)
+const minLeft = padding;
+const maxLeft = window.innerWidth - dropdownWidth - padding;
+
+// clamp
+if (left < minLeft) {
+  left = minLeft;
+}
+
+if (left > maxLeft) {
+  left = maxLeft;
+}
+
+setPosition({
+  top: rect.bottom + window.scrollY + 8,
+  left,
+});
+
       }
     }, [open, anchorEl]);
 
@@ -229,18 +253,25 @@
     return (
       <div
         ref={dropdownRef}
-        style={{
-          position: "absolute",
-          top: position.top,
-          left: position.left,
-          zIndex: 9999,
-          width: 320,
-          background: "#ffffff",
-          borderRadius: 16,
-          border: "1px solid #f0f0f0",
-          boxShadow: "0 4px 24px rgba(0,0,0,0.10)",
-          overflow: "hidden",
-        }}
+style={{
+  position: "absolute",
+  top: position.top,
+  left: position.left,
+
+  width: Math.min(320, window.innerWidth - 16),
+
+  maxWidth: "calc(100vw - 16px)",
+  right: "auto",
+
+  zIndex: 9999,
+  background: "#fff",
+  borderRadius: 16,
+  border: "1px solid #f0f0f0",
+  boxShadow: "0 4px 24px rgba(0,0,0,0.10)",
+  overflow: "hidden",
+width: Math.min(320, window.innerWidth - 32),
+maxWidth: "calc(100vw - 32px)",
+}}
       >
         {/* Search Input */}
         <div style={{ padding: "14px 14px 10px" }}>
@@ -427,7 +458,15 @@
         const rect = anchorEl.getBoundingClientRect();
         const scrollY = window.scrollY || document.documentElement.scrollTop;
         const scrollX = window.scrollX || document.documentElement.scrollLeft;
-        setPos({ top: rect.bottom + scrollY + 8, left: rect.left + scrollX });
+        // setPos({ top: rect.bottom + scrollY + 8, left: rect.left + scrollX });
+        const isMobile = window.innerWidth < 768;
+
+            setPos({
+              top: rect.bottom + scrollY + 8,
+              left: isMobile
+                ? 8
+                : Math.max(12, rect.left + scrollX),
+            });
         // Reset to selected date's month or today
         const base = selectedDate || today;
         setViewMonth({ year: base.getFullYear(), month: base.getMonth() });
@@ -501,20 +540,45 @@
       <Paper
         id="bus-drp-popup"
         elevation={0}
-        sx={{
-          position: "absolute",
-          top: pos.top,
-          left: { xs: 8, md: pos.left },
-          right: { xs: 8, md: "auto" },
-          zIndex: 9999,
-          borderRadius: "16px",
-          p: { xs: "20px 16px", md: "24px 28px" },
-          boxShadow: "0 8px 40px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.07)",
-          border: "1px solid #f3f4f6",
-          bgcolor: "#ffffff",
-          width: { xs: "calc(100vw - 16px)", md: "auto" },
-          minWidth: { md: 300 },
-        }}
+        // sx={{
+        //   position: "absolute",
+        //   top: pos.top,
+        //   left: { xs: 8, md: pos.left },
+        //   right: { xs: 8, md: "auto" },
+        //   zIndex: 9999,
+        //   borderRadius: "16px",
+        //   p: { xs: "20px 16px", md: "24px 28px" },
+        //   boxShadow: "0 8px 40px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.07)",
+        //   border: "1px solid #f3f4f6",
+        //   bgcolor: "#ffffff",
+        //   width: { xs: "calc(100vw - 16px)", md: "auto" },
+        //   minWidth: { md: 300 },
+        // }}
+
+sx={{
+  position: "absolute",
+  top: pos.top,
+
+  left: { xs: 8, md: pos.left },
+  right: { xs: 8, md: "auto" },
+
+  zIndex: 9999,
+  borderRadius: "14px",   
+
+  p: { xs: "14px 12px", md: "18px 20px" }, 
+
+  boxShadow: "0 6px 25px rgba(0,0,0,0.12)", 
+
+  border: "1px solid #f3f4f6",
+  bgcolor: "#ffffff",
+
+  width: { xs: "calc(100vw - 20px)", md: "auto" }, 
+  minWidth: { md: 280 }, 
+
+  maxWidth: { xs: "100%", md: "none" },
+
+  boxSizing: "border-box",
+}}
       >
         {/* Month header */}
         <Box
@@ -1599,9 +1663,9 @@ marginLeft: "24px",
                             boxSizing: "border-box",
                       cursor: "pointer",
                           mb: {
-      xs: 0.5, // 12px
-      sm: 0,
-    },
+                                xs: 0.5, // 12px
+                                sm: 0,
+                              },
                       "&:hover": { borderColor: "#2e7d32" },
                       transition: "border-color 0.15s",
                     }}
@@ -1771,7 +1835,6 @@ marginLeft: "24px",
             </Paper>
           </Box>
 
-          {/* ── BusDatePicker ── */}
           {/* ── BusDatePicker ── */}
           <BusDatePicker
             anchorEl={dateFieldRef.current}
